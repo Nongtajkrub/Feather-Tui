@@ -29,28 +29,7 @@ Termui is still under development. Currently, the following parts are done (or p
 
 ---
 
-## 💡 Why Rewrite in Rust?
-
-- Better **memory safety** without manual management
-- Modern language features like **pattern matching** and **error handling**
-- Opportunity to **learn Rust** while working on a real project
-
----
-
-## 📜 License
-
-This project is licensed under the **MIT License** — see [LICENSE](./LICENSE) for details.
-
----
-
 ## 🌱 Related Projects
 
 - [Original C Version (part of my school management system)](https://github.com/nongtajkrub/school-management)
 - [This Rust Rewrite (current project)](https://github.com/nongtajkrub/termui)
-
----
-
-## 📬 Contact
-
-If you have questions or feedback, you can reach me via GitHub Issues.
-
