@@ -9,7 +9,7 @@ impl Option {
         Option {
             label,
             line: 0,
-            selc_on: false
+            selc_on: false,
         }
     }
 
