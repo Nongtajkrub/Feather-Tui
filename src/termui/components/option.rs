@@ -25,6 +25,10 @@ impl Option {
         return &self.label;
     }
 
+    pub fn selc_on(&self) -> bool {
+        return self.selc_on;
+    }
+
     pub fn set_selc_on(&mut self, value: bool) {
         self.selc_on = value;
     }
