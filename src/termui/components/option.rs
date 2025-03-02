@@ -16,4 +16,16 @@ impl Option {
     pub fn set_line(&mut self, line: u16) {
         self.line = line;
     }
+
+    pub fn line(&self) -> u16 {
+        return self.line;
+    }
+
+    pub fn label(&self) -> &String {
+        return &self.label;
+    }
+
+    pub fn set_selc_on(&mut self, value: bool) {
+        self.selc_on = value;
+    }
 }

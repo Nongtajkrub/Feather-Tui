@@ -14,4 +14,12 @@ impl Text {
     pub fn set_line(&mut self, line: u16) {
         self.line = line;
     }
+
+    pub fn line(&self) -> u16 {
+        return self.line;
+    }
+
+    pub fn label(&self) -> &String {
+        return &self.label;
+    }
 }

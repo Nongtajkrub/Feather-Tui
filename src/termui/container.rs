@@ -1,5 +1,3 @@
-use std::io::SeekFrom;
-
 use crate::termui::components::{
     header::Header,
     option::Option,
@@ -25,9 +23,14 @@ impl Container {
 
     pub fn set_header(&mut self, header: Header) {
         self.header = Some(header);
+        self.component_count += 1;
     }
 
-    pub fn add_option(&mut self, option: Option) {
+    pub fn add_option(&mut self, mut option: Option) {
+        if self.options.len() == 0 {
+            option.set_selc_on(true);
+        }
+
         self.options.push(option);
         self.options.last_mut().unwrap().set_line(self.component_count);
         self.component_count += 1;
@@ -43,7 +46,7 @@ impl Container {
         return &self.header;
     }
 
-    pub fn option(&self) -> &Vec<Option> {
+    pub fn options(&self) -> &Vec<Option> {
         return &self.options;
     }
 

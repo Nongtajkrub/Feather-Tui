@@ -5,8 +5,8 @@ use crate::termui::components::{
     text::Text,
 };
 
-const BG_CHAR: &str = " ";
-const NO_HEADER_ERRMSG: &str = "Renderer: Missing Header!";
+const BG_CHAR: &'static str = " ";
+const NO_HEADER_ERRMSG: &'static str = "Renderer: Header is not set!";
 
 struct Line {
     ascii: std::option::Option<String>,
@@ -62,14 +62,32 @@ impl Renderer {
         self.lines[0].edit(header.label(), pos);
     }
 
+    fn render_options(&mut self, options: &Vec<Option>) {
+        for option in options.iter() {
+            self.lines[option.line() as usize].edit(option.label(), 0);
+        }
+    }
+
+    fn render_text(&mut self, texts: &Vec<Text>) {
+        for text in texts.iter() {
+            self.lines[text.line() as usize].edit(text.label(), 0);
+        }
+    }
+
     pub fn render(&mut self, container: &Container) {
         // TODO: implement rendering options and texts
         self.render_header(container.header().as_ref().expect(NO_HEADER_ERRMSG));
+        self.render_options(container.options());
+        self.render_text(container.texts());
     }
 
     pub fn draw(&mut self) {
         for line in self.lines.iter() {
-            println!("{}", line.data);
+            if let Some(ascii) = &line.ascii {
+                println!("{}{}", ascii, line.data);
+            } else {
+                println!("{}", line.data)
+            }
         }
     }
 }
