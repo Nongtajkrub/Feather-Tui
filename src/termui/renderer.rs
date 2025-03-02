@@ -1,4 +1,4 @@
-use crate::termui::util::ansi::{self, ANSI_ESC_CURSOR_SHOW};
+use crate::termui::util::ansi;
 use crate::termui::container;
 use crate::termui::components;
 
@@ -7,6 +7,7 @@ const NO_HEADER_ERRMSG: &str = "Renderer: Header is not set!";
 
 struct Line {
     ansi: std::option::Option<String>,
+    width: u16,
     data: String,
 }
 
@@ -14,8 +15,13 @@ impl Line {
     pub fn new(width: u16) -> Line {
         Line {
             ansi: None,
-            data: BG_CHAR.repeat(width as usize)
+            width,
+            data: Self::make_empty_line(width),
         }
+    }
+
+    fn make_empty_line(width: u16) -> String {
+        BG_CHAR.repeat(width as usize)
     }
 
     pub fn set_ansi(&mut self, ansi: String) {
@@ -24,6 +30,11 @@ impl Line {
 
     pub fn edit(&mut self, data: &String, begin: u16) {
         self.data.replace_range(begin as usize..data.len() + begin as usize, data);
+    }
+
+    pub fn clear(&mut self) {
+        self.data = Self::make_empty_line(self.width);
+        self.ansi = None;
     }
 }
 
@@ -44,7 +55,7 @@ pub fn unready() {
     print!(
         "{}{}{}",
         ansi::ANSI_ESC_CLEAR_TERM,
-        ansi::ANSI_ESC_CURSOR_HOME, ANSI_ESC_CURSOR_SHOW);
+        ansi::ANSI_ESC_CURSOR_HOME, ansi::ANSI_ESC_CURSOR_SHOW);
 }
 
 
@@ -108,6 +119,14 @@ impl Renderer {
             } else {
                 println!("{}", line.data)
             }
+        }
+
+        print!("{}", ansi::ANSI_ESC_CURSOR_HOME);
+    }
+
+    pub fn clear(&mut self) {
+        for line in self.lines.iter_mut() {
+            line.clear();
         }
     }
 }
