@@ -1,9 +1,9 @@
-use crate::termui::util::ansi;
-use crate::termui::container;
-use crate::termui::components;
+use crate::tui::util::ansi;
+use crate::tui::con;
+use crate::tui::cpn; 
+use crate::tui::emg;
 
 const BG_CHAR: &str = " ";
-const NO_HEADER_ERRMSG: &str = "Renderer: Header is not set!";
 
 struct Line {
     ansi: std::option::Option<String>,
@@ -78,7 +78,7 @@ impl Renderer {
         return lines;
     }
 
-    fn render_header(&mut self, header: &components::header::Header) {
+    fn render_header(&mut self, header: &cpn::hed::Header) {
         let pos: u16 = 
             ((self.width as f32 - header.len() as f32) / 2.0).round() as u16; 
 
@@ -88,7 +88,7 @@ impl Renderer {
         line.set_ansi(String::from(ansi::ANSI_ESC_GREEN_B));
     }
 
-    fn render_options(&mut self, options: &Vec<components::option::Option>) {
+    fn render_options(&mut self, options: &Vec<cpn::opt::Option>) {
         for option in options.iter() {
             let line = &mut self.lines[option.line() as usize];
 
@@ -100,14 +100,14 @@ impl Renderer {
         }
     }
 
-    fn render_text(&mut self, texts: &Vec<components::text::Text>) {
+    fn render_text(&mut self, texts: &Vec<cpn::txt::Text>) {
         for text in texts.iter() {
             self.lines[text.line() as usize].edit(text.label(), 0);
         }
     }
 
-    pub fn render(&mut self, container: &container::Container) {
-        self.render_header(container.header().as_ref().expect(NO_HEADER_ERRMSG));
+    pub fn render(&mut self, container: &con::Container) {
+        self.render_header(container.header().as_ref().expect(emg::NO_HEADER_ERRMSG));
         self.render_options(container.options());
         self.render_text(container.texts());
     }
