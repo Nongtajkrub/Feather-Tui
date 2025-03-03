@@ -12,8 +12,7 @@ pub struct Callback {
 
 impl Callback {
     pub fn new<T: 'static>(
-        func: fn(arg: &Box<dyn std::any::Any>),
-        arg: T) -> Callback {
+        func: fn(arg: &Box<dyn std::any::Any>), arg: T) -> Callback {
         Callback {
             func,
             arg: Box::new(arg),
