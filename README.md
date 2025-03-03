@@ -19,15 +19,12 @@ It started life as a small C library in my **school management system project**,
 
 ## 📊 Progress
 
-![](https://geps.dev/progress/15)
+![](https://geps.dev/progress/20)
 
-Termui is still under development. Currently, the following parts are done (or partially done):
-
-✅ **Component** - Basic building blocks  
-✅ **Container** - For grouping components  
-✅ **Renderer** - For rendering and drawing UI
-
-These parts might get refined later, but for now, they’re good enough to work with.
+* 🚧 Termui is still under development.  
+* ✅ Some parts are complete, while others are only partially done.  
+* ✨ These parts may get refined or improved in the future.  
+* 👍 For now, they’re good enough to work with.  
 
 ---
 
