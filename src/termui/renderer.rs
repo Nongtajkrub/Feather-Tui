@@ -100,7 +100,10 @@ impl Renderer {
 
     fn render_text(&mut self, texts: &Vec<cpn::txt::Text>) {
         for text in texts.iter() {
-            self.lines[text.line() as usize].edit(text.label(), 0);
+            let line = &mut self.lines[text.line() as usize];
+
+            line.edit(text.label(), 0);
+            line.set_ansi(String::from(text.color()));
         }
     }
 
