@@ -6,10 +6,10 @@ bitflags::bitflags! {
         const NONE          = 0;
 
         // alignment
-        //const ALIGN_CENTER  = 1 << 0;
-        //const ALIGN_LEFT    = 1 << 1;
-        //const ALIGN_RIGHT   = 1 << 2;
-        //const ALIGN_BOTTOM  = 1 << 3;
+        const ALIGN_CENTER  = 1 << 0;
+        const ALIGN_LEFT    = 1 << 1;
+        const ALIGN_RIGHT   = 1 << 2;
+        const ALIGN_BOTTOM  = 1 << 3;
 
         // color settings
         const COLOR_BACK    = 1 << 4;
@@ -51,7 +51,7 @@ pub struct Text {
     line: u16,
     flags: TextFlags,
     pos_resolve: bool,
-    x_pos: u16,
+    pos: u16,
     color: String,
 }
 
@@ -62,7 +62,7 @@ impl Text {
             line: 0,
             flags: flags.clone(),
             pos_resolve: false,
-            x_pos: 0,
+            pos: 0,
             color: Self::resolve_color(flags),
         }
     }
@@ -109,6 +109,30 @@ impl Text {
 
     pub fn label(&self) -> &String {
         return &self.label;
+    }
+
+    pub fn len(&self) -> usize {
+        return self.label.len();
+    }
+
+    pub fn set_pos(&mut self, pos: u16) {
+        self.pos = pos;
+    }
+
+    pub fn pos(&self) -> u16 {
+        return self.pos;
+    }
+
+    pub fn pos_resolve(&self) -> bool {
+        return self.pos_resolve;
+    }
+
+    pub fn set_pos_resolve(&mut self, value: bool) {
+        self.pos_resolve = value;
+    }
+
+    pub fn flags(&self) -> &TextFlags {
+        return &self.flags;
     }
 
     pub fn color(&self) -> &String {

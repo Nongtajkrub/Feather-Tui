@@ -92,4 +92,8 @@ impl Container {
     pub fn texts(&self) -> &Vec<txt::Text> {
         return &self.texts;
     }
+
+    pub fn texts_mut(&mut self) -> &mut Vec<txt::Text> {
+        return &mut self.texts;
+    }
 }
