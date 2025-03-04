@@ -19,7 +19,7 @@ It started life as a small C library in my **school management system project**,
 
 ## 📊 Progress
 
-![](https://geps.dev/progress/20)
+![](https://geps.dev/progress/30)
 
 * 🚧 Termui is still under development.  
 * ✅ Some parts are complete, while others are only partially done.  
