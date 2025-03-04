@@ -1,6 +1,6 @@
 mod termui;
 
-use termui as tui;
+use termui::{self as tui, components::text::TextFlags};
 
 tui_trg_new_trigger_func!(up_trig_func, arg, {
     return false;
@@ -27,6 +27,10 @@ fn main() {
         .with_option(
             tui::cpn::opt::Option::new(String::from("Credit"),
             tui::cbk::Callback::new(callback_func, 0)))
+        .with_text(
+            tui::cpn::txt::Text::new(
+                String::from("Text"),
+                TextFlags::COLOR_BACK | TextFlags::COLOR_RED))
         .with_selector(
             tui::sel::Selector::new(
                 tui::trg::Trigger::new(up_trig_func, 0),
