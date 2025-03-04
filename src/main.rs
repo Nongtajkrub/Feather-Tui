@@ -1,58 +1,51 @@
 mod termui;
-
-use termui::{self as tui, components::text::TextFlags};
+use termui as tui;
 
 tui_trg_new_trigger_func!(up_trig_func, arg, {
-    return false;
+    false
 });
 
 tui_trg_new_trigger_func!(down_trig_func, arg, {
-    return false;
+    false
 });
 
 tui_trg_new_trigger_func!(selc_trig_func, arg, {
-    return false;
+    true
 });
 
-tui_cbk_new_callback_func!(callback_func, arg, {
-    println!("Hello from 1!");
+tui_cbk_new_callback_func!(callback, arg, {
+    println!("{}", arg.downcast_ref::<u32>().expect("Expect Number As Arg"));
 });
 
 fn main() {
-    let mut container1 = tui::container::Container::new()
-        .with_header(tui::cpn::hed::Header::new(String::from("Welcom")))
+    let mut container = tui::con::Container::new()
+        .with_header(tui::cpn::hed::Header::new("Welcome".to_string()))
         .with_option(
-            tui::cpn::opt::Option::new(String::from("Settings"),
-            tui::cbk::Callback::new(callback_func, 0)))
-        .with_option(
-            tui::cpn::opt::Option::new(String::from("Credit"),
-            tui::cbk::Callback::new(callback_func, 0)))
+            tui::cpn::opt::Option::new(
+                "Settings".to_string(),
+                tui::cbk::Callback::new(callback, 1u32)))
         .with_text(
             tui::cpn::txt::Text::new(
-                String::from("Text"),
-                TextFlags::COLOR_BACK | TextFlags::COLOR_RED))
+                "Text".to_string(), 
+                tui::cpn::txt::TextFlags::COLOR_YELLOW_BACK |
+                tui::cpn::txt::TextFlags::ALIGN_RIGHT))
         .with_selector(
             tui::sel::Selector::new(
                 tui::trg::Trigger::new(up_trig_func, 0),
                 tui::trg::Trigger::new(down_trig_func, 0),
                 tui::trg::Trigger::new(selc_trig_func, 0)));
 
+
     let mut renderer = tui::ren::Renderer::new(40, 20);
-    let mut menu = tui::mnu::Menu::new(&mut container1);
-    let mut should_update = true;
 
-   tui::ren::ready();
+    tui::ren::ready();
 
-    for _ in 0..3 {
-        if should_update {
-            renderer.clear();
-            renderer.render(menu.current());
-            renderer.draw();
-        }
+    container.looper();
 
-        should_update = menu.current_mut().looper();
-        std::thread::sleep(std::time::Duration::from_secs(1));
-    }
+    renderer.clear();
+    renderer.render(&mut container);
+    renderer.draw();
 
+    std::thread::sleep(std::time::Duration::from_secs(2));
     tui::ren::unready();
 }
