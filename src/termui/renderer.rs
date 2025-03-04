@@ -47,15 +47,13 @@ pub struct Renderer {
 pub fn ready() {
     print!(
         "{}{}{}",
-        ansi::ANSI_ESC_CLEAR_TERM, 
-        ansi::ANSI_ESC_CURSOR_HOME, ansi::ANSI_ESC_CURSOR_HOME);
+        ansi::ESC_CLEAR_TERM, ansi::ESC_CURSOR_HOME, ansi::ESC_CURSOR_HOME);
 }
 
 pub fn unready() {
     print!(
         "{}{}{}",
-        ansi::ANSI_ESC_CLEAR_TERM,
-        ansi::ANSI_ESC_CURSOR_HOME, ansi::ANSI_ESC_CURSOR_SHOW);
+        ansi::ESC_CLEAR_TERM, ansi::ESC_CURSOR_HOME, ansi::ESC_CURSOR_SHOW);
 }
 
 
@@ -85,7 +83,7 @@ impl Renderer {
         let line = &mut self.lines[0];
 
         line.edit(header.label(), pos);
-        line.set_ansi(String::from(ansi::ANSI_ESC_GREEN_B));
+        line.set_ansi(String::from(ansi::ESC_GREEN_B));
     }
 
     fn render_options(&mut self, options: &Vec<cpn::opt::Option>) {
@@ -95,7 +93,7 @@ impl Renderer {
             line.edit(option.label(), 0);
 
             if option.selc_on() {
-                line.set_ansi(String::from(ansi::ANSI_ESC_BLUE_B));
+                line.set_ansi(String::from(ansi::ESC_BLUE_B));
             }
         }
     }
@@ -115,13 +113,13 @@ impl Renderer {
     pub fn draw(&mut self) {
         for line in self.lines.iter() {
             if let Some(ansi) = &line.ansi {
-                println!("{}{}{}", ansi, line.data, ansi::ANSI_ESC_RESET);
+                println!("{}{}{}", ansi, line.data, ansi::ESC_RESET);
             } else {
                 println!("{}", line.data)
             }
         }
 
-        print!("{}", ansi::ANSI_ESC_CURSOR_HOME);
+        print!("{}", ansi::ESC_CURSOR_HOME);
     }
 
     pub fn clear(&mut self) {
