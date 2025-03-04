@@ -3,6 +3,8 @@ use crate::tui::con;
 use crate::tui::cpn; 
 use crate::tui::emg;
 
+use super::components::text::TextFlags;
+
 const BG_CHAR: &str = " ";
 
 struct Line {
@@ -97,20 +99,40 @@ impl Renderer {
             }
         }
     }
+    
+    fn resolve_text_pos(&self, text: &mut cpn::txt::Text) {
+        let flags = text.flags();
 
-    fn render_text(&mut self, texts: &Vec<cpn::txt::Text>) {
-        for text in texts.iter() {
+        if flags.contains(cpn::txt::TextFlags::ALIGN_CENTER) {
+            text.set_pos(
+                ((self.width as f32 - text.len() as f32) / 2.0) .round() as u16);
+        } else if flags.contains(cpn::txt::TextFlags::ALIGN_RIGHT) {
+            text.set_pos(self.width - text.len() as u16);
+        } else {
+            // default to left alignment
+            text.set_pos(0);
+        } 
+
+        text.set_pos_resolve(true);
+    }
+
+    fn render_text(&mut self, texts: &mut Vec<cpn::txt::Text>) {
+        for text in texts.iter_mut() {
+            if !text.pos_resolve() {
+                self.resolve_text_pos(text);
+            }
+            
             let line = &mut self.lines[text.line() as usize];
 
-            line.edit(text.label(), 0);
+            line.edit(text.label(), text.pos());
             line.set_ansi(String::from(text.color()));
         }
     }
 
-    pub fn render(&mut self, container: &con::Container) {
+    pub fn render(&mut self, container: &mut con::Container) {
         self.render_header(container.header().as_ref().expect(emg::NO_HEADER_ERRMSG));
         self.render_options(container.options());
-        self.render_text(container.texts());
+        self.render_text(container.texts_mut());
     }
 
     pub fn draw(&mut self) {
