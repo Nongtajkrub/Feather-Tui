@@ -1,3 +1,5 @@
+use std::option;
+
 use crate::tui::sel;
 
 use crate::tui::{
@@ -58,6 +60,26 @@ impl Container {
         self.texts.last_mut().unwrap().set_line(self.component_count);
         self.component_count += 1;
     }
+
+    pub fn with_header(mut self, header: hed::Header) -> Self {
+        self.set_header(header);
+        self
+    }
+
+    pub fn with_option(mut self, option: opt::Option) -> Self {
+        self.add_option(option);
+        self
+    }
+
+    pub fn with_text(mut self, text: txt::Text) -> Self {
+        self.add_text(text);
+        self
+    }
+
+    pub fn with_selector(mut self, selector: sel::Selector) -> Self {
+        self.set_selector(selector);
+        self
+    } 
 
     pub fn header(&self) -> &std::option::Option<hed::Header>{
         return &self.header;
