@@ -24,7 +24,7 @@ It started life as a small C library in my **school management system project**,
 
 ---
 
-## 📦 crates.io
+## 📦 Crates
 
 **Comming Soon**
 
@@ -119,7 +119,7 @@ Unreadying the renderer restores the terminal back to its normal state (importan
 
 ---
 
-## 🏗️ dependencies
+## 🏗️ Dependencies
 
 `bitflags` `crossterm`
 
