@@ -117,6 +117,12 @@ Unreadying the renderer restores the terminal back to its normal state (importan
 
 ---
 
+## 📦 dependencies
+
+`bitflags` `crossterm`
+
+---
+
 ## 🌱 Related Projects
 
 - [Original C Version (part of my school management system)](https://github.com/nongtajkrub/school-management)
