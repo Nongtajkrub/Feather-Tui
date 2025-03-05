@@ -18,6 +18,16 @@ tui_cbk_new_callback_func!(callback, arg, {
 });
 
 fn main() {
+    match tui::inp::read("Input Something".to_string()) {
+        Ok(input) => {
+            println!("You inputed {}", input);
+        }
+        Err(e) => {
+            println!("Fail to get input: {}", e);
+        }
+    }
+
+    /*
     let mut container = tui::con::Container::new()
         .with_header(tui::cpn::hed::Header::new("Welcome".to_string()))
         .with_option(
@@ -48,4 +58,5 @@ fn main() {
 
     std::thread::sleep(std::time::Duration::from_secs(2));
     tui::ren::unready();
+    */
 }
