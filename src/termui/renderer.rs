@@ -3,8 +3,6 @@ use crate::tui::con;
 use crate::tui::cpn; 
 use crate::tui::emg;
 
-use super::components::text::TextFlags;
-
 const BG_CHAR: &str = " ";
 
 struct Line {
