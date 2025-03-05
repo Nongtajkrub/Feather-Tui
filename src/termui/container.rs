@@ -30,10 +30,8 @@ impl Container {
 
     // return whether an update occure
     pub fn looper(&mut self) -> bool {
-        let selector: &mut sel::Selector = 
-            self.selector.as_mut().expect(emg::NO_SELETOR_ERRMSG);
-
-        return selector.looper(&mut self.options);
+        return self.selector.as_mut().expect(emg::NO_SELETOR_ERRMSG)
+            .looper(&mut self.options);
     }
 
     pub fn set_header(&mut self, header: hed::Header) {
