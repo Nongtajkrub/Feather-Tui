@@ -1,4 +1,8 @@
 mod termui;
+use crossterm::{
+    terminal::{EnterAlternateScreen, LeaveAlternateScreen},
+    ExecutableCommand,
+};
 use termui as tui;
 
 tui_trg_new_trigger_func!(up_trig_func, arg, {
@@ -18,6 +22,30 @@ tui_cbk_new_callback_func!(callback, arg, {
 });
 
 fn main() {
+    loop {
+        match tui::inp::key() {
+            Ok(key) => {
+                match key {
+                    Some(code) => {
+                        match tui::inp::keycode_to_char(code) {
+                            Some(c) => {
+                                println!("You pressed -> {}", c);
+
+                                if c == 'q' {
+                                    break;
+                                } 
+                            },
+                            None => println!("Unreadable"),
+                        }
+                    }
+                    None => println!("Not key pressed"),
+                }
+            },
+            Err(e) => println!("Input err: {}", e),
+        }
+    }
+
+    /*
     match tui::inp::read("Input Something".to_string()) {
         Ok(input) => {
             println!("You inputed {}", input);
@@ -27,7 +55,6 @@ fn main() {
         }
     }
 
-    /*
     let mut container = tui::con::Container::new()
         .with_header(tui::cpn::hed::Header::new("Welcome".to_string()))
         .with_option(
