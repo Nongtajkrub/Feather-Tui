@@ -2,6 +2,8 @@ use crate::tui::ren;
 use crossterm as ct;
 use std::io::Write;
 
+pub const READ_KEY_FAIL_ERRMSG: &str = "Input: Fail to read key events from the terminal.";
+
 pub fn line(promt: String) -> std::io::Result<String> {
     ren::unready();
 
@@ -20,7 +22,7 @@ pub fn key() -> std::io::Result<std::option::Option<ct::event::KeyCode>> {
     
     ct::terminal::enable_raw_mode()?;
 
-    if ct::event::poll(std::time::Duration::from_millis(100))? {
+    if ct::event::poll(std::time::Duration::from_millis(0))? {
         match ct::event::read()? {
             ct::event::Event::Key(event) => {
                 key_code = Some(event.code);
@@ -39,3 +41,10 @@ pub fn keycode_to_char(code: ct::event::KeyCode) -> std::option::Option<char> {
         _ => None,
     }
 }
+
+pub fn key_char() -> std::io::Result<std::option::Option<char>> {
+    match key()? {
+        Some(code) => Ok(keycode_to_char(code)),
+        None => Ok(None),
+    }
+} 
