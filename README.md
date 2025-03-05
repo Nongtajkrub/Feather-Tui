@@ -19,12 +19,18 @@ It started life as a small C library in my **school management system project**,
 
 ## 📊 Progress
 
-![](https://geps.dev/progress/30)
+![](https://geps.dev/progress/40)
 
 * 🚧 Termui is still under development.  
 * ✅ Some parts are complete, while others are only partially done.  
 * ✨ These parts may get refined or improved in the future.  
 * 👍 For now, they’re good enough to work with.  
+
+---
+
+## 📦 crates.io
+
+**Comming Soon**
 
 ---
 
@@ -117,7 +123,7 @@ Unreadying the renderer restores the terminal back to its normal state (importan
 
 ---
 
-## 📦 dependencies
+## 🏗️ dependencies
 
 `bitflags` `crossterm`
 
