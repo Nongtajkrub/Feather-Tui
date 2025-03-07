@@ -1,59 +1,45 @@
 mod termui;
-use crossterm::{
-    terminal::{EnterAlternateScreen, LeaveAlternateScreen},
-    ExecutableCommand,
-};
 use termui as tui;
 
 tui_trg_new_trigger_func!(up_trig_func, arg, {
-    false
+    match arg.downcast_ref::<std::option::Option<char>>().unwrap() {
+        Some(c) => *c == 'w',
+        None => false,
+    }
 });
 
 tui_trg_new_trigger_func!(down_trig_func, arg, {
-    false
+    match arg.downcast_ref::<std::option::Option<char>>().unwrap() {
+        Some(c) => *c == 's',
+        None => false,
+    }
 });
 
 tui_trg_new_trigger_func!(selc_trig_func, arg, {
-    true
+    match arg.downcast_ref::<std::option::Option<char>>().unwrap() {
+        Some(c) => *c == 'e',
+        None => false,
+    }
+});
+
+tui_trg_new_trigger_func!(quit_trig_func, arg, {
+    match arg.downcast_ref::<std::option::Option<char>>().unwrap() {
+        Some(c) => *c == 'q',
+        None => false,
+    }
 });
 
 tui_cbk_new_callback_func!(callback, arg, {
     println!("{}", arg.downcast_ref::<u32>().expect("Expect Number As Arg"));
 });
 
+#[inline]
+fn get_key_char() -> std::option::Option<char> {
+    tui::inp::key_char().expect(tui::inp::READ_KEY_FAIL_ERRMSG)
+}
+
 fn main() {
-    loop {
-        match tui::inp::key() {
-            Ok(key) => {
-                match key {
-                    Some(code) => {
-                        match tui::inp::keycode_to_char(code) {
-                            Some(c) => {
-                                println!("You pressed -> {}", c);
-
-                                if c == 'q' {
-                                    break;
-                                } 
-                            },
-                            None => println!("Unreadable"),
-                        }
-                    }
-                    None => println!("Not key pressed"),
-                }
-            },
-            Err(e) => println!("Input err: {}", e),
-        }
-    }
-
-    /*
-    match tui::inp::read("Input Something".to_string()) {
-        Ok(input) => {
-            println!("You inputed {}", input);
-        }
-        Err(e) => {
-            println!("Fail to get input: {}", e);
-        }
-    }
+    let mut key_char: std::option::Option<char> = get_key_char();
 
     let mut container = tui::con::Container::new()
         .with_header(tui::cpn::hed::Header::new("Welcome".to_string()))
@@ -61,6 +47,9 @@ fn main() {
             tui::cpn::opt::Option::new(
                 "Settings".to_string(),
                 tui::cbk::Callback::new(callback, 1u32)))
+        .with_option(
+            tui::cpn::opt::Option::new("Credits".to_string(),
+            tui::cbk::Callback::new(callback, 2u32)))
         .with_text(
             tui::cpn::txt::Text::new(
                 "Text".to_string(), 
@@ -68,22 +57,33 @@ fn main() {
                 tui::cpn::txt::TextFlags::ALIGN_RIGHT))
         .with_selector(
             tui::sel::Selector::new(
-                tui::trg::Trigger::new(up_trig_func, 0),
-                tui::trg::Trigger::new(down_trig_func, 0),
-                tui::trg::Trigger::new(selc_trig_func, 0)));
+                tui::trg::Trigger::new(up_trig_func, key_char),
+                tui::trg::Trigger::new(down_trig_func, key_char),
+                tui::trg::Trigger::new(selc_trig_func, key_char)));
 
 
     let mut renderer = tui::ren::Renderer::new(40, 20);
+    let mut should_update = true;
+    let mut quit_trig = tui::trg::Trigger::new(quit_trig_func, key_char);
 
     tui::ren::ready();
 
-    container.looper();
+    loop {
+        if quit_trig.check() {
+            break;
+        }
 
-    renderer.clear();
-    renderer.render(&mut container);
-    renderer.draw();
+        if should_update {
+            renderer.clear();
+            renderer.render(&mut container);
+            renderer.draw();
+        }
 
-    std::thread::sleep(std::time::Duration::from_secs(2));
+        key_char = get_key_char();
+        container.selector_mut().update_trig_arg(key_char, key_char, key_char);
+        quit_trig.update_arg(key_char);
+        should_update = container.looper();
+    }
+
     tui::ren::unready();
-    */
 }
