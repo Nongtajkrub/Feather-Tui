@@ -94,4 +94,8 @@ impl Container {
     pub fn texts_mut(&mut self) -> &mut Vec<txt::Text> {
         return &mut self.texts;
     }
+
+    pub fn selector_mut(&mut self) -> &mut sel::Selector {
+        return self.selector.as_mut().expect(emg::NO_SELETOR_ERRMSG);
+    }
 }
