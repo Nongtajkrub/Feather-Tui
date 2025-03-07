@@ -12,7 +12,7 @@ pub struct Trigger {
 
 impl Trigger {
     pub fn new<T: 'static>(
-        func: fn(arg: &Box<dyn std::any::Any>) -> bool, arg: T) -> Trigger {
+        func: fn(arg: &Box<dyn std::any::Any>) -> bool, arg: T) -> Self {
         Trigger {
             func,
             arg: Box::new(arg),
@@ -21,5 +21,9 @@ impl Trigger {
 
     pub fn check(&self) -> bool {
         (self.func)(&self.arg)
+    }
+
+    pub fn update_arg<T: 'static>(&mut self, arg: T) {
+        self.arg = Box::new(arg);
     }
 }
