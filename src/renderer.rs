@@ -38,6 +38,30 @@ impl Line {
     }
 }
 
+/// A `Renderer` is responsible for rendering the UI to the terminal. It takes 
+/// a `Container` and displays its components on the screen.
+///
+/// # Usage
+///
+/// A `Renderer` is used to render a `Container` to the terminal. It manages
+/// drawing operations and handles the rendering process efficiently.
+///
+/// # Example
+/// ```rust
+/// use feather_tui as tui;
+///
+/// // Create a Renderer with a width of 40 and a height of 20
+/// let mut renderer = tui::ren::Renderer::new(40, 20);
+///
+/// // Clear the buffer before rendering
+/// renderer.clear();
+///
+/// // Render the container (assuming `container` is created elsewhere)
+/// renderer.render(&container);
+///
+/// // Draw the final output to the terminal
+/// renderer.draw();
+/// ```
 pub struct Renderer {
     width: u16,
     height: u16,

@@ -1,6 +1,30 @@
 use crate::trg;
 use crate::cpn;
 
+/// A `Selector` is used within a `Container` to navigate and select `Option` 
+/// components. It allows movement up and down between options and selection of
+/// an option using `Trigger`s.
+///
+/// # Usage
+///
+/// A `Selector` is required for `Option` components in a `Container` to work.
+///
+/// # Notes
+/// * Without a `Selector`, `Option` components in a `Container` cannot be 
+/// selected or navigated.
+///
+/// # Example
+/// ```rust
+/// use feather_tui as tui;
+///
+/// // Create a selector with triggers for navigation
+/// // (Assuming up_trig, down_trig, and select_trig are defined elsewhere)
+/// let selector = tui::sel::Selector::new(up_trig, down_trig, select_trig);
+///
+/// // Create a container and assign the selector
+/// let mut container = tui::con::Container::new();
+/// container.set_selector(selector);
+/// ```
 pub struct Selector {
     up_trig: trg::Trigger,
     down_trig: trg::Trigger,
