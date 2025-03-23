@@ -56,7 +56,7 @@ tui::trg_new_trigger_func!(up_trig_func, key_char, {
 });
 
 // Create trigger function for moving down with 's' key
-tui::new_trigger_func!(down_trig_func, key_char, {
+tui::trg_new_trigger_func!(down_trig_func, key_char, {
     match key_char.downcast_ref::<std::option::Option<char>>().unwrap() {
         Some(c) => *c == 's',  // Return true if 's' is pressed
         None => false,
