@@ -9,7 +9,7 @@
 ⚠️ **This is my first-ever Rust project** ⚠️  
 
 
-Termui is a simple terminal UI library designed to provide building blocks for text-based user interfaces. It started life as a small C library in my school management system project, aiming to offer an easy-to-use UI framework for terminal applications. Now, I’m rewriting it in Rust to learn the language and (hopefully) improve both performance and maintainability.
+Feather-Tui is a simple terminal UI library designed to provide building blocks for text-based user interfaces. It started life as a small C library in my school management system project, aiming to offer an easy-to-use UI framework for terminal applications. Now, I’m rewriting it in Rust to learn the language and (hopefully) improve both performance and maintainability.
 
 ---
 
@@ -17,7 +17,7 @@ Termui is a simple terminal UI library designed to provide building blocks for t
 
 ![](https://geps.dev/progress/50)
 
-* 🚧 Termui is still under development.  
+* 🚧 Feather-Tui is still under development.  
 * ✅ Some parts are complete, while others are only partially done.  
 * ✨ These parts may get refined or improved in the future.  
 * 👍 For now, they’re good enough to work with.  

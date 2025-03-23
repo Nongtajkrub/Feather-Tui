@@ -1,5 +1,8 @@
+/// A UI component that serves as the header of a `Container`. 
 pub mod header;
+/// A UI component representing an interactive option in a `Container`. 
 pub mod option;
+/// A UI component representing a text element in a `Container`.
 pub mod text;
 
 pub use header as hed;

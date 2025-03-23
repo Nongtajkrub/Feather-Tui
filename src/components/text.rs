@@ -46,7 +46,31 @@ bitflags::bitflags! {
     }
 }
 
-/// A UI component that serves a text in a `Container`. It is displayed in order 
+/// A UI component representing a text element in a `Container`. `Text` components
+/// are displayed in the order they are added to the `Container`. They can be
+/// customized using `TextFlags` to adjust alignment, color, and other styling options.
+///
+/// # Usage
+///
+/// The `Text` component is used within a `Container` to display static text elements.  
+///
+/// # Example
+///
+/// ```rust
+/// use feather_tui as tui;
+///
+/// // Create a text component with custom styling
+/// let text = 
+///     tui::cpn::txt::Text::new(
+///         "Text!",
+///         tui::cpn::txt::TextFlags::COLOR_CYAN_BACK |
+///         tui::cpn::txt::TextFlags::ALIGN_RIGHT);
+///
+/// // Add the text component to a container
+/// let mut container = tui::con::Container::new();
+/// container.add_text(text);
+/// ```
+
 pub struct Text {
     label: String,
     line: u16,
