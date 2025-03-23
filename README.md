@@ -32,88 +32,99 @@ Termui is a simple terminal UI library designed to provide building blocks for t
 
 ## 🚀 Usage
 
-Here’s a step-by-step example demonstrating how to create a basic terminal UI using **Termui** in it current state.
+I am really not unexpected people to actually use this crate. So here is a quick example I made in 5 minutes.
 
-### 1️⃣ Import Termui
+``` Rust
+use feather_tui as tui;
 
-```rust
-mod termui;  // Import your termui module
-use termui as tui;  // Use a shorter alias for convenience
+tui::tui_trg_new_trigger_func!(up_trig_func, key_char, {
+    match key_char.downcast_ref::<std::option::Option<char>>().unwrap() {
+        Some(c) => *c == 'w',
+        None => false,
+    }
+});
+
+tui::tui_trg_new_trigger_func!(down_trig_func, key_char, {
+    match key_char.downcast_ref::<std::option::Option<char>>().unwrap() {
+        Some(c) => *c == 's',
+        None => false,
+    }
+});
+
+tui::tui_trg_new_trigger_func!(selc_trig_func, key_char, {
+    match key_char.downcast_ref::<std::option::Option<char>>().unwrap() {
+        Some(c) => *c == 'e',
+        None => false,
+    }
+});
+
+tui::tui_trg_new_trigger_func!(quit_trig_func, key_char, {
+    match key_char.downcast_ref::<std::option::Option<char>>().unwrap() {
+        Some(c) => *c == 'q',
+        None => false,
+    }
+});
+
+tui::tui_cbk_new_callback_func!(callback_func, argument, {
+    println!("Callback Argument: {}", argument.downcast_ref::<u32>().expect("Expect callback argument to be a u32"));
+});
+
+#[inline]
+fn read_key() -> std::option::Option<char> {
+    tui::inp::key_char().expect(tui::inp::READ_KEY_FAIL_ERRMSG)
+}
+
+fn main() {
+    let mut key_char: std::option::Option<char> = read_key();
+
+    let mut container = tui::con::Container::new()
+        .with_header(tui::cpn::hed::Header::new("Main Menu"))
+        .with_option(
+            tui::cpn::opt::Option::new(
+                "Option1",
+                tui::cbk::Callback::new(callback_func, 1u32)))
+        .with_option(
+            tui::cpn::opt::Option::new(
+                "Option2",
+                tui::cbk::Callback::new(callback_func, 2u32)))
+        .with_text(
+            tui::cpn::txt::Text::new(
+                "Text", 
+                tui::cpn::txt::TextFlags::COLOR_YELLOW_BACK |
+                tui::cpn::txt::TextFlags::ALIGN_RIGHT))
+        .with_selector(
+            tui::sel::Selector::new(
+                tui::trg::Trigger::new(up_trig_func, key_char),
+                tui::trg::Trigger::new(down_trig_func, key_char),
+                tui::trg::Trigger::new(selc_trig_func, key_char)));
+
+    let mut renderer = tui::ren::Renderer::new(40, 20);
+    let mut quit_trig = tui::trg::Trigger::new(quit_trig_func, key_char);
+    let mut should_update = true;
+
+    tui::ren::ready();
+    
+    loop {
+        key_char = read_key();
+        container.selector_mut().update_trig_arg(key_char, key_char, key_char);
+        quit_trig.update_arg(key_char);
+
+        if quit_trig.check() {
+            break;
+        }
+
+        if should_update {
+            renderer.clear();
+            renderer.render(&mut container);
+            renderer.draw();
+        }
+
+        should_update = container.looper();
+    }
+
+    tui::ren::unready();
+}
 ```
-
-
-
-### 2️⃣ Create Components
-
-```rust
-let header = tui::components::header::Header::new(String::from("Header"));
-let option = tui::components::option::Option::new(String::from("Option"));
-let text = tui::components::text::Text::new(String::from("Text"));
-```
-
-This creates 3 components:
-
-| Component   | Description                           |
-|-------------|---------------------------------------|
-| ✨ Header   | Displays a title at the top.          |
-| 🛠️ Option   | Represent selectable options.         |
-| 📝 Text     | Displays regular text content.        |
-
-
-
-### 3️⃣ Make A Container
-
-```rust
-let mut container = tui::container::Container::new();
-container.set_header(header);
-container.add_option(option);
-container.add_text(text);
-```
-
-The container holds and organizes all components, so the renderer can process them as a single unit.
-
-
-
-### 4️⃣ Create a Renderer
-
-```rust
-let mut renderer = tui::renderer::Renderer::new(20, 10);
-```
-
-This sets up the renderer, which controls the drawing area (20 columns wide, 10 rows high in this case).
-
-
-
-### 5️⃣ Ready The Renderer
-
-```rust
-tui::renderer::ready();
-```
-
-This prepares the terminal for drawing (like switching into a special "UI mode").
-
-
-
-### 6️⃣ Render and Draw
-
-```rust
-renderer.render(&container);
-renderer.draw();
-```
-
-This tells the renderer to process the container and its components, then draw everything onto the screen.
-
-
-
-### 7️⃣ Delay And Exit
-
-```rust
-std::thread::sleep(std::time::Duration::from_secs(2));
-tui::renderer::unready();
-```
-
-Without delaying, the program would quit instantly, so this gives you time to see the UI.  
-Unreadying the renderer restores the terminal back to its normal state (important to avoid terminal glitches after quitting).
 
 ---
 
