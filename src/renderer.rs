@@ -206,4 +206,10 @@ impl Renderer {
             line.clear();
         }
     }
+
+    pub fn simple_draw(&mut self, container: &mut con::Container) {
+        self.clear();
+        self.render(container);
+        self.draw();
+    }
 }
