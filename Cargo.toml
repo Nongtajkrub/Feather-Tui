@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 license = "MIT"
 description = "A crate for building simple terminal-based user interfaces."
+homepage = "https://github.com/Nongtajkrub/termui"
 repository = "https://github.com/Nongtajkrub/termui"
 readme = "README.md"
 keywords = ["user interface", "terminal", "ui"]
