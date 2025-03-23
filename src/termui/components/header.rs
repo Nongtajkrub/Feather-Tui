@@ -3,8 +3,10 @@ pub struct Header {
 }
 
 impl Header {
-    pub fn new(label: String) -> Header {
-        Header { label }
+    pub fn new(label: &str) -> Header {
+        Header { 
+            label: label.to_string(), 
+        }
     }
 
     pub fn len(&self) -> usize {

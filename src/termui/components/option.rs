@@ -8,9 +8,9 @@ pub struct Option {
 }
 
 impl Option {
-    pub fn new(label: String, callback: cbk::Callback) -> Option {
+    pub fn new(label: &str, callback: cbk::Callback) -> Option {
         Option {
-            label,
+            label: label.to_string(),
             line: 0,
             selc_on: false,
             callback,

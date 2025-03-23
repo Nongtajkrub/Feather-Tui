@@ -56,9 +56,9 @@ pub struct Text {
 }
 
 impl Text {
-    pub fn new(label: String, flags: TextFlags) -> Self {
+    pub fn new(label: &str, flags: TextFlags) -> Self {
         Text {
-            label,
+            label: label.to_string(),
             line: 0,
             flags: flags.clone(),
             pos_resolve: false,
