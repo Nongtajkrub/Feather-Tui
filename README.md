@@ -1,5 +1,4 @@
-# 🦀 Ftui 
-#### Feather Terminal User Interface Library
+# 🦀 Feather-Tui
 
 ![Language](https://img.shields.io/badge/language-Rust-orange?logo=rust)
 ![License](https://img.shields.io/badge/license-MIT-blue)
