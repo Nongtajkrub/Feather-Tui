@@ -16,15 +16,15 @@
 /// });
 /// ```
 #[macro_export]
-macro_rules! tui_trg_new_trigger_func {
+macro_rules! trg_new_trigger_func {
     ($func_name:ident, $arg_name:ident, $body:block) => {
         fn $func_name($arg_name: &Box<dyn std::any::Any>) -> bool $body
     };
 }
 
 /// A generic trigger handler for evaluating conditions based on stored arguments.
-/// 
-/// `Trigger` allows you to define a condition as a function, associate it with an argument, and check whether the condition is met.
+/// `Trigger` allows you to define a condition as a function, associate it with
+/// an argument, and check whether the condition is met.
 ///
 /// # Usage
 /// Trigger is use for creating a `Selector` object.
@@ -45,24 +45,29 @@ macro_rules! tui_trg_new_trigger_func {
 /// trig.check(); // Condition no longer met return False
 /// ```
 pub struct Trigger {
-    func: fn(arg: &Box<dyn std::any::Any>) -> bool,
+    func: fn(&Box<dyn std::any::Any>) -> bool,
     arg: Box<dyn std::any::Any>,
 }
 
 impl Trigger {
-    pub fn new<T: 'static>(
-        func: fn(arg: &Box<dyn std::any::Any>) -> bool, arg: T) -> Self {
+    pub fn new<T>(func: fn(&Box<dyn std::any::Any>) -> bool, arg: T) -> Self
+    where
+        T: 'static,
+    {
         Trigger {
             func,
             arg: Box::new(arg),
         }
     }
 
-    pub fn check(&self) -> bool {
+    pub fn check(&mut self) -> bool {
         (self.func)(&self.arg)
     }
 
-    pub fn update_arg<T: 'static>(&mut self, arg: T) {
+    pub fn update_arg<T>(&mut self, arg: T) 
+    where
+        T: 'static
+    {
         self.arg = Box::new(arg);
     }
 }

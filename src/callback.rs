@@ -47,13 +47,15 @@ macro_rules! tui_cbk_new_callback_func {
 /// cb.call(); // Prints: Callback Argument: 42
 /// ```
 pub struct Callback {
-    func: fn(arg: &Box<dyn std::any::Any>) -> (),
+    func: fn(&Box<dyn std::any::Any>) -> (),
     arg: Box<dyn std::any::Any>,
 }
 
 impl Callback {
-    pub fn new<T: 'static>(
-        func: fn(arg: &Box<dyn std::any::Any>), arg: T) -> Callback {
+    pub fn new<T>(func: fn(&Box<dyn std::any::Any>), arg: T) -> Self 
+    where
+        T: 'static,
+    {
         Callback {
             func,
             arg: Box::new(arg),
