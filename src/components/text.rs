@@ -46,6 +46,7 @@ bitflags::bitflags! {
     }
 }
 
+/// A UI component that serves a text in a `Container`. It is displayed in order 
 pub struct Text {
     label: String,
     line: u16,

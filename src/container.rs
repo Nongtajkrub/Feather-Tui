@@ -7,6 +7,43 @@ use crate::{
     emg,
 };
 
+/// `Container` acts as a layout manager for the UI elements (headers, options,
+/// text, and selector).
+///
+/// # Usage
+///
+/// The `Renderer` requires a `Container` object to render the UI to the terminal.  
+/// Components can be added to the container using method chaining, allowing for a  
+/// structured and organized layout.
+///
+/// # Example
+/// ```rust
+/// use feather_tui as tui;
+///
+/// // Define a container with a header, two options, a text component, and a selector.
+/// let mut container = tui::con::Container::new()
+///     .with_header(tui::cpn::hed::Header::new("Main Menu"))
+///     .with_option(
+///         tui::cpn::opt::Option::new(
+///             "Option1",
+///             tui::cbk::Callback::new(callback_func, 1u32)))
+///     .with_option(
+///         tui::cpn::opt::Option::new(
+///             "Option2",
+///             tui::cbk::Callback::new(callback_func, 2u32)))
+///     .with_text(
+///         tui::cpn::txt::Text::new(
+///             "Text", 
+///             tui::cpn::txt::TextFlags::COLOR_YELLOW_BACK |
+///             tui::cpn::txt::TextFlags::ALIGN_RIGHT))
+///     .with_selector(
+///         tui::sel::Selector::new(
+///             tui::trg::Trigger::new(up_trig_func, key_char),
+///             tui::trg::Trigger::new(down_trig_func, key_char),
+///             tui::trg::Trigger::new(selc_trig_func, key_char)));
+///
+/// // The container can then be passed to a `Renderer` for display.
+/// ```
 pub struct Container {
     header: std::option::Option<hed::Header>,
     options: Vec<opt::Option>,

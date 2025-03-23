@@ -11,7 +11,8 @@
 /// 
 /// // Define a callback function that print out the argument that is was given
 /// tui::tui_cbk_new_callback_func!(function_name, argument_name, {
-///     println!("Callback received: {}",
+///     println!(
+///         "Callback received: {}",
 ///         argument_name.downcast_ref::<u32>().unwrap());
 /// });
 /// ```
@@ -37,7 +38,8 @@ macro_rules! tui_cbk_new_callback_func {
 /// 
 /// // Define a callback function that print out the argument that is was given 
 /// tui::tui_cbk_new_callback_func!(callback_func, argument, {
-///     println!("Callback Argument: {}", 
+///     println!(
+///         "Callback Argument: {}", 
 ///         argument.downcast_ref::<u32>().unwrap());
 /// });
 /// 
