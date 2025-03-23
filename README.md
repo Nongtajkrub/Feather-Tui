@@ -1,4 +1,4 @@
-# 🦀 Termui - Terminal UI Library
+# 🦀 Ftui - Feather Terminal UI Library
 
 ![Language](https://img.shields.io/badge/language-Rust-orange?logo=rust)
 ![License](https://img.shields.io/badge/license-MIT-blue)
