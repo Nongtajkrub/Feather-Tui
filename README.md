@@ -6,8 +6,10 @@
 
 > A Rust rewrite of the terminal UI library I originally wrote in C for my school management project.
 
-⚠️ **This is my first-ever Rust project** ⚠️
-**Termui** is a **simple terminal UI library** designed to provide building blocks for text-based user interfaces. It started life as a small C library in my **school management system project**, aiming to offer an **easy-to-use UI framework** for terminal applications. Now, I’m rewriting it in **Rust** to learn the language and (hopefully) improve both performance and maintainability.
+⚠️ **This is my first-ever Rust project** ⚠️  
+
+
+Termui is a simple terminal UI library designed to provide building blocks for text-based user interfaces. It started life as a small C library in my school management system project, aiming to offer an easy-to-use UI framework for terminal applications. Now, I’m rewriting it in Rust to learn the language and (hopefully) improve both performance and maintainability.
 
 ---
 
@@ -31,8 +33,6 @@
 ## 🚀 Usage
 
 Here’s a step-by-step example demonstrating how to create a basic terminal UI using **Termui** in it current state.
-
-
 
 ### 1️⃣ Import Termui
 
