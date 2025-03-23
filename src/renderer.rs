@@ -38,6 +38,51 @@ impl Line {
     }
 }
 
+/// Prepares the terminal for rendering. This function is typically used in 
+/// conjunction with `unready()`, similar to how `malloc` pairs with `free`.
+///
+/// It clears the terminal screen and moves the cursor to the home position,
+/// then hide it. This ensure a clean state before rendering.
+///
+/// # Example
+/// ```rust
+/// tui::ren::ready();
+///
+/// loop {
+///     // Main loop
+/// }
+///
+/// tui::ren::unready();
+/// ```
+pub fn ready() {
+    print!(
+        "{}{}{}",
+        ansi::ESC_CLEAR_TERM, ansi::ESC_CURSOR_HOME, ansi::ESC_CURSOR_HOME);
+}
+
+/// Restores the terminal state after rendering is done. This function is 
+/// typically used in conjunction with `ready()`, similar to how `malloc` pairs
+/// with `free`.
+///
+/// It clears the terminal screen and moves the cursor to the home position,
+/// then unhide it. This ensure a clean state before rendering.
+///
+/// # Example
+/// ```rust
+/// tui::ren::ready();
+///
+/// loop {
+///     // Main loop
+/// }
+///
+/// tui::ren::unready();
+/// ```
+pub fn unready() {
+    print!(
+        "{}{}{}",
+        ansi::ESC_CLEAR_TERM, ansi::ESC_CURSOR_HOME, ansi::ESC_CURSOR_SHOW);
+}
+
 /// A `Renderer` is responsible for rendering the UI to the terminal. It takes 
 /// a `Container` and displays its components on the screen.
 ///
@@ -67,19 +112,6 @@ pub struct Renderer {
     height: u16,
     lines: Vec<Line>,
 }
-
-pub fn ready() {
-    print!(
-        "{}{}{}",
-        ansi::ESC_CLEAR_TERM, ansi::ESC_CURSOR_HOME, ansi::ESC_CURSOR_HOME);
-}
-
-pub fn unready() {
-    print!(
-        "{}{}{}",
-        ansi::ESC_CLEAR_TERM, ansi::ESC_CURSOR_HOME, ansi::ESC_CURSOR_SHOW);
-}
-
 
 impl Renderer {
     pub fn new(width: u16, height: u16) -> Renderer {
