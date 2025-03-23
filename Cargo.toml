@@ -7,7 +7,7 @@ description = "A crate for building simple terminal-based user interfaces."
 homepage = "https://github.com/Nongtajkrub/termui"
 repository = "https://github.com/Nongtajkrub/termui"
 readme = "README.md"
-keywords = ["tui", "user_interface", "ui", "terminal", "cli", "lightweight", "simple"]
+keywords = ["user_interface", "ui", "terminal", "cli", "simple"]
 
 [dependencies]
 bitflags = "2.9.0"
