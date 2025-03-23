@@ -1,5 +1,5 @@
-use crate::tui::con;
-use crate::tui::emg;
+use crate::con;
+use crate::emg;
 
 pub struct Menu<'a> {
     containers: Vec<&'a mut con::Container>,

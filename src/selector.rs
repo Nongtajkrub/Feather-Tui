@@ -1,5 +1,5 @@
-use crate::tui::trg;
-use crate::tui::cpn;
+use crate::trg;
+use crate::cpn;
 
 pub struct Selector {
     up_trig: trg::Trigger,
@@ -10,8 +10,8 @@ pub struct Selector {
 
 impl Selector {
     pub fn new(
-        up_trig: trg::Trigger,
-        down_trig: trg::Trigger, selc_trig: trg::Trigger) -> Selector {
+        up_trig: trg::Trigger, down_trig: trg::Trigger, selc_trig: trg::Trigger
+    ) -> Selector {
         Selector {
             up_trig,
             down_trig,

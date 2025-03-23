@@ -2,6 +2,11 @@
 name = "termui"
 version = "0.1.0"
 edition = "2024"
+license = "MIT"
+description = "A crate for building simple terminal-based user interfaces."
+repository = "https://github.com/Nongtajkrub/termui"
+readme = "README.md"
+keywords = ["user interface", "terminal", "ui"]
 
 [dependencies]
 bitflags = "2.9.0"

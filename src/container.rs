@@ -1,8 +1,8 @@
 use std::option;
 
-use crate::tui::sel;
+use crate::sel;
 
-use crate::tui::{
+use crate::{
     cpn::hed,
     cpn::opt,
     cpn::txt,

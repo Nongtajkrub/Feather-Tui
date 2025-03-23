@@ -1,7 +1,7 @@
-use crate::tui::util::ansi;
-use crate::tui::con;
-use crate::tui::cpn; 
-use crate::tui::emg;
+use crate::util::ansi;
+use crate::con;
+use crate::cpn; 
+use crate::emg;
 
 const BG_CHAR: &str = " ";
 

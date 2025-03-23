@@ -1,4 +1,4 @@
-use crate::tui::util::ansi;
+use crate::util::ansi;
 
 bitflags::bitflags! {
     #[derive(Clone)]

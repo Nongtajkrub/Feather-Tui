@@ -1,4 +1,4 @@
-use crate::tui::cbk;
+use crate::cbk;
 
 pub struct Option {
     label: String,

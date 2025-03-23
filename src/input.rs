@@ -1,4 +1,4 @@
-use crate::tui::ren;
+use crate::ren;
 use crossterm as ct;
 use std::io::Write;
 
