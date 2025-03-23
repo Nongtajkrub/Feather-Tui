@@ -15,7 +15,7 @@ Feather-Tui is a simple terminal UI library designed to provide building blocks 
 
 ## 📊 Progress
 
-![](https://geps.dev/progress/50)
+![](https://geps.dev/progress/70)
 
 * 🚧 Feather-Tui is still under development.  
 * ✅ Some parts are complete, while others are only partially done.  
@@ -26,7 +26,7 @@ Feather-Tui is a simple terminal UI library designed to provide building blocks 
 
 ## 📦 Crates
 
-**Comming Soon**
+https://crates.io/crates/feather-tui
 
 ---
 
