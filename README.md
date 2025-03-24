@@ -26,10 +26,7 @@ Feather-Tui is a simple terminal UI library designed to provide building blocks 
 
 ## 📝 Changelog
 
-* `tui_trg_new_trigger_func!` is changed to `trg_new_trigger_func!`
-* `tui_cbk_new_callback_func!` is changed to `cbk_new_callback_func!`
-* New method call `simple_draw` for `Renderer`
-* Added some more documentation.
+* Fix `TextFlags::ALIGN_BOTTOM` not working.
 
 ---
 
