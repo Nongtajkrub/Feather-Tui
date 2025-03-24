@@ -27,6 +27,7 @@ Feather-Tui is a simple terminal UI library designed to provide building blocks 
 ## 📝 Changelog
 
 * Fix `TextFlags::ALIGN_BOTTOM` not working.
+* More documentation (A Wiki) (WIP)
 
 ---
 
