@@ -7,7 +7,7 @@ pub const READ_KEY_FAIL_ERRMSG: &str = "Input: Fail to read key events from the 
 /// Reads a line of input from the user after displaying a prompt.
 ///
 /// # Parameters
-/// * `prompt`: A `&sr` containing the message to display before user input.
+/// * `prompt`: A `&str` containing the message to display before user input.
 ///
 /// # Returns
 /// * `Ok(String)`: The user’s input as a `String`, including the newline character.
