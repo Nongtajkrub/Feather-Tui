@@ -110,7 +110,7 @@ fn main() {
 }
 ```
 
-## 2️⃣ Terminal UI With Selectable Options
+### 2️⃣ Terminal UI With Selectable Options
 
 _This section will be imrpove later_
 
