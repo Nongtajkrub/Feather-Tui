@@ -114,6 +114,22 @@ pub struct Renderer {
 }
 
 impl Renderer {
+    /// Constructs a new `Renderer` with the specified width and height.
+    ///
+    /// # Parameters
+    /// - `width`: A `u16` representing the width in characters.
+    /// - `height`: A `u16` representing the height in characters.
+    ///
+    /// # Returns
+    /// A `Renderer` instance.
+    ///
+    /// # Example
+    /// ```rust
+    /// use feather_tui as tui;
+    ///
+    /// // Create a Renderer with a width of 40 and a height of 20 characters.
+    /// let renderer = tui::ren::Renderer::new(40, 20);
+    /// ```
     pub fn new(width: u16, height: u16) -> Renderer {
         Renderer {
             width,
@@ -183,12 +199,57 @@ impl Renderer {
         }
     }
 
+    /// Renders a `Container` into the `Renderer` buffer without drawing to the terminal.
+    ///
+    /// # Note
+    ///  * This method only updates the internal buffer. 
+    ///  * To display the rendered content, call the `draw` method.
+    ///  * You should use the `clear` method to clear the buffer first.
+    ///
+    /// # Parameters
+    /// * `container`: A mutable reference to the `Container` to be rendered.
+    ///
+    /// # Example
+    /// ```rust
+    /// use feather_tui as tui;
+    ///
+    /// // Create a `Renderer` with a width of 40 and a height of 20 characters.
+    /// let mut renderer = tui::ren::Renderer::new(40, 20);
+    ///
+    /// // Render the container into the renderer buffer
+    /// // (assuming `container` is created elsewhere)
+    /// renderer.render(&mut container);
+    /// ```
     pub fn render(&mut self, container: &mut con::Container) {
         self.render_header(container.header().as_ref().expect(emg::NO_HEADER_ERRMSG));
         self.render_options(container.options());
         self.render_text(container.texts_mut());
     }
-
+    
+    /// Draws the `Renderer` buffer to the terminal.
+    ///
+    /// # Note
+    /// The `render` method must be called at least once before `draw`, as `draw` only
+    /// displays the content stored in the `Renderer` buffer.
+    ///
+    /// # Example
+    /// ```rust
+    /// use feather_tui as tui;
+    ///
+    /// // Create a `Renderer` with a width of 40 and a height of 20 characters.
+    /// let mut renderer = tui::ren::Renderer::new(40, 20);
+    ///
+    /// // Render the container into the renderer buffer
+    /// // (assuming `container` is created elsewhere)
+    /// renderer.render(&mut container);
+    ///
+    /// // Draw the rendered content to the terminal
+    /// renderer.draw();
+    ///
+    /// // The draw method can be called again without re-rendering,
+    /// // but changes won't be reflected unless `render` is called.
+    /// renderer.draw();
+    /// ```
     pub fn draw(&mut self) {
         for line in self.lines.iter() {
             if let Some(ansi) = &line.ansi {
@@ -201,12 +262,61 @@ impl Renderer {
         print!("{}", ansi::ESC_CURSOR_HOME);
     }
 
+    /// Clears the `Renderer` buffer. This method should be called before rendering.
+    ///
+    /// # Note
+    /// Calling this method before rendering prevents visual artifacts.
+    ///
+    /// # Example
+    /// ```rust
+    /// use feather_tui as tui;
+    ///
+    /// // Create a `Renderer` with a width of 40 and a height of 20 characters.
+    /// let mut renderer = tui::ren::Renderer::new(40, 20);
+    ///
+    /// // Rendering loop
+    /// loop {
+    ///     // Clear the `Renderer` buffer to remove previous frame content
+    ///     renderer.clear();
+    ///
+    ///     // Render the container into the renderer buffer
+    ///     // (assuming `container` is created elsewhere)
+    ///     renderer.render(&mut container);
+    ///
+    ///     // Draw the rendered content to the terminal
+    ///     renderer.draw();
+    /// }
+    /// ```
     pub fn clear(&mut self) {
         for line in self.lines.iter_mut() {
             line.clear();
         }
     }
 
+    /// Executes a full rendering cycle in a single method call. This method 
+    /// automatically calls `clear`, `render`, and `draw` in sequence.
+    ///
+    /// # Example
+    /// ```rust
+    /// use feather_tui as tui;
+    ///
+    /// // Create a `Renderer` with a width of 40 and a height of 20 characters.
+    /// let mut renderer = tui::ren::Renderer::new(40, 20);
+    ///
+    /// // Standard rendering loop
+    /// loop {
+    ///     renderer.clear();
+    ///     // Render content (assuming `container` is created elsewhere)
+    ///     renderer.render(&mut container);
+    ///     renderer.draw();
+    /// }
+    ///
+    /// // Simplified rendering loop using `simple_draw`
+    /// loop {
+    ///     // Render and draw in a single step
+    ///     renderer.simple_draw(&mut container);
+    /// }
+    /// ```
     pub fn simple_draw(&mut self, container: &mut con::Container) {
         self.clear();
         self.render(container);
