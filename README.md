@@ -38,83 +38,9 @@ https://crates.io/crates/feather-tui
 
 ## 🚀 Usage
 
-### 1️⃣ Render Your First Terminal UI
+https://github.com/Nongtajkrub/Feather-Tui/wiki
 
-Let's render a simple UI in the terminal.
-
-```rust
-use feather_tui as tui;
-
-fn main()
-    // Create a container with a header and positioned text
-    // -------------------------------------------------
-    // 1. Initialize a new container
-    let mut container = tui::con::Container::new()
-        // 2. Add a header component with the title "Hello, World"
-        .with_header(tui::cpn::hed::Header::new("Hello, World"))
-        // 3. Add text component with the following properties:
-        //    - Content: "Simple UI"
-        //    - Background: Magenta
-        //    - Position: Bottom-aligned
-        .with_text(
-            tui::cpn::txt::Text::new(
-                "Simple UI",
-                tui::cpn::txt::TextFlags::COLOR_MAGENTA_BACK |
-                tui::cpn::txt::TextFlags::ALIGN_BOTTOM));
-
-    // Rendering setup and display
-    // --------------------------
-    // 1. Create a renderer with dimensions 40x20 characters
-    let mut renderer = tui::ren::Renderer::new(40, 20);
-
-    // 2. Prepare terminal for TUI rendering
-    tui::ren::ready();
-
-    // 3. Clear the renderer's buffer before drawing new content
-    renderer.clear();
-
-    // 4. Render the container to the internal buffer (not yet visible)
-    renderer.render(&mut container);
-
-    // 5. Draw the buffered content to the terminal (makes it visible)
-    renderer.draw();
-
-    // 6. Keep the UI visible for 5 seconds
-    std::thread::sleep(std::time::Duration::from_secs(5));
-
-    // 7. Restore terminal to original state
-    tui::ren::unready();
-}
-```
-
-You can achieve the same result more concisely like this.
-
-```rust
-use feather_tui as tui;
-
-fn main() {
-    tui::ren::ready();
-
-    tui::ren::Renderer::new(40, 20)
-        .simple_draw(
-            &mut tui::con::Container::new()
-                .with_header(tui::cpn::hed::Header::new("Hello, World"))
-                .with_text(
-                    tui::cpn::txt::Text::new(
-                        "Simple UI",
-                        tui::cpn::txt::TextFlags::COLOR_MAGENTA_BACK |
-                        tui::cpn::txt::TextFlags::ALIGN_BOTTOM)));
-
-    std::thread::sleep(std::time::Duration::from_secs(5));
-    tui::ren::unready();
-}
-```
-
-### 2️⃣ Terminal UI With Selectable Options
-
-_This section will be imrpove later_
-
-Now let's crate a terminal UI with selectable options.
+The Wiki is still not fully complete so here an example.
 
 ```rust
 use feather_tui as tui;
