@@ -171,17 +171,20 @@ impl Renderer {
     }
     
     fn resolve_text_pos(&self, text: &mut cpn::txt::Text) {
-        let flags = text.flags();
-
-        if flags.contains(cpn::txt::TextFlags::ALIGN_CENTER) {
-            text.set_pos(
-                ((self.width as f32 - text.len() as f32) / 2.0) .round() as u16);
-        } else if flags.contains(cpn::txt::TextFlags::ALIGN_RIGHT) {
+        // x pos
+        if text.flags().contains(cpn::txt::TextFlags::ALIGN_CENTER) {
+            text.set_pos(((self.width as f32 - text.len() as f32) / 2.0) .round() as u16);
+        } else if text.flags().contains(cpn::txt::TextFlags::ALIGN_RIGHT) {
             text.set_pos(self.width - text.len() as u16);
         } else {
             // default to left alignment
             text.set_pos(0);
         } 
+
+        // y pos
+        if text.flags().contains(cpn::txt::TextFlags::ALIGN_BOTTOM) {
+            text.set_line(self.height - 1);
+        }
 
         text.set_pos_resolve(true);
     }
