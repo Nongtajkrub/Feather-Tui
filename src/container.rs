@@ -1,4 +1,4 @@
-use crate::sel;
+use crate::{cbk, sel};
 
 use crate::{
     cpn::hed,
@@ -94,18 +94,18 @@ impl Container {
         self.component_count += 1;
     }
 
-    pub fn with_header(mut self, header: hed::Header) -> Self {
-        self.set_header(header);
+    pub fn with_header(mut self, label: &str) -> Self {
+        self.set_header(hed::Header::new(label));
         self
     }
 
-    pub fn with_option(mut self, option: opt::Option) -> Self {
-        self.add_option(option);
+    pub fn with_option(mut self, label: &str, callback: cbk::Callback) -> Self {
+        self.add_option(opt::Option::new(label, callback));
         self
     }
 
-    pub fn with_text(mut self, text: txt::Text) -> Self {
-        self.add_text(text);
+    pub fn with_text(mut self, label: &str, flags: txt::TextFlags) -> Self {
+        self.add_text(txt::Text::new(label, flags));
         self
     }
 
