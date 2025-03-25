@@ -82,6 +82,34 @@ pub struct Text {
 }
 
 impl Text {
+    /// Creates a new `Text` component with the specified label and flags.
+    ///
+    /// # Parameters
+    /// * `label`: A `&str` representing the text content.
+    /// * `flags`: A set of `TextFlags` combined using the bitwise OR operator.
+    ///
+    /// # Notes
+    ///
+    /// * This is what bitwise OR operator look like -> `flag1 | flag2 | flag3 ...`
+    ///
+    /// # Returns
+    /// A new `Text` instance.
+    ///
+    /// # Example
+    /// ```rust
+    /// use feather_tui as tui;
+    ///
+    /// // Create a `Text` component labeled "Text".
+    /// // The text is right-aligned.
+    /// // The background color is red.
+    /// // (Use `COLOR_FORE` to change the foreground color.)
+    /// let text = 
+    ///     tui::cpn::txt::Text::new(
+    ///         "Text",
+    ///         tui::cpn::txt::TextFlags::ALIGN_RIGHT | 
+    ///         tui::cpn::txt::TextFlags::COLOR_BACK |
+    ///         tui::cpn::txt::TextFlags::COLOR_RED);
+    /// ```
     pub fn new(label: &str, flags: TextFlags) -> Self {
         Text {
             label: label.to_string(),

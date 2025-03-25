@@ -22,6 +22,21 @@ pub struct Header {
 }
 
 impl Header {
+    /// Creates a new `Header` with the specified label.
+    ///
+    /// # Parameters
+    /// * `label`: A `&str` representing the text displayed in the header.
+    ///
+    /// # Returns
+    /// A new `Header` instance.
+    ///
+    /// # Example
+    /// ```rust
+    /// use feather_tui as tui;
+    ///
+    /// // Create a Header with the label "Welcome".
+    /// let header = tui::cpn::hed::Header::new("Welcome");
+    /// ```
     pub fn new(label: &str) -> Header {
         Header { 
             label: label.to_string(), 

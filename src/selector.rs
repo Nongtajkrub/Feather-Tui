@@ -18,7 +18,7 @@ use crate::{trg, cpn};
 ///
 /// // Create a selector with triggers for navigation
 /// // (Assuming up_trig, down_trig, and select_trig are defined elsewhere)
-/// let selector = tui::sel::Selector::new(up_trig, down_trig, select_trig);
+/// let selector = tui::slc::Selector::new(up_trig, down_trig, select_trig);
 ///
 /// // Create a container and assign the selector
 /// let mut container = tui::con::Container::new();
