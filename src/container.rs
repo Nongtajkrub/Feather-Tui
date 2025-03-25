@@ -36,7 +36,7 @@ use std::option::Option;
 pub struct Container {
     header: Option<cpn::hed::Header>,
     options: Vec<cpn::opt::Option>,
-    selector: Option<sel::Selector>,
+    selector: Option<slc::Selector>,
     texts: Vec<cpn::txt::Text>,
     component_count: u16,
 }
@@ -63,7 +63,7 @@ impl Container {
         self.component_count += 1;
     }
 
-    pub fn set_selector(&mut self, selector: sel::Selector) {
+    pub fn set_selector(&mut self, selector: slc::Selector) {
         self.selector = Some(selector);
     }
 
@@ -98,7 +98,7 @@ impl Container {
         self
     }
 
-    pub fn with_selector(mut self, selector: sel::Selector) -> Self {
+    pub fn with_selector(mut self, selector: slc::Selector) -> Self {
         self.set_selector(selector);
         self
     } 
@@ -119,7 +119,7 @@ impl Container {
         return &mut self.texts;
     }
 
-    pub fn selector_mut(&mut self) -> &mut sel::Selector {
+    pub fn selector_mut(&mut self) -> &mut slc::Selector {
         return self.selector.as_mut().expect(emg::NO_SELETOR_ERRMSG);
     }
 }
