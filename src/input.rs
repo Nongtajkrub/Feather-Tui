@@ -1,6 +1,7 @@
 use crate::ren;
+
 use crossterm as ct;
-use std::io::Write;
+use std::{io::{self, Write}, option::Option};
 
 pub const READ_KEY_FAIL_ERRMSG: &str = "Input: Fail to read key events from the terminal.";
 
@@ -26,14 +27,14 @@ pub const READ_KEY_FAIL_ERRMSG: &str = "Input: Fail to read key events from the 
 ///     Err(e) => eprintln!("Error: {}", e),
 /// };
 /// ```
-pub fn line(promt: &str) -> std::io::Result<String> {
+pub fn line(promt: &str) -> io::Result<String> {
     ren::unready();
 
     print!("{} -> ", promt);
-    std::io::stdout().flush()?;
+    io::stdout().flush()?;
 
     let mut line = String::new();
-    std::io::stdin().read_line(&mut line)?;
+    io::stdin().read_line(&mut line)?;
 
     ren::ready();
     Ok(line)
@@ -60,8 +61,8 @@ pub fn line(promt: &str) -> std::io::Result<String> {
 ///     Err(e) => eprintln!("Error reading key: {}", e),
 /// }
 /// ```
-pub fn key() -> std::io::Result<std::option::Option<ct::event::KeyCode>> {
-    let mut key_code: std::option::Option<ct::event::KeyCode> = None;
+pub fn key() -> io::Result<Option<ct::event::KeyCode>> {
+    let mut key_code: Option<ct::event::KeyCode> = None;
     
     ct::terminal::enable_raw_mode()?;
 
@@ -106,7 +107,7 @@ pub fn key() -> std::io::Result<std::option::Option<ct::event::KeyCode>> {
 ///     None => return, 
 /// }
 /// ```
-pub fn keycode_to_char(code: ct::event::KeyCode) -> std::option::Option<char> {
+pub fn keycode_to_char(code: ct::event::KeyCode) -> Option<char> {
     match code {
         ct::event::KeyCode::Char(c) => Some(c),
         _ => None,
@@ -131,7 +132,7 @@ pub fn keycode_to_char(code: ct::event::KeyCode) -> std::option::Option<char> {
 ///     Err(e) => eprintln!("Error reading key: {}", e),
 /// }
 /// ```
-pub fn key_char() -> std::io::Result<std::option::Option<char>> {
+pub fn key_char() -> io::Result<Option<char>> {
     match key()? {
         Some(code) => Ok(keycode_to_char(code)),
         None => Ok(None),

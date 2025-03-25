@@ -1,6 +1,7 @@
 use crate::util::ansi;
+use bitflags::bitflags;
 
-bitflags::bitflags! {
+bitflags! {
     #[derive(Clone)]
     pub struct TextFlags: u16 {
         const NONE          = 0;

@@ -1,12 +1,11 @@
-use crate::util::ansi;
-use crate::con;
-use crate::cpn; 
-use crate::emg;
+use crate::{util::ansi, con, cpn, emg};
+
+use std::option::Option;
 
 const BG_CHAR: &str = " ";
 
 struct Line {
-    ansi: std::option::Option<String>,
+    ansi: Option<String>,
     width: u16,
     data: String,
 }

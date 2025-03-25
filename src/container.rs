@@ -1,11 +1,6 @@
-use crate::{cbk, sel};
+use crate::{cbk, sel, cpn, emg};
 
-use crate::{
-    cpn::hed,
-    cpn::opt,
-    cpn::txt,
-    emg,
-};
+use std::option::Option;
 
 /// `Container` acts as a layout manager for the UI elements (headers, options,
 /// text, and selector).
@@ -39,10 +34,10 @@ use crate::{
 /// // The container can then be passed to a `Renderer` for display.
 /// ```
 pub struct Container {
-    header: std::option::Option<hed::Header>,
-    options: Vec<opt::Option>,
-    selector: std::option::Option<sel::Selector>,
-    texts: Vec<txt::Text>,
+    header: Option<cpn::hed::Header>,
+    options: Vec<cpn::opt::Option>,
+    selector: Option<sel::Selector>,
+    texts: Vec<cpn::txt::Text>,
     component_count: u16,
 }
 
@@ -63,7 +58,7 @@ impl Container {
             .looper(&mut self.options);
     }
 
-    pub fn set_header(&mut self, header: hed::Header) {
+    pub fn set_header(&mut self, header: cpn::hed::Header) {
         self.header = Some(header);
         self.component_count += 1;
     }
@@ -72,7 +67,7 @@ impl Container {
         self.selector = Some(selector);
     }
 
-    pub fn add_option(&mut self, mut option: opt::Option) {
+    pub fn add_option(&mut self, mut option: cpn::opt::Option) {
         if self.options.len() == 0 {
             option.set_selc_on(true);
         }
@@ -82,24 +77,24 @@ impl Container {
         self.component_count += 1;
     }
 
-    pub fn add_text(&mut self, text: txt::Text) {
+    pub fn add_text(&mut self, text: cpn::txt::Text) {
         self.texts.push(text);
         self.texts.last_mut().unwrap().set_line(self.component_count);
         self.component_count += 1;
     }
 
     pub fn with_header(mut self, label: &str) -> Self {
-        self.set_header(hed::Header::new(label));
+        self.set_header(cpn::hed::Header::new(label));
         self
     }
 
     pub fn with_option(mut self, label: &str, callback: cbk::Callback) -> Self {
-        self.add_option(opt::Option::new(label, callback));
+        self.add_option(cpn::opt::Option::new(label, callback));
         self
     }
 
-    pub fn with_text(mut self, label: &str, flags: txt::TextFlags) -> Self {
-        self.add_text(txt::Text::new(label, flags));
+    pub fn with_text(mut self, label: &str, flags: cpn::txt::TextFlags) -> Self {
+        self.add_text(cpn::txt::Text::new(label, flags));
         self
     }
 
@@ -108,19 +103,19 @@ impl Container {
         self
     } 
 
-    pub fn header(&self) -> &std::option::Option<hed::Header>{
+    pub fn header(&self) -> &Option<cpn::hed::Header>{
         return &self.header;
     }
 
-    pub fn options(&self) -> &Vec<opt::Option> {
+    pub fn options(&self) -> &Vec<cpn::opt::Option> {
         return &self.options;
     }
 
-    pub fn texts(&self) -> &Vec<txt::Text> {
+    pub fn texts(&self) -> &Vec<cpn::txt::Text> {
         return &self.texts;
     }
 
-    pub fn texts_mut(&mut self) -> &mut Vec<txt::Text> {
+    pub fn texts_mut(&mut self) -> &mut Vec<cpn::txt::Text> {
         return &mut self.texts;
     }
 

@@ -1,3 +1,5 @@
+use std::any::Any;
+
 /// This macro generates a function that takes a reference to a `Box<dyn Any>`
 /// as an argument and returns a `bool`. The function body (`$body`) determines
 /// whether the condition is met.
@@ -18,7 +20,7 @@
 #[macro_export]
 macro_rules! trg_new_trigger_func {
     ($func_name:ident, $arg_name:ident, $body:block) => {
-        fn $func_name($arg_name: &Box<dyn std::any::Any>) -> bool $body
+        fn $func_name($arg_name: &Box<dyn Any>) -> bool $body
     };
 }
 
@@ -45,12 +47,12 @@ macro_rules! trg_new_trigger_func {
 /// trig.check(); // Condition no longer met return False
 /// ```
 pub struct Trigger {
-    func: fn(&Box<dyn std::any::Any>) -> bool,
-    arg: Box<dyn std::any::Any>,
+    func: fn(&Box<dyn Any>) -> bool,
+    arg: Box<dyn Any>,
 }
 
 impl Trigger {
-    pub fn new<T>(func: fn(&Box<dyn std::any::Any>) -> bool, arg: T) -> Self
+    pub fn new<T>(func: fn(&Box<dyn Any>) -> bool, arg: T) -> Self
     where
         T: 'static,
     {
