@@ -20,7 +20,8 @@ use std::any::Any;
 #[macro_export]
 macro_rules! trg_new_trigger_func {
     ($func_name:ident, $arg_name:ident, $body:block) => {
-        fn $func_name($arg_name: &Box<dyn Any>) -> bool $body
+        // Do not use Any use std::any::Any only
+        fn $func_name($arg_name: &Box<dyn std::any::Any>) -> bool $body
     };
 }
 
