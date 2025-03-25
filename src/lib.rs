@@ -6,11 +6,13 @@ pub mod components;
 pub mod callback;
 /// A generic trigger handler for evaluating conditions based on stored arguments.
 pub mod trigger;
+/// Used within a `Container` to navigate and select `Option`. 
 pub mod selector;
-/// Acts as a layout manager for the UI elements
+/// Acts as a layout manager for the UI elements.
 pub mod container;
-/// Responsible for rendering the UI to the terminal
+/// Responsible for rendering the UI to the terminal.
 pub mod renderer;
+/// Handles user input, non-blocking key events, and key code conversions with crossterm.
 pub mod input;
 
 mod     util;
