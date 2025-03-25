@@ -20,27 +20,21 @@ use crate::{
 /// ```rust
 /// use feather_tui as tui;
 ///
-/// // Define a container with a header, two options, a text component, and a selector.
+/// // Define a container with a header, two options, a text component, 
+/// // and a selector.
 /// let mut container = tui::con::Container::new()
-///     .with_header(tui::cpn::hed::Header::new("Main Menu"))
-///     .with_option(
-///         tui::cpn::opt::Option::new(
-///             "Option1",
-///             tui::cbk::Callback::new(callback_func, 1u32)))
-///     .with_option(
-///         tui::cpn::opt::Option::new(
-///             "Option2",
-///             tui::cbk::Callback::new(callback_func, 2u32)))
+///     .with_header("Header")
+///     .with_option("Option1", tui::cbk::Callback::new(callback_func, arg)) 
+///     .with_option("Option2", tui::cbk::Callback::new(callback_func, arg))
 ///     .with_text(
-///         tui::cpn::txt::Text::new(
-///             "Text", 
-///             tui::cpn::txt::TextFlags::COLOR_YELLOW_BACK |
-///             tui::cpn::txt::TextFlags::ALIGN_RIGHT))
+///         "Text",
+///         tui::cpn::txt::TextFlags::COLOR_YELLOW_BACK |
+///         tui::cpn::txt::TextFlags::ALIGN_RIGHT)
 ///     .with_selector(
 ///         tui::sel::Selector::new(
-///             tui::trg::Trigger::new(up_trig_func, key_char),
-///             tui::trg::Trigger::new(down_trig_func, key_char),
-///             tui::trg::Trigger::new(selc_trig_func, key_char)));
+///             tui::trg::Trigger::new(up_trig_func, arg),
+///             tui::trg::Trigger::new(down_trig_func, arg),
+///             tui::trg::Trigger::new(selc_trig_func, arg)));
 ///
 /// // The container can then be passed to a `Renderer` for display.
 /// ```
