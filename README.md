@@ -24,9 +24,9 @@ Feather-Tui is a simple terminal UI library designed to provide building blocks 
 
 ---
 
-## 📝 Changelog [(v0.2.5)](https://github.com/Nongtajkrub/Feather-Tui/wiki/Changes#v025)
+## 📝 Changelog
 
-* **(🚨 Breaking Change 🚨)** The methods `with_header`, `with_option`, and `with_text` in `Container` now take the required data as arguments to create the components, instead of accepting the components directly. [More infomation](https://github.com/Nongtajkrub/Feather-Tui/wiki/Changes#container-creating)
+https://github.com/Nongtajkrub/Feather-Tui/wiki/Changes#v025
 
 ---
 
