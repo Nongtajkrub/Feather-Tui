@@ -26,7 +26,7 @@ Feather-Tui is a simple terminal UI library designed to provide building blocks 
 
 ## 📝 Changelog (v0.2.5)
 
-* **(🚨 Breaking Change 🚨)** The methods `with_header`, `with_option`, and `with_text` in `Container` now take the required data as arguments to create the components, instead of accepting the components directly.
+* **(🚨 Breaking Change 🚨)** The methods `with_header`, `with_option`, and `with_text` in `Container` now take the required data as arguments to create the components, instead of accepting the components directly. [Here more infomation](https://github.com/Nongtajkrub/Feather-Tui/wiki/Breaking-Changes#container-creating)
 
 ---
 
@@ -38,7 +38,7 @@ https://crates.io/crates/feather-tui
 
 ## 🚀 Usage
 
-https://github.com/Nongtajkrub/Feather-Tui/wiki
+https://github.com/Nongtajkrub/Feather-Tui/wiki/Guide
 
 The Wiki is still not fully complete so here an example.
 
