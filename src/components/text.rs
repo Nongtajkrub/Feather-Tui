@@ -71,7 +71,6 @@ bitflags! {
 /// let mut container = tui::con::Container::new();
 /// container.add_text(text);
 /// ```
-
 pub struct Text {
     label: String,
     line: u16,
