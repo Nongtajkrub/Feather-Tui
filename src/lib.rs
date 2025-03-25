@@ -19,7 +19,7 @@ mod     errmsg;
 pub use components as cpn;
 pub use callback   as cbk;
 pub use trigger    as trg;
-pub use selector   as sel;
+pub use selector   as slc;
 pub use container  as con;
 pub use renderer   as ren;
 pub use input      as inp;
