@@ -1,4 +1,4 @@
-use crate::{util::ansi, con, cpn, emg};
+use crate::{con, cpn, error::FtuiError, util::ansi};
 
 use std::option::Option;
 
@@ -228,10 +228,16 @@ impl Renderer {
     /// // (assuming `container` is created elsewhere)
     /// renderer.render(&mut container);
     /// ```
-    pub fn render(&mut self, container: &mut con::Container) {
-        self.render_header(container.header().as_ref().expect(emg::NO_HEADER_ERRMSG));
+    pub fn render(&mut self, container: &mut con::Container) -> Result<(), FtuiError> {
+        container.header()
+            .as_ref()
+            .map(|header| self.render_header(header))
+            .ok_or_else(|| FtuiError::MissingHeader)?;
+
         self.render_options(container.options());
         self.render_text(container.texts_mut());
+
+        Ok(())
     }
     
     /// Draws the `Renderer` buffer to the terminal.
@@ -325,9 +331,11 @@ impl Renderer {
     ///     renderer.simple_draw(&mut container);
     /// }
     /// ```
-    pub fn simple_draw(&mut self, container: &mut con::Container) {
+    pub fn simple_draw(&mut self, container: &mut con::Container) -> Result<(), FtuiError> {
         self.clear();
-        self.render(container);
+        self.render(container)?;
         self.draw();
+
+        Ok(())
     }
 }
