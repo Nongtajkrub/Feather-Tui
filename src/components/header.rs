@@ -6,6 +6,10 @@
 ///
 /// The `Header` component is required to create a `Container` object.
 ///
+/// # Derives
+///
+/// `Debug`, `Clone`, `PartialEq`, `Eq`
+///
 /// # Example
 /// ```rust
 /// use feather_tui as tui;
