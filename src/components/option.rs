@@ -1,4 +1,4 @@
-use crate::cbk;
+use crate::{cbk, error::FtuiError};
 
 /// A UI component representing an interactive option in a `Container`. 
 /// `Option` components are displayed in the order they are added to the
@@ -73,13 +73,17 @@ impl Option {
     /// // When selected, it exit the program.
     /// let option = tui::cpn::opt::Option::new("Quit", callback);
     /// ```
-    pub fn new(label: &str, callback: cbk::Callback) -> Option {
-        Option {
+    pub fn new(label: &str, callback: cbk::Callback) -> Result<Self, FtuiError> {
+        if label.is_empty() {
+            return Err(FtuiError::OptionLabelEmpty);
+        }
+
+        Ok(Option {
             label: label.to_string(),
             line: 0,
             selc_on: false,
             callback,
-        }
+        })
     }
 
     pub fn set_line(&mut self, line: u16) {

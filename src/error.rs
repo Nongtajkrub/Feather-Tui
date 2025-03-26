@@ -4,5 +4,6 @@ pub enum FtuiError {
     TextFlagNoneWithOther,
     TextFlagMultipleColor,
     HeaderLabelEmpty,
-    MissingHeader,
+    OptionLabelEmpty,
+    RendererContainerNoHeader,
 }
