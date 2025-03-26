@@ -17,6 +17,7 @@
 /// let mut container = tui::con::Container::new();
 /// container.set_header(header);
 /// ```
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Header {
     label: String,
 }
