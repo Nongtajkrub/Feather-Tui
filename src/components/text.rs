@@ -158,10 +158,6 @@ impl Text {
     ///         tui::cpn::txt::TextFlags::COLOR_RED);
     /// ```
     pub fn new(label: &str, flags: impl Into<Option<TextFlags>>) -> Result<Self, FtuiError> {
-        if label.is_empty() {
-            return Err(FtuiError::LabelEmpty);
-        }
-
         let flags = flags.into().unwrap_or(TextFlags::NONE);
 
         Self::ensure_compatible_flags(&flags)?; 
