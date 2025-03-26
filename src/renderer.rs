@@ -4,6 +4,7 @@ use std::option::Option;
 
 const BG_CHAR: &str = " ";
 
+#[derive(Clone, Debug, PartialEq, Eq)]
 struct Line {
     ansi: Option<String>,
     width: u16,
@@ -90,6 +91,10 @@ pub fn unready() {
 /// A `Renderer` is used to render a `Container` to the terminal. It manages
 /// drawing operations and handles the rendering process efficiently.
 ///
+/// # Derives
+///
+/// `Clone`, `Debug`, `PartialEq`, `Eq`
+///
 /// # Example
 /// ```rust
 /// use feather_tui as tui;
@@ -106,6 +111,7 @@ pub fn unready() {
 /// // Draw the final output to the terminal
 /// renderer.draw();
 /// ```
+#[derive(Clone, Debug, PartialEq, Eq)] 
 pub struct Renderer {
     width: u16,
     height: u16,
