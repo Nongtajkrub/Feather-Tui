@@ -232,7 +232,7 @@ impl Renderer {
         container.header()
             .as_ref()
             .map(|header| self.render_header(header))
-            .ok_or_else(|| FtuiError::MissingHeader)?;
+            .ok_or_else(|| FtuiError::RendererContainerNoHeader)?;
 
         self.render_options(container.options());
         self.render_text(container.texts_mut());
