@@ -2,7 +2,7 @@ use crate::util::ansi;
 use bitflags::bitflags;
 
 bitflags! {
-    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
     pub struct TextFlags: u16 {
         const NONE          = 0;
 
@@ -55,6 +55,13 @@ bitflags! {
 ///
 /// The `Text` component is used within a `Container` to display static text elements.  
 ///
+/// # Derives
+/// `Debug`, `Clone`, `PartialEq`
+///
+/// # PartialEq Implementation
+///
+/// Only the `label` and `flags` are considered when comparing `Text` instances.
+///
 /// # Example
 ///
 /// ```rust
@@ -71,6 +78,7 @@ bitflags! {
 /// let mut container = tui::con::Container::new();
 /// container.add_text(text);
 /// ```
+#[derive(Debug, Clone)]
 pub struct Text {
     label: String,
     line: u16,
@@ -78,6 +86,42 @@ pub struct Text {
     pos_resolve: bool,
     pos: u16,
     color: String,
+}
+
+/// Implementation of the `PartialEq` trait for the `Text` struct. This implementation
+/// defines equality based on two fields: `label` and `flags`.
+///
+/// # Notes
+/// - Only the `label` and `flags` are considered when comparing `Text` instances.
+///
+/// # Example
+/// ```rust
+/// use feather_tui as tui; 
+///
+/// // Create two `Text` instances with identical `label` and `flags`
+/// let text1 = tui::cpn::txt::Text::new("Text", tui::cpn::txt::TextFlags::NONE);
+/// let text2 = tui::cpn::txt::Text::new("Text", tui::cpn::txt::TextFlags::NONE);
+///
+/// // Assert that both `text1` and `text2` are equal, since they have the same `label` and `flags`
+/// assert_eq!(text1, text2); // This will evaluate to true
+/// 
+/// // Create a new `Text` instance with a different flag (ALIGN_RIGHT)
+/// let text3 = tui::cpn::txt::Text::new("Text", tui::cpn::txt::TextFlags::ALIGN_RIGHT);
+/// 
+/// // Assert that `text1` and `text3` are not equal, since their `flags` are different
+/// assert_ne!(text1, text3); // This will evaluate to true (text1 != text3)
+/// 
+/// // Create a new `Text` instance with a different `label`
+/// let text4 = tui::cpn::txt::Text::new("Hello", tui::cpn::txt::TextFlags::ALIGN_RIGHT);
+/// 
+/// // Assert that `text3` and `text4` are not equal, since their `label` is different
+/// assert_ne!(text3, text4); // This will evaluate to true (text3 != text4)
+/// ```
+impl PartialEq for Text {
+    fn eq(&self, others: &Self) -> bool {
+        self.label == others.label &&
+        self.flags == others.flags
+    }
 }
 
 impl Text {
