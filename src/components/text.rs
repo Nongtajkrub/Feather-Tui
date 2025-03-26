@@ -22,6 +22,23 @@ bitflags! {
         const COLOR_MAGENTA = 1 << 11;
         const COLOR_CYAN    = 1 << 12;
         const COLOR_WHITE   = 1 << 13;
+
+        const COLOR_BLACK_BACK = 
+            Self::COLOR_BLACK.bits() | Self::COLOR_BACK.bits();
+        const COLOR_RED_BACK = 
+            Self::COLOR_RED.bits() | Self::COLOR_BACK.bits();
+        const COLOR_GREEN_BACK = 
+            Self::COLOR_GREEN.bits() | Self::COLOR_BACK.bits();
+        const COLOR_YELLOW_BACK = 
+            Self::COLOR_YELLOW.bits() | Self::COLOR_BACK.bits();
+        const COLOR_BLUE_BACK =
+            Self::COLOR_BLUE.bits() | Self::COLOR_BACK.bits();
+        const COLOR_MAGENTA_BACK =
+            Self::COLOR_MAGENTA.bits() | Self::COLOR_BACK.bits();
+        const COLOR_CYAN_BACK =
+            Self::COLOR_CYAN.bits() | Self::COLOR_BACK.bits();
+        const COLOR_WHITE_BACK =
+            Self::COLOR_WHITE.bits() | Self::COLOR_BACK.bits();
     }
 }
 
