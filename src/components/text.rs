@@ -2,9 +2,10 @@ use crate::{error::FtuiError, util::ansi};
 use bitflags::bitflags;
 
 bitflags! {
-    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
     pub struct TextFlags: u16 {
-        const NONE          = 0;
+        // NONE can't be 0
+        const NONE          = 1 << 0;
 
         // alignment
         const ALIGN_RIGHT   = 1 << 1;
@@ -40,6 +41,12 @@ bitflags! {
             Self::COLOR_CYAN.bits() | Self::COLOR_BACK.bits();
         const COLOR_WHITE_BACK =
             Self::COLOR_WHITE.bits() | Self::COLOR_BACK.bits();
+    }
+}
+
+impl Default for TextFlags {
+    fn default() -> Self {
+        Self::NONE
     }
 }
 
@@ -178,6 +185,23 @@ impl Text {
         // NONE Flags should not be combined with any other flags
         if flags.contains(TextFlags::NONE) && *flags != TextFlags::NONE {
             return Err(FtuiError::TextFlagNoneWithOther);
+        }
+
+        // Only one color can be set
+        if flags
+            .intersection(
+                TextFlags::COLOR_BACK |
+                TextFlags::COLOR_RED |
+                TextFlags::COLOR_GREEN |
+                TextFlags::COLOR_YELLOW |
+                TextFlags::COLOR_BLUE |
+                TextFlags::COLOR_MAGENTA |
+                TextFlags::COLOR_CYAN |
+                TextFlags::COLOR_WHITE)
+            .bits()
+            .count_ones() > 1 
+        {
+            return Err(FtuiError::TextFlagMultipleColor);
         }
 
         Ok(())
