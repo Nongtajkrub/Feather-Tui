@@ -7,7 +7,8 @@ bitflags! {
         const NONE          = 0;
 
         // alignment
-        const ALIGN_RIGHT   = 1 << 2;
+        const ALIGN_RIGHT   = 1 << 1;
+        const ALIGN_MIDDLE  = 1 << 2;
         const ALIGN_BOTTOM  = 1 << 3;
 
         // color settings

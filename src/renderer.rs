@@ -177,7 +177,7 @@ impl Renderer {
     
     fn resolve_text_pos(&self, text: &mut cpn::txt::Text) {
         // x pos
-        if text.flags().contains(cpn::txt::TextFlags::ALIGN_CENTER) {
+        if text.flags().contains(cpn::txt::TextFlags::ALIGN_MIDDLE) {
             text.set_pos(((self.width as f32 - text.len() as f32) / 2.0) .round() as u16);
         } else if text.flags().contains(cpn::txt::TextFlags::ALIGN_RIGHT) {
             text.set_pos(self.width - text.len() as u16);
