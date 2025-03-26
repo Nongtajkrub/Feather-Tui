@@ -7,14 +7,11 @@ bitflags! {
         const NONE          = 0;
 
         // alignment
-        const ALIGN_CENTER  = 1 << 0;
-        const ALIGN_LEFT    = 1 << 1;
         const ALIGN_RIGHT   = 1 << 2;
         const ALIGN_BOTTOM  = 1 << 3;
 
         // color settings
         const COLOR_BACK    = 1 << 4;
-        const COLOR_FORE    = 1 << 5;
 
         // colors
         const COLOR_BLACK   = 1 << 6;
@@ -25,25 +22,6 @@ bitflags! {
         const COLOR_MAGENTA = 1 << 11;
         const COLOR_CYAN    = 1 << 12;
         const COLOR_WHITE   = 1 << 13;
-
-        // no COLOR_..._FORE because if COLOR_BACK flag is not set text will
-        // default to foreground color
-        const COLOR_BLACK_BACK = 
-            Self::COLOR_BLACK.bits() | Self::COLOR_BACK.bits();
-        const COLOR_RED_BACK = 
-            Self::COLOR_RED.bits() | Self::COLOR_BACK.bits();
-        const COLOR_GREEN_BACK = 
-            Self::COLOR_GREEN.bits() | Self::COLOR_BACK.bits();
-        const COLOR_YELLOW_BACK = 
-            Self::COLOR_YELLOW.bits() | Self::COLOR_BACK.bits();
-        const COLOR_BLUE_BACK =
-            Self::COLOR_BLUE.bits() | Self::COLOR_BACK.bits();
-        const COLOR_MAGENTA_BACK =
-            Self::COLOR_MAGENTA.bits() | Self::COLOR_BACK.bits();
-        const COLOR_CYAN_BACK =
-            Self::COLOR_CYAN.bits() | Self::COLOR_BACK.bits();
-        const COLOR_WHITE_BACK =
-            Self::COLOR_WHITE.bits() | Self::COLOR_BACK.bits();
     }
 }
 
@@ -160,6 +138,8 @@ impl Text {
         }
 
         let flags = flags.into().unwrap_or(TextFlags::NONE);
+
+        Self::ensure_compatible_flags(&flags)?; 
         
         Ok(Text {
             label: label.to_string(),
@@ -169,6 +149,20 @@ impl Text {
             pos: 0,
             color: Self::resolve_color(flags),
         })
+    }
+
+    fn ensure_compatible_flags(flags: &TextFlags) -> Result<(), FtuiError> {
+        // NONE Flags alone is always compatible
+        if *flags == TextFlags::NONE {
+            return Ok(());
+        }
+
+        // NONE Flags should not be combined with any other flags
+        if flags.contains(TextFlags::NONE) && *flags != TextFlags::NONE {
+            return Err(FtuiError::TextFlagNoneWithOther);
+        }
+
+        Ok(())
     }
 
     #[inline]
