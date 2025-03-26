@@ -53,9 +53,11 @@ impl Container {
     }
 
     // return whether an update occure
-    pub fn looper(&mut self) -> bool {
-        return self.selector.as_mut().expect(emg::NO_SELETOR_ERRMSG)
-            .looper(&mut self.options);
+    pub fn looper(&mut self) -> Result<bool, FtuiError> {
+        return match self.selector.as_mut() {
+            Some(selector) => Ok(selector.looper(&mut self.options)),
+            None => Err(FtuiError::ContainerNoSelector),
+        };
     }
 
     pub fn set_header(&mut self, header: cpn::hed::Header) {
@@ -83,14 +85,16 @@ impl Container {
         self.component_count += 1;
     }
 
-    pub fn with_header(mut self, label: &str) -> Self {
-        self.set_header(cpn::hed::Header::new(label));
-        self
+    pub fn with_header(mut self, label: &str) -> Result<Self, FtuiError> {
+        self.set_header(cpn::hed::Header::new(label)?);
+        Ok(self)
     }
 
-    pub fn with_option(mut self, label: &str, callback: cbk::Callback) -> Self {
-        self.add_option(cpn::opt::Option::new(label, callback));
-        self
+    pub fn with_option(
+        mut self, label: &str, callback: cbk::Callback
+    ) -> Result<Self, FtuiError> {
+        self.add_option(cpn::opt::Option::new(label, callback)?);
+        Ok(self)
     }
 
     pub fn with_text(

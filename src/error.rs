@@ -6,4 +6,5 @@ pub enum FtuiError {
     HeaderLabelEmpty,
     OptionLabelEmpty,
     RendererContainerNoHeader,
+    ContainerNoSelector,
 }
