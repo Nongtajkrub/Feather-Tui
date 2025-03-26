@@ -2,6 +2,7 @@
 #[derive(Debug)]
 pub enum FtuiError {
     TextFlagNoneWithOther,
-    LabelEmpty,
+    TextFlagMultipleColor,
+    HeaderLabelEmpty,
     MissingHeader,
 }
