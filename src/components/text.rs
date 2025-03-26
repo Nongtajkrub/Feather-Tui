@@ -1,4 +1,4 @@
-use crate::util::ansi;
+use crate::{error::FtuiError, util::ansi};
 use bitflags::bitflags;
 
 bitflags! {
@@ -136,7 +136,8 @@ impl Text {
     /// * This is what bitwise OR operator look like -> `flag1 | flag2 | flag3 ...`
     ///
     /// # Returns
-    /// A new `Text` instance.
+    /// * `Ok(Text)`: Returns a `Text` instance
+    /// * `Err(FtuiError)`: Returns an error.
     ///
     /// # Example
     /// ```rust
@@ -153,24 +154,30 @@ impl Text {
     ///         tui::cpn::txt::TextFlags::COLOR_BACK |
     ///         tui::cpn::txt::TextFlags::COLOR_RED);
     /// ```
-    pub fn new(label: &str, flags: TextFlags) -> Self {
-        Text {
+    pub fn new(label: &str, flags: impl Into<Option<TextFlags>>) -> Result<Self, FtuiError> {
+        if label.is_empty() {
+            return Err(FtuiError::LabelEmpty);
+        }
+
+        let flags = flags.into().unwrap_or(TextFlags::NONE);
+        
+        Ok(Text {
             label: label.to_string(),
             line: 0,
-            flags: flags.clone(),
+            flags,
             pos_resolve: false,
             pos: 0,
             color: Self::resolve_color(flags),
-        }
+        })
     }
 
     #[inline]
     fn color_f_or_b(flags: TextFlags, b: &str, f: &str) -> String {
         // if COLOR_BACK flag is not set text will default to foreground color
-        if flags.contains(TextFlags::COLOR_BACK) { 
-            String::from(b) 
+        if flags.contains(TextFlags::COLOR_BACK) {
+            b.to_string() 
         } else {
-            String::from(f)
+            f.to_string()
         }
     }
 

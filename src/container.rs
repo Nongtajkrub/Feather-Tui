@@ -1,4 +1,4 @@
-use crate::{cbk, slc, cpn, emg};
+use crate::{cbk, cpn, emg, error::FtuiError, slc};
 
 use std::option::Option;
 
@@ -93,9 +93,11 @@ impl Container {
         self
     }
 
-    pub fn with_text(mut self, label: &str, flags: cpn::txt::TextFlags) -> Self {
-        self.add_text(cpn::txt::Text::new(label, flags));
-        self
+    pub fn with_text(
+        mut self, label: &str, flags: impl Into<Option<cpn::txt::TextFlags>>
+    ) -> Result<Self, FtuiError> {
+        self.add_text(cpn::txt::Text::new(label, flags)?);
+        Ok(self)
     }
 
     pub fn with_selector(mut self, selector: slc::Selector) -> Self {
