@@ -2,7 +2,7 @@ use crate::util::ansi;
 use bitflags::bitflags;
 
 bitflags! {
-    #[derive(Clone)]
+    #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
     pub struct TextFlags: u16 {
         const NONE          = 0;
 
