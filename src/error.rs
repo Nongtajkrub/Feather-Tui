@@ -1,4 +1,5 @@
 use thiserror::Error;
+use std::io;
 
 #[repr(u8)]
 #[derive(Error, Debug)]
@@ -20,4 +21,7 @@ pub enum FtuiError {
 
     #[error("The container's looper method requires a Selector.")]
     ContainerNoSelector,
+
+    #[error("Std Input Output Error: {0}")]
+    StdInputOutputError(#[from] io::Error),
 }
