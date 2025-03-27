@@ -1,4 +1,4 @@
-use crate::{cbk, cpn, emg, error::{FtuiError, FtuiResult}, slc};
+use crate::{cbk, cpn, error::{FtuiError, FtuiResult}, slc};
 
 use std::option::Option;
 
@@ -56,7 +56,7 @@ impl Container {
     pub fn looper(&mut self) -> FtuiResult<bool> {
         return match self.selector.as_mut() {
             Some(selector) => Ok(selector.looper(&mut self.options)),
-            None => Err(FtuiError::ContainerNoSelector),
+            None => Err(FtuiError::ContainerLooperNoSelector),
         };
     }
 
@@ -125,7 +125,7 @@ impl Container {
         return &mut self.texts;
     }
 
-    pub fn selector_mut(&mut self) -> &mut slc::Selector {
-        return self.selector.as_mut().expect(emg::NO_SELETOR_ERRMSG);
+    pub fn selector_mut(&mut self) -> FtuiResult<&mut slc::Selector> {
+        self.selector.as_mut().ok_or(FtuiError::ContainerNoSelector)
     }
 }
