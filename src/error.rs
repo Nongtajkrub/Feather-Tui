@@ -25,3 +25,5 @@ pub enum FtuiError {
     #[error("Std Input Output Error: {0}")]
     StdInputOutputError(#[from] io::Error),
 }
+
+pub type FtuiResult<T> = Result<T, FtuiError>;
