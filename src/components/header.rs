@@ -35,7 +35,8 @@ impl Header {
     /// * `label`: A `&str` representing the text displayed in the header.
     ///
     /// # Returns
-    /// A new `Header` instance.
+    /// `Ok(Header)`: A new `Header` instance.
+    /// `Err(FtuiError)`: Returns an error.
     ///
     /// # Example
     /// ```rust
