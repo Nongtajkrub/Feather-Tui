@@ -1,4 +1,4 @@
-use crate::{con, cpn, error::FtuiError, util::ansi};
+use crate::{con, cpn, error::{FtuiError, FtuiResult}, util::ansi};
 
 use std::option::Option;
 
@@ -228,7 +228,7 @@ impl Renderer {
     /// // (assuming `container` is created elsewhere)
     /// renderer.render(&mut container);
     /// ```
-    pub fn render(&mut self, container: &mut con::Container) -> Result<(), FtuiError> {
+    pub fn render(&mut self, container: &mut con::Container) -> FtuiResult<()> {
         container.header()
             .as_ref()
             .map(|header| self.render_header(header))
@@ -331,7 +331,7 @@ impl Renderer {
     ///     renderer.simple_draw(&mut container);
     /// }
     /// ```
-    pub fn simple_draw(&mut self, container: &mut con::Container) -> Result<(), FtuiError> {
+    pub fn simple_draw(&mut self, container: &mut con::Container) -> FtuiResult<()> {
         self.clear();
         self.render(container)?;
         self.draw();

@@ -1,4 +1,4 @@
-use crate::{err::FtuiError, ren};
+use crate::{err::{FtuiError, FtuiResult}, ren};
 
 use crossterm as ct;
 use std::{io::{self, Write}, option::Option};
@@ -27,7 +27,7 @@ pub const READ_KEY_FAIL_ERRMSG: &str = "Input: Fail to read key events from the 
 ///     Err(e) => eprintln!("Error: {}", e),
 /// };
 /// ```
-pub fn line(promt: &str) -> Result<String, FtuiError> {
+pub fn line(promt: &str) -> FtuiResult<String> {
     ren::unready();
 
     print!("{} -> ", promt);
@@ -62,7 +62,7 @@ pub fn line(promt: &str) -> Result<String, FtuiError> {
 ///     Err(e) => eprintln!("Error reading key: {}", e),
 /// }
 /// ```
-pub fn key() -> Result<Option<ct::event::KeyCode>, FtuiError> {
+pub fn key() -> FtuiResult<Option<ct::event::KeyCode>> {
     let mut key_code: Option<ct::event::KeyCode> = None;
     
     ct::terminal::enable_raw_mode()?;
@@ -133,7 +133,7 @@ pub fn keycode_to_char(code: ct::event::KeyCode) -> Option<char> {
 ///     Err(e) => eprintln!("Error reading key: {}", e),
 /// }
 /// ```
-pub fn key_char() -> Result<Option<char>, FtuiError> {
+pub fn key_char() -> FtuiResult<Option<char>> {
     match key()? {
         Some(code) => Ok(keycode_to_char(code)),
         None => Ok(None),

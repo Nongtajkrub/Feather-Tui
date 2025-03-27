@@ -1,4 +1,4 @@
-use crate::{cbk, cpn, emg, error::FtuiError, slc};
+use crate::{cbk, cpn, emg, error::{FtuiError, FtuiResult}, slc};
 
 use std::option::Option;
 
@@ -53,7 +53,7 @@ impl Container {
     }
 
     // return whether an update occure
-    pub fn looper(&mut self) -> Result<bool, FtuiError> {
+    pub fn looper(&mut self) -> FtuiResult<bool> {
         return match self.selector.as_mut() {
             Some(selector) => Ok(selector.looper(&mut self.options)),
             None => Err(FtuiError::ContainerNoSelector),
@@ -85,21 +85,21 @@ impl Container {
         self.component_count += 1;
     }
 
-    pub fn with_header(mut self, label: &str) -> Result<Self, FtuiError> {
+    pub fn with_header(mut self, label: &str) -> FtuiResult<Self> {
         self.set_header(cpn::hed::Header::new(label)?);
         Ok(self)
     }
 
     pub fn with_option(
         mut self, label: &str, callback: cbk::Callback
-    ) -> Result<Self, FtuiError> {
+    ) -> FtuiResult<Self> {
         self.add_option(cpn::opt::Option::new(label, callback)?);
         Ok(self)
     }
 
     pub fn with_text(
         mut self, label: &str, flags: impl Into<Option<cpn::txt::TextFlags>>
-    ) -> Result<Self, FtuiError> {
+    ) -> FtuiResult<Self> {
         self.add_text(cpn::txt::Text::new(label, flags)?);
         Ok(self)
     }

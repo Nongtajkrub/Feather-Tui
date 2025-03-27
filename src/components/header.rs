@@ -1,4 +1,4 @@
-use crate::error::FtuiError;
+use crate::err::{FtuiError, FtuiResult};
 
 /// A UI component that serves as the header of a `Container`. It is displayed 
 /// at the top of the `Container` and is typically used to provide a title or
@@ -44,7 +44,7 @@ impl Header {
     /// // Create a Header with the label "Welcome".
     /// let header = tui::cpn::hed::Header::new("Welcome");
     /// ```
-    pub fn new(label: &str) -> Result<Self, FtuiError> {
+    pub fn new(label: &str) -> FtuiResult<Self> {
         if label.is_empty() {
             return Err(FtuiError::HeaderLabelEmpty);
         }

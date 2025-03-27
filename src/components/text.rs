@@ -1,4 +1,4 @@
-use crate::{error::FtuiError, util::ansi};
+use crate::{error::{FtuiError, FtuiResult}, util::ansi};
 use bitflags::bitflags;
 
 bitflags! {
@@ -157,7 +157,7 @@ impl Text {
     ///         tui::cpn::txt::TextFlags::COLOR_BACK |
     ///         tui::cpn::txt::TextFlags::COLOR_RED);
     /// ```
-    pub fn new(label: &str, flags: impl Into<Option<TextFlags>>) -> Result<Self, FtuiError> {
+    pub fn new(label: &str, flags: impl Into<Option<TextFlags>>) -> FtuiResult<Self> {
         let flags = flags.into().unwrap_or(TextFlags::NONE);
 
         Self::ensure_compatible_flags(&flags)?; 
@@ -172,7 +172,7 @@ impl Text {
         })
     }
 
-    fn ensure_compatible_flags(flags: &TextFlags) -> Result<(), FtuiError> {
+    fn ensure_compatible_flags(flags: &TextFlags) -> FtuiResult<()> {
         // NONE Flags alone is always compatible
         if *flags == TextFlags::NONE {
             return Ok(());
