@@ -21,7 +21,7 @@ use std::any::Any;
 macro_rules! trg_new_trigger_func {
     ($func_name:ident, $arg_name:ident, $body:block) => {
         // Do not use Any use std::any::Any only
-        fn $func_name($arg_name: &Box<dyn std::any::Any>) -> bool $body
+        fn $func_name($arg_name: &Option<Box<dyn std::any::Any>>) -> bool $body
     };
 }
 
@@ -48,18 +48,25 @@ macro_rules! trg_new_trigger_func {
 /// trig.check(); // Condition no longer met return False
 /// ```
 pub struct Trigger {
-    func: fn(&Box<dyn Any>) -> bool,
-    arg: Box<dyn Any>,
+    func: fn(&Option<Box<dyn Any>>) -> bool,
+    arg: Option<Box<dyn Any>>,
 }
 
 impl Trigger {
-    pub fn new<T>(func: fn(&Box<dyn Any>) -> bool, arg: T) -> Self
+    pub fn new<T>(func: fn(&Option<Box<dyn Any>>) -> bool, arg: T) -> Self
     where
         T: 'static,
     {
         Trigger {
             func,
-            arg: Box::new(arg),
+            arg: Some(Box::new(arg)),
+        }
+    }
+
+    pub fn no_arg(func: fn(&Option<Box<dyn Any>>) -> bool) -> Self {
+        Trigger {
+            func,
+            arg: None,
         }
     }
 
@@ -67,10 +74,10 @@ impl Trigger {
         (self.func)(&self.arg)
     }
 
-    pub fn update_arg<T>(&mut self, arg: T) 
+    pub fn update_arg<T>(&mut self, arg: impl Into<Option<T>>) 
     where
         T: 'static
     {
-        self.arg = Box::new(arg);
+        self.arg = arg.into().map(|arg| Box::new(arg) as Box<dyn Any>);
     }
 }
