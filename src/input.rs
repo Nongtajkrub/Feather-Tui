@@ -1,4 +1,4 @@
-use crate::{err::{FtuiError, FtuiResult}, ren};
+use crate::{err::FtuiResult, ren};
 
 use crossterm as ct;
 use std::{io::{self, Write}, option::Option};
@@ -12,7 +12,7 @@ pub const READ_KEY_FAIL_ERRMSG: &str = "Input: Fail to read key events from the 
 ///
 /// # Returns
 /// * `Ok(String)`: The user’s input as a `String`, including the newline character.
-/// * `Err(std::io::Error)`: An error if reading from `stdin` fails.
+/// * `Err(FtuiError)`: Returns an error.
 ///
 /// # Notes
 /// * The returned `String` includes the newline (`\n`). Use `.trim()` if necessary.
@@ -46,7 +46,7 @@ pub fn line(promt: &str) -> FtuiResult<String> {
 /// # Returns
 /// * `Ok(Some(KeyCode))`: If a key event is detected.
 /// * `Ok(None)`: If no key event is detected.
-/// * `Err(std::io::Error)`: If an error occurs while interacting with the terminal.
+/// * `Err(FtuiError)`: Returns an error. 
 ///
 /// # Notes
 /// * This function does not block waiting for input.
@@ -118,9 +118,9 @@ pub fn keycode_to_char(code: ct::event::KeyCode) -> Option<char> {
 /// Reads a key press event as a `char` from the terminal without blocking.
 ///
 /// # Returns
-/// - `Ok(Some(char))` if a printable key was pressed.
-/// - `Ok(None)` if a non-printable key was pressed or no input was detected.
-/// - `Err(std::io::Error)` if an I/O error occurs while reading input.
+/// - `Ok(Some(char))`: if a printable key was pressed.
+/// - `Ok(None)`: if a non-printable key was pressed or no input was detected.
+/// - `Err(FtuiError)`: Returns an error.
 ///
 /// # Example
 /// ```rust
