@@ -25,6 +25,14 @@ macro_rules! trg_new_trigger_func {
     };
 }
 
+#[inline]
+pub fn cast_arg<T>(arg: &Option<Box<dyn Any>>) -> &T 
+where
+    T: 'static,
+{
+    arg.as_ref().unwrap().downcast_ref::<T>().unwrap()
+}
+
 /// A generic trigger handler for evaluating conditions based on stored arguments.
 /// `Trigger` allows you to define a condition as a function, associate it with
 /// an argument, and check whether the condition is met.
