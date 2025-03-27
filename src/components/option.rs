@@ -55,7 +55,8 @@ impl Option {
     /// - `callback`: A `Callback` that will be invoked when the option is selected. 
     ///
     /// # Returns
-    /// A new `Option` instance.
+    /// `Ok(Option)`: A new `Option` instance.
+    /// `Err(FtuiError)`: Returns an error.
     ///
     /// # Example
     /// ```rust
