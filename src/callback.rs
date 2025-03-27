@@ -21,7 +21,7 @@ use std::any::Any;
 #[macro_export]
 macro_rules! cbk_new_callback_func {
     ($func_name:ident, $arg_name:ident, $body:block) => {
-        fn $func_name($arg_name: &Box<dyn std::any::Any>) $body
+        fn $func_name($arg_name: &Option<Box<dyn std::any::Any>>) $body
     };
 }
 
@@ -49,18 +49,25 @@ macro_rules! cbk_new_callback_func {
 /// cb.call(); // Prints: Callback Argument: 42
 /// ```
 pub struct Callback {
-    func: fn(&Box<dyn Any>) -> (),
-    arg: Box<dyn Any>,
+    func: fn(&Option<Box<dyn Any>>) -> (),
+    arg: Option<Box<dyn Any>>,
 }
 
 impl Callback {
-    pub fn new<T>(func: fn(&Box<dyn Any>), arg: T) -> Self 
+    pub fn new<T>(func: fn(&Option<Box<dyn Any>>), arg: T) -> Self 
     where
         T: 'static,
     {
         Callback {
             func,
-            arg: Box::new(arg),
+            arg: Some(Box::new(arg)),
+        }
+    }
+
+    pub fn no_arg(func: fn(&Option<Box<dyn Any>>)) -> Self {
+        Callback {
+            func,
+            arg: None,
         }
     }
 
