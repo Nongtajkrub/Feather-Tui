@@ -12,3 +12,4 @@ keywords = ["user_interface", "ui", "terminal", "cli", "simple"]
 [dependencies]
 bitflags = "2.9.0"
 crossterm = "0.28.1"
+thiserror = "2.0.12"
