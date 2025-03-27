@@ -25,6 +25,14 @@ macro_rules! cbk_new_callback_func {
     };
 }
 
+#[inline]
+pub fn cast_arg<T>(arg: &Option<Box<dyn Any>>) -> &T 
+where
+    T: 'static,
+{
+    arg.as_ref().unwrap().downcast_ref::<T>().unwrap()
+}
+
 /// A generic callback handler for executing functions with stored arguments.
 /// 
 /// `Callback` allows you to associate a function with an argument and invoke 
