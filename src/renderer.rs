@@ -229,10 +229,10 @@ impl Renderer {
     /// renderer.render(&mut container);
     /// ```
     pub fn render(&mut self, container: &mut con::Container) -> FtuiResult<()> {
-        container.header()
-            .as_ref()
-            .map(|header| self.render_header(header))
-            .ok_or_else(|| FtuiError::RendererContainerNoHeader)?;
+        match container.header().as_ref() {
+            Some(header) => self.render_header(header),
+            None => return Err(FtuiError::RendererContainerNoHeader),
+        };
 
         self.render_options(container.options());
         self.render_text(container.texts_mut());
