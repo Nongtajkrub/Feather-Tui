@@ -209,14 +209,18 @@ impl Renderer {
 
     /// Renders a `Container` into the `Renderer` buffer without drawing to the terminal.
     ///
+    /// # Parameters
+    /// * `container`: A mutable reference to the `Container` to be rendered.
+    ///
     /// # Note
     ///  * This method only updates the internal buffer. 
     ///  * To display the rendered content, call the `draw` method.
     ///  * You should use the `clear` method to clear the buffer first.
     ///
-    /// # Parameters
-    /// * `container`: A mutable reference to the `Container` to be rendered.
-    ///
+    /// # Returns
+    /// * `Ok(())`: Returns nothing.
+    /// * `Err(FtuiError)`: Returns an error.
+    /// 
     /// # Example
     /// ```rust
     /// use feather_tui as tui;
@@ -309,6 +313,13 @@ impl Renderer {
 
     /// Executes a full rendering cycle in a single method call. This method 
     /// automatically calls `clear`, `render`, and `draw` in sequence.
+    ///
+    /// # Parameters
+    /// * `container`: A mutable reference to the `Container` to be drawn.
+    ///
+    /// # Returns
+    /// * `Ok(())`: Returns nothing.
+    /// * `Err(FtuiError)`: Returns an error.
     ///
     /// # Example
     /// ```rust
