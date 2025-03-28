@@ -186,7 +186,7 @@ impl Text {
         // Only one color can be set
         if flags
             .intersection(
-                TextFlags::COLOR_BACK |
+                TextFlags::COLOR_BLACK |
                 TextFlags::COLOR_RED |
                 TextFlags::COLOR_GREEN |
                 TextFlags::COLOR_YELLOW |
