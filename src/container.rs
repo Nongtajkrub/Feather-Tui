@@ -18,13 +18,13 @@ use std::option::Option;
 /// // Define a container with a header, two options, a text component, 
 /// // and a selector.
 /// let mut container = tui::con::Container::new()
-///     .with_header("Header")
-///     .with_option("Option1", tui::cbk::Callback::new(callback_func, arg)) 
-///     .with_option("Option2", tui::cbk::Callback::new(callback_func, arg))
+///     .with_header("Header")?
+///     .with_option("Option1", tui::cbk::Callback::new(callback_func, arg))? 
+///     .with_option("Option2", tui::cbk::Callback::new(callback_func, arg))?
 ///     .with_text(
 ///         "Text",
 ///         tui::cpn::txt::TextFlags::COLOR_YELLOW_BACK |
-///         tui::cpn::txt::TextFlags::ALIGN_RIGHT)
+///         tui::cpn::txt::TextFlags::ALIGN_RIGHT)?
 ///     .with_selector(
 ///         tui::sel::Selector::new(
 ///             tui::trg::Trigger::new(up_trig_func, arg),
