@@ -230,7 +230,7 @@ impl Renderer {
     ///
     /// // Render the container into the renderer buffer
     /// // (assuming `container` is created elsewhere)
-    /// renderer.render(&mut container);
+    /// renderer.render(&mut container)?;
     /// ```
     pub fn render(&mut self, container: &mut con::Container) -> FtuiResult<()> {
         match container.header().as_ref() {
@@ -259,7 +259,7 @@ impl Renderer {
     ///
     /// // Render the container into the renderer buffer
     /// // (assuming `container` is created elsewhere)
-    /// renderer.render(&mut container);
+    /// renderer.render(&mut container)?;
     ///
     /// // Draw the rendered content to the terminal
     /// renderer.draw();
@@ -299,7 +299,7 @@ impl Renderer {
     ///
     ///     // Render the container into the renderer buffer
     ///     // (assuming `container` is created elsewhere)
-    ///     renderer.render(&mut container);
+    ///     renderer.render(&mut container)?;
     ///
     ///     // Draw the rendered content to the terminal
     ///     renderer.draw();
@@ -332,14 +332,14 @@ impl Renderer {
     /// loop {
     ///     renderer.clear();
     ///     // Render content (assuming `container` is created elsewhere)
-    ///     renderer.render(&mut container);
+    ///     renderer.render(&mut container)?;
     ///     renderer.draw();
     /// }
     ///
     /// // Simplified rendering loop using `simple_draw`
     /// loop {
     ///     // Render and draw in a single step
-    ///     renderer.simple_draw(&mut container);
+    ///     renderer.simple_draw(&mut container)?;
     /// }
     /// ```
     pub fn simple_draw(&mut self, container: &mut con::Container) -> FtuiResult<()> {
