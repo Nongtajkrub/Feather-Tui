@@ -7,15 +7,18 @@ use std::any::Any;
 /// # Usage
 /// Use for defining functions required to create a `Callback` object,  
 /// 
+/// # Parameters
+/// - `func_name`: An identifier (`ident`) representing the generated function name.
+/// - `arg_name`: An identifier (`ident`) representing the function argument name.
+/// - `body`: A block (`block`) containing the function implementation.
+/// 
 /// # Example
 /// ```rust
 /// use feather_tui as tui;
 /// 
-/// // Define a callback function that print out the argument that is was given
-/// tui::tui_cbk_new_callback_func!(function_name, argument_name, {
-///     println!(
-///         "Callback received: {}",
-///         argument_name.downcast_ref::<u32>().unwrap());
+/// // A callback function that accept a u32 an print it out.
+/// tui::cbk_new_callback_func!(print_num, arg, {
+///    println!("{}", tui::cbk::cast_arg::<u32>(arg));
 /// });
 /// ```
 #[macro_export]
@@ -25,6 +28,35 @@ macro_rules! cbk_new_callback_func {
     };
 }
 
+/// Casts the argument of a callback function to the specified type. For the time
+/// being this function will panic if the argument is not set or if the cast type
+/// is wrong.
+///
+/// # Parameters
+/// - `arg`: The argument of the callback function.
+///
+/// # Notes
+/// - This function should only be use in a callback function. 
+///
+/// # Usage
+/// use this function within a callback function to cast the argument to the
+/// expected type.
+///
+/// # Example
+/// ```rust
+/// use feather_tui as tui;
+///
+/// // A callback function that accept a u32 an print it out.
+/// tui::cbk_new_callback_func!(print_num, arg, {
+///    println!("{}", tui::cbk::cast_arg::<u32>(arg));
+/// });
+/// 
+/// tui::cbk::Callback::new(print_num, 5u32).call(); // print 5
+/// tui::cbk::Callback::new(print_num, 6u32).call(); // print 6
+///     
+/// tui::cbk::Callback::new(print_num, "String").call(); // Panic
+/// tui::cbk::Callback::no_arg(print_num).call();        // Panic
+/// ```
 #[inline]
 pub fn cast_arg<T>(arg: &Option<Box<dyn Any>>) -> &T 
 where
