@@ -1,6 +1,6 @@
 use std::any::Any;
 
-use crate::err::FtuiResult;
+use crate::err::{FtuiResult, FtuiError};
 
 /// This macro generates a function that take a reference to a `Box<dyn Any>`
 /// as an argument and return nothing. The function body (`$body`) is the code
@@ -28,7 +28,7 @@ macro_rules! cbk_new_callback_func {
     ($func_name:ident, $arg_name:ident, $body:block) => {
         fn $func_name(
             $arg_name: &Option<Box<dyn std::any::Any>>
-        ) -> feather_tui::err::FtuiResult<()> $body
+        ) -> err::FtuiResult<()> $body
     };
 }
 
@@ -61,12 +61,17 @@ macro_rules! cbk_new_callback_func {
 /// tui::cbk::Callback::new(print_num, "String").call(); // Panic
 /// tui::cbk::Callback::no_arg(print_num).call();        // Panic
 /// ```
-#[inline]
-pub fn cast_arg<T>(arg: &Option<Box<dyn Any>>) -> &T 
+pub fn cast_arg<T>(arg: &Option<Box<dyn Any>>) -> FtuiResult<&T> 
 where
     T: 'static,
 {
-    arg.as_ref().unwrap().downcast_ref::<T>().unwrap()
+    match arg.as_ref() {
+        Some(arg) => match arg.downcast_ref::<T>() {
+            Some(casted_arg) => Ok(casted_arg),
+            None => Err(FtuiError::TriggerCastArgWrongType),
+        },
+        None => Err(FtuiError::TriggerCastArgNoArgument), 
+    }
 }
 
 /// A generic callback handler for executing functions with stored arguments.

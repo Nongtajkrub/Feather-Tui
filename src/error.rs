@@ -27,6 +27,18 @@ pub enum FtuiError {
 
     #[error("Std Input Output Error: {0}")]
     StdInputOutputError(#[from] io::Error),
+
+    #[error("Trigger function does not have an argument available for casting.")]
+    TriggerCastArgNoArgument,
+
+    #[error("Trigger function argument type mismatch unable to cast to the expected type.")]
+    TriggerCastArgWrongType,
+
+    #[error("Callback function does not have an argument available for casting.")]
+    CallbackCastArgNoArgument,
+
+    #[error("Callback function argument type mismatch unable to cast to the expected type.")]
+    CallbackCastArgWrongType,
 }
 
 pub type FtuiResult<T> = Result<T, FtuiError>;
