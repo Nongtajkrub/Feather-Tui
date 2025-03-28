@@ -149,13 +149,11 @@ impl Text {
     /// // Create a `Text` component labeled "Text".
     /// // The text is right-aligned.
     /// // The background color is red.
-    /// // (Use `COLOR_FORE` to change the foreground color.)
     /// let text = 
     ///     tui::cpn::txt::Text::new(
     ///         "Text",
     ///         tui::cpn::txt::TextFlags::ALIGN_RIGHT | 
-    ///         tui::cpn::txt::TextFlags::COLOR_BACK |
-    ///         tui::cpn::txt::TextFlags::COLOR_RED);
+    ///         tui::cpn::txt::TextFlags::COLOR_RED_BACK)?;
     /// ```
     pub fn new(label: &str, flags: impl Into<Option<TextFlags>>) -> FtuiResult<Self> {
         let flags = flags.into().unwrap_or(TextFlags::NONE);
