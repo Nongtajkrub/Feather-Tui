@@ -30,8 +30,3 @@ pub use container  as con;
 pub use renderer   as ren;
 pub use input      as inp;
 pub use error      as err;
-
-// TODO: Update documentation for new error handling system 
-// TODO: Update Wiki changes page
-// TODO: ...
-// TODO: Publish new version
