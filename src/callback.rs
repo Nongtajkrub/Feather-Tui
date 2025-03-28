@@ -20,7 +20,8 @@ use crate::err::{FtuiResult, FtuiError};
 /// 
 /// // A callback function that accept a u32 an print it out.
 /// tui::cbk_new_callback_func!(print_num, arg, {
-///    println!("{}", tui::cbk::cast_arg::<u32>(arg));
+///    println!("{}", tui::cbk::cast_arg::<u32>(arg)?);
+///    Ok(())
 /// });
 /// ```
 #[macro_export]
@@ -32,12 +33,14 @@ macro_rules! cbk_new_callback_func {
     };
 }
 
-/// Casts the argument of a callback function to the specified type. For the time
-/// being this function will panic if the argument is not set or if the cast type
-/// is wrong.
+/// Casts the argument of a callback function to the specified type.
 ///
 /// # Parameters
 /// - `arg`: The argument of the callback function.
+///
+/// # Returns
+/// - `Ok(&T)`: The casted argument..
+/// - `Err(FtuiError)`: Returns an error.
 ///
 /// # Notes
 /// - This function should only be use in a callback function. 
@@ -52,14 +55,15 @@ macro_rules! cbk_new_callback_func {
 ///
 /// // A callback function that accept a u32 an print it out.
 /// tui::cbk_new_callback_func!(print_num, arg, {
-///    println!("{}", tui::cbk::cast_arg::<u32>(arg));
+///    println!("{}", tui::cbk::cast_arg::<u32>(arg)?);
+///    Ok(())
 /// });
 /// 
-/// tui::cbk::Callback::new(print_num, 5u32).call(); // print 5
-/// tui::cbk::Callback::new(print_num, 6u32).call(); // print 6
+/// tui::cbk::Callback::new(print_num, 5u32).call()?; // print 5
+/// tui::cbk::Callback::new(print_num, 6u32).call()?; // print 6
 ///     
-/// tui::cbk::Callback::new(print_num, "String").call(); // Panic
-/// tui::cbk::Callback::no_arg(print_num).call();        // Panic
+/// tui::cbk::Callback::new(print_num, "String").call()?; // Panic
+/// tui::cbk::Callback::no_arg(print_num).call()?;        // Panic
 /// ```
 pub fn cast_arg<T>(arg: &Option<Box<dyn Any>>) -> FtuiResult<&T> 
 where
@@ -88,14 +92,13 @@ where
 /// use feather_tui as tui;
 /// 
 /// // Define a callback function that print out the argument that is was given 
-/// tui::tui_cbk_new_callback_func!(callback_func, argument, {
-///     println!(
-///         "Callback Argument: {}", 
-///         argument.downcast_ref::<u32>().unwrap());
+/// tui::cbk_new_callback_func!(print_num, arg, {
+///    println!("{}", tui::cbk::cast_arg::<u32>(arg)?);
+///    Ok(())
 /// });
 /// 
-/// let cb = tui::cbk::Callback::new(callback_func, 42u32);
-/// cb.call(); // Prints: Callback Argument: 42
+/// let cb = tui::cbk::Callback::new(print_num, 42u32);
+/// cb.call()?; // Prints: Callback Argument: 42
 /// ```
 pub struct Callback {
     func: fn(&Option<Box<dyn Any>>) -> FtuiResult<()>,
