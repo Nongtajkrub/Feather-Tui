@@ -1,6 +1,6 @@
 use std::any::Any;
 
-use crate::error::FtuiResult;
+use crate::err::FtuiResult;
 
 /// This macro generates a function that takes a reference to a `Box<dyn Any>`
 /// as an argument and returns a `bool`. The function body (`$body`) determines
@@ -30,7 +30,7 @@ use crate::error::FtuiResult;
 macro_rules! trg_new_trigger_func {
     ($func_name:ident, $arg_name:ident, $body:block) => {
         // Do not use Any use std::any::Any only
-        fn $func_name($arg_name: &Option<Box<dyn std::any::Any>>) -> FtuiResult<bool> $body
+        fn $func_name($arg_name: &Option<Box<dyn std::any::Any>>) -> err::FtuiResult<bool> $body
     };
 }
 
@@ -122,10 +122,14 @@ impl Trigger {
         (self.func)(&self.arg)
     }
 
-    pub fn update_arg<T>(&mut self, arg: impl Into<Option<T>>) 
+    pub fn update_arg<T>(&mut self, arg: T) 
     where
         T: 'static
     {
-        self.arg = arg.into().map(|arg| Box::new(arg) as Box<dyn Any>);
+        self.arg = Some(Box::new(arg));
+    }
+
+    pub fn remove_arg(&mut self) {
+        self.arg = None;
     }
 }
