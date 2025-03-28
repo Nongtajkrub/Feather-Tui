@@ -44,10 +44,10 @@ Feather-Tui is a simple terminal UI library designed to provide building blocks 
 
 ## 🏗️ Dependencies
 
-`bitflags` `crossterm`
+`bitflags` `crossterm` `thiserror`
 
 ---
 
 ## 🌱 Related Projects
 
-- [Original C Version (part of my school management system)](https://github.com/nongtajkrub/school-management)
+[Original C Version (part of my school management system)](https://github.com/nongtajkrub/school-management)
