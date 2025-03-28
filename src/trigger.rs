@@ -14,6 +14,8 @@ use std::any::Any;
 /// 
 /// # Example
 /// ```
+/// use feather_tui as tui;
+///
 /// // Define a trigger function that print the argument than evaluate whether
 /// // the argument is 5
 /// trg_new_trigger_func!(func_name, arg, {
@@ -46,16 +48,18 @@ macro_rules! trg_new_trigger_func {
 ///
 /// # Example
 /// ```rust
+/// use feather_tui as tui;
+///
 /// // A trigger function that take in a u32 an evaluate whether it is five.
-/// trg_new_trigger_func!(is_five, arg, {
-///     *trg::cast_arg::<u32>(arg) == 5
+/// tui::trg_new_trigger_func!(is_five, arg, {
+///     *tui::trg::cast_arg::<u32>(arg) == 5
 /// });
 ///
-/// trg::Trigger::new(is_five, 5u32).check(); // Evaluate to true
-/// trg::Trigger::new(is_five, 6u32).check(); // Evaluate to false
+/// tui::trg::Trigger::new(is_five, 5u32).check(); // Evaluate to true
+/// tui::trg::Trigger::new(is_five, 6u32).check(); // Evaluate to false
 ///                                           
-/// trg::Trigger::new(is_five, "String").check(); // Panic
-/// trg::Trigger::no_arg(is_five).check();        // Panic
+/// tui::trg::Trigger::new(is_five, "String").check(); // Panic
+/// tui::trg::Trigger::no_arg(is_five).check();        // Panic
 /// ```
 #[inline]
 pub fn cast_arg<T>(arg: &Option<Box<dyn Any>>) -> &T 
