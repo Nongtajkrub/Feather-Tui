@@ -31,7 +31,7 @@ macro_rules! trg_new_trigger_func {
     ($func_name:ident, $arg_name:ident, $body:block) => {
         fn $func_name(
             $arg_name: &Option<Box<dyn std::any::Any>>
-        ) -> err::FtuiResult<bool> $body
+        ) -> feather_tui::err::FtuiResult<bool> $body
     };
 }
 
