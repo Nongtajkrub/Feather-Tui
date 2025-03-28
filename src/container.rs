@@ -55,7 +55,7 @@ impl Container {
     // return whether an update occure
     pub fn looper(&mut self) -> FtuiResult<bool> {
         return match self.selector.as_mut() {
-            Some(selector) => Ok(selector.looper(&mut self.options)),
+            Some(selector) => Ok(selector.looper(&mut self.options)?),
             None => Err(FtuiError::ContainerLooperNoSelector),
         };
     }

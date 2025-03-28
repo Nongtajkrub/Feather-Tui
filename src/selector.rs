@@ -1,4 +1,4 @@
-use crate::{trg, cpn};
+use crate::{cpn, err::FtuiResult, trg};
 
 /// A `Selector` is used within a `Container` to navigate and select `Option` 
 /// components. It allows movement up and down between options and selection of
@@ -70,25 +70,24 @@ impl Selector {
     }
 
     // return whether a move occure
-    pub fn looper(&mut self, options: &mut Vec<cpn::opt::Option>) -> bool {
-        if self.up_trig.check() {
+    pub fn looper(&mut self, options: &mut Vec<cpn::opt::Option>) -> FtuiResult<bool> {
+        if self.up_trig.check()? {
             self.move_up(options);
-            return true;
+            return Ok(true);
         }
-        if self.down_trig.check() {
+        if self.down_trig.check()? {
             self.move_down(options);
-            return true;
+            return Ok(true);
         }
-        if self.selc_trig.check() {
+        if self.selc_trig.check()? {
             self.selc(options);
-            return true;
+            return Ok(true);
         }
 
-        return false;
+        return Ok(false);
     }
 
-    pub fn update_trig_arg<T: 'static>(
-        &mut self, up_arg: T, down_arg: T, selc_arg: T) {
+    pub fn update_trig_arg<T: 'static>(&mut self, up_arg: T, down_arg: T, selc_arg: T) {
         self.up_trig.update_arg(up_arg);
         self.down_trig.update_arg(down_arg);
         self.selc_trig.update_arg(selc_arg);

@@ -1,5 +1,7 @@
 use std::any::Any;
 
+use crate::error::FtuiResult;
+
 /// This macro generates a function that takes a reference to a `Box<dyn Any>`
 /// as an argument and returns a `bool`. The function body (`$body`) determines
 /// whether the condition is met.
@@ -28,7 +30,7 @@ use std::any::Any;
 macro_rules! trg_new_trigger_func {
     ($func_name:ident, $arg_name:ident, $body:block) => {
         // Do not use Any use std::any::Any only
-        fn $func_name($arg_name: &Option<Box<dyn std::any::Any>>) -> bool $body
+        fn $func_name($arg_name: &Option<Box<dyn std::any::Any>>) -> FtuiResult<bool> $body
     };
 }
 
@@ -92,12 +94,14 @@ where
 /// trig.check(); // Condition no longer met return False
 /// ```
 pub struct Trigger {
-    func: fn(&Option<Box<dyn Any>>) -> bool,
+    func: fn(&Option<Box<dyn Any>>) -> FtuiResult<bool>,
     arg: Option<Box<dyn Any>>,
 }
 
 impl Trigger {
-    pub fn new<T>(func: fn(&Option<Box<dyn Any>>) -> bool, arg: T) -> Self
+    pub fn new<T>(
+        func: fn(&Option<Box<dyn Any>>) -> FtuiResult<bool>, arg: T
+    ) -> Self
     where
         T: 'static,
     {
@@ -107,14 +111,14 @@ impl Trigger {
         }
     }
 
-    pub fn no_arg(func: fn(&Option<Box<dyn Any>>) -> bool) -> Self {
+    pub fn no_arg(func: fn(&Option<Box<dyn Any>>) -> FtuiResult<bool>) -> Self {
         Trigger {
             func,
             arg: None,
         }
     }
 
-    pub fn check(&mut self) -> bool {
+    pub fn check(&mut self) -> FtuiResult<bool> {
         (self.func)(&self.arg)
     }
 
