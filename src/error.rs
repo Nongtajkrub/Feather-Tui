@@ -20,6 +20,9 @@ pub enum FtuiError {
     RendererContainerNoHeader,
 
     #[error("The container's looper method requires a Selector.")]
+    ContainerLooperNoSelector,
+
+    #[error("Container doesnot have a Selector.")]
     ContainerNoSelector,
 
     #[error("Std Input Output Error: {0}")]
