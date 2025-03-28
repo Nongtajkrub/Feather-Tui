@@ -9,7 +9,7 @@ use crate::{cpn, err::FtuiResult, trg};
 /// A `Selector` is required for `Option` components in a `Container` to work.
 ///
 /// # Notes
-/// * Without a `Selector`, `Option` components in a `Container` cannot be 
+/// - Without a `Selector`, `Option` components in a `Container` cannot be 
 /// selected or navigated.
 ///
 /// # Example

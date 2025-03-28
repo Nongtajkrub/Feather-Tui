@@ -8,14 +8,14 @@ pub const READ_KEY_FAIL_ERRMSG: &str = "Input: Fail to read key events from the 
 /// Reads a line of input from the user after displaying a prompt.
 ///
 /// # Parameters
-/// * `prompt`: A `&str` containing the message to display before user input.
+/// - `prompt`: A `&str` containing the message to display before user input.
 ///
 /// # Returns
-/// * `Ok(String)`: The user’s input as a `String`, including the newline character.
-/// * `Err(FtuiError)`: Returns an error.
+/// - `Ok(String)`: The user’s input as a `String`, including the newline character.
+/// - `Err(FtuiError)`: Returns an error.
 ///
 /// # Notes
-/// * The returned `String` includes the newline (`\n`). Use `.trim()` if necessary.
+/// - The returned `String` includes the newline (`\n`). Use `.trim()` if necessary.
 ///
 /// # Example
 /// ```rust
@@ -44,12 +44,12 @@ pub fn line(promt: &str) -> FtuiResult<String> {
 /// Reads a key press event as `KeyCode` from the terminal without blocking.
 ///
 /// # Returns
-/// * `Ok(Some(KeyCode))`: If a key event is detected.
-/// * `Ok(None)`: If no key event is detected.
-/// * `Err(FtuiError)`: Returns an error. 
+/// - `Ok(Some(KeyCode))`: If a key event is detected.
+/// - `Ok(None)`: If no key event is detected.
+/// - `Err(FtuiError)`: Returns an error. 
 ///
 /// # Notes
-/// * This function does not block waiting for input.
+/// - This function does not block waiting for input.
 ///
 /// # Example
 /// ```rust
@@ -83,11 +83,11 @@ pub fn key() -> FtuiResult<Option<ct::event::KeyCode>> {
 /// Converts a `KeyCode` into its corresponding character, if applicable.
 ///
 /// # Parameters
-/// * `code`: The `KeyCode` to convert.
+/// - `code`: The `KeyCode` to convert.
 ///
 /// # Returns
-/// * `Some(char)`: If the `KeyCode` represents a printable character.
-/// * `None`: If the `KeyCode` is not a character (e.g., arrow keys, function keys).
+/// - `Some(char)`: If the `KeyCode` represents a printable character.
+/// - `None`: If the `KeyCode` is not a character (e.g., arrow keys, function keys).
 ///
 /// # Example
 /// ```rust

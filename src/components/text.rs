@@ -131,16 +131,16 @@ impl Text {
     /// Creates a new `Text` component with the specified label and flags.
     ///
     /// # Parameters
-    /// * `label`: A `&str` representing the text content.
-    /// * `flags`: A set of `TextFlags` combined using the bitwise OR operator.
+    /// - `label`: A `&str` representing the text content.
+    /// - `flags`: A set of `TextFlags` combined using the bitwise OR operator.
     ///
     /// # Notes
     ///
-    /// * This is what bitwise OR operator look like -> `flag1 | flag2 | flag3 ...`
+    /// - This is what bitwise OR operator look like -> `flag1 | flag2 | flag3 ...`
     ///
     /// # Returns
-    /// * `Ok(Text)`: Returns a `Text` instance
-    /// * `Err(FtuiError)`: Returns an error.
+    /// - `Ok(Text)`: Returns a `Text` instance
+    /// - `Err(FtuiError)`: Returns an error.
     ///
     /// # Example
     /// ```rust

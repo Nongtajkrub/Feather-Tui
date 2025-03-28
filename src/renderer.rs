@@ -210,16 +210,16 @@ impl Renderer {
     /// Renders a `Container` into the `Renderer` buffer without drawing to the terminal.
     ///
     /// # Parameters
-    /// * `container`: A mutable reference to the `Container` to be rendered.
+    /// - `container`: A mutable reference to the `Container` to be rendered.
     ///
     /// # Note
-    ///  * This method only updates the internal buffer. 
-    ///  * To display the rendered content, call the `draw` method.
-    ///  * You should use the `clear` method to clear the buffer first.
+    ///  - This method only updates the internal buffer. 
+    ///  - To display the rendered content, call the `draw` method.
+    ///  - You should use the `clear` method to clear the buffer first.
     ///
     /// # Returns
-    /// * `Ok(())`: Returns nothing.
-    /// * `Err(FtuiError)`: Returns an error.
+    /// - `Ok(())`: Returns nothing.
+    /// - `Err(FtuiError)`: Returns an error.
     /// 
     /// # Example
     /// ```rust
@@ -315,11 +315,11 @@ impl Renderer {
     /// automatically calls `clear`, `render`, and `draw` in sequence.
     ///
     /// # Parameters
-    /// * `container`: A mutable reference to the `Container` to be drawn.
+    /// - `container`: A mutable reference to the `Container` to be drawn.
     ///
     /// # Returns
-    /// * `Ok(())`: Returns nothing.
-    /// * `Err(FtuiError)`: Returns an error.
+    /// - `Ok(())`: Returns nothing.
+    /// - `Err(FtuiError)`: Returns an error.
     ///
     /// # Example
     /// ```rust

@@ -32,7 +32,7 @@ impl Header {
     /// Creates a new `Header` with the specified label.
     ///
     /// # Parameters
-    /// * `label`: A `&str` representing the text displayed in the header.
+    /// - `label`: A `&str` representing the text displayed in the header.
     ///
     /// # Returns
     /// `Ok(Header)`: A new `Header` instance.
