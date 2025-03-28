@@ -11,7 +11,6 @@ use crate::{cbk, err::{FtuiError, FtuiResult}};
 /// choices. Each option requires an associated callback function that defines  
 /// what happens when the option is selected.
 ///
-///
 /// # Notes
 /// - A `Selector` is required to navigate and select options.
 /// - Each `Option` should have an associated `Callback` function.
@@ -22,15 +21,15 @@ use crate::{cbk, err::{FtuiError, FtuiResult}};
 /// use feather_tui as tui;
 ///
 /// // Define a callback function that exits the program when invoked 
-/// tui::tui_cbk_new_callback_func!(quit_option_callback, _arg, {
+/// tui::cbk_new_callback_func!(quit_option_callback, _arg, {
 ///    std::process::exit(0);
 /// });
 ///
 /// // Create a Callback
-/// let callback = tui::cbk::Callback::new(quit_option_callback, 0);
+/// let callback = tui::cbk::Callback::no_arg(quit_option_callback);
 ///
 /// // Create an option labeled "Quit"
-/// let option = tui::cpn::opt::Option::new("Quit", callback);
+/// let option = tui::cpn::opt::Option::new("Quit", callback)?;
 ///
 /// // Create a container and add the option
 /// let mut container = tui::con::Container::new();
@@ -68,11 +67,11 @@ impl Option {
     /// });
     ///
     /// // Create a Callback that stores the number 5.
-    /// let callback = tui::cbk::Callback::new(quit_option_callback, 0);
+    /// let callback = tui::cbk::Callback::no_arg(quit_option_callback);
     ///
     /// // Create an Option labeled "Quit".
     /// // When selected, it exit the program.
-    /// let option = tui::cpn::opt::Option::new("Quit", callback);
+    /// let option = tui::cpn::opt::Option::new("Quit", callback)?;
     /// ```
     pub fn new(label: &str, callback: cbk::Callback) -> FtuiResult<Self> {
         if label.is_empty() {
