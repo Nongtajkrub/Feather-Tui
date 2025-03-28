@@ -119,4 +119,15 @@ impl Callback {
         (self.func)(&self.arg)?;
         Ok(())
     }
+
+    pub fn update_arg<T>(&mut self, arg: T)
+    where
+        T: 'static
+    {
+        self.arg = Some(Box::new(arg));
+    }
+
+    pub fn remove_arg(&mut self) {
+        self.arg = None;
+    }
 }
