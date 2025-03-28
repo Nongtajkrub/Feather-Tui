@@ -21,7 +21,7 @@ use crate::err::{FtuiResult, FtuiError};
 /// // Define a trigger function that print the argument than evaluate whether
 /// // the argument is 5
 /// trg_new_trigger_func!(func_name, arg, {
-///     let number = trg::cast_arg::<u32>(arg);
+///     let number = trg::cast_arg::<u32>(arg)?;
 ///     println!("{}", number);
 ///     *number == 5
 /// });
@@ -35,12 +35,14 @@ macro_rules! trg_new_trigger_func {
     };
 }
 
-/// Casts the argument of a trigger function to the specified type. For the time
-/// being this function will panic if the argument is not set or if the cast type
-/// is wrong.
+/// Casts the argument of a trigger function to the specified type.
 ///
 /// # Parameters
 /// - `arg`: The argument of the trigger function.
+///
+/// # Returns
+/// - `Ok(&T)`: The casted argument..
+/// - `Err(FtuiError)`: Returns an error.
 ///
 /// # Notes
 /// - This function should only be use in a trigger function. 
@@ -55,14 +57,14 @@ macro_rules! trg_new_trigger_func {
 ///
 /// // A trigger function that take in a u32 an evaluate whether it is five.
 /// tui::trg_new_trigger_func!(is_five, arg, {
-///     *tui::trg::cast_arg::<u32>(arg) == 5
+///     Ok(*tui::trg::cast_arg::<u32>(arg)? == 5)
 /// });
 ///
-/// tui::trg::Trigger::new(is_five, 5u32).check(); // Evaluate to true
-/// tui::trg::Trigger::new(is_five, 6u32).check(); // Evaluate to false
+/// tui::trg::Trigger::new(is_five, 5u32).check()?; // Evaluate to true
+/// tui::trg::Trigger::new(is_five, 6u32).check()?; // Evaluate to false
 ///                                           
-/// tui::trg::Trigger::new(is_five, "String").check(); // Panic
-/// tui::trg::Trigger::no_arg(is_five).check();        // Panic
+/// tui::trg::Trigger::new(is_five, "String").check()?; // Error (Wrong type) 
+/// tui::trg::Trigger::no_arg(is_five).check()?;        // Error (No argument)
 /// ```
 pub fn cast_arg<T>(arg: &Option<Box<dyn Any>>) -> FtuiResult<&T> 
 where
@@ -95,9 +97,9 @@ where
 /// 
 /// let mut trig = tui::trg::Trigger::new(trigger, 5u32);
 ///
-/// trig.check(); // Condition is met return True
+/// trig.check()?; // Condition is met return True
 /// trig.update_arg(6);
-/// trig.check(); // Condition no longer met return False
+/// trig.check()?; // Condition no longer met return False
 /// ```
 pub struct Trigger {
     func: fn(&Option<Box<dyn Any>>) -> FtuiResult<bool>,
