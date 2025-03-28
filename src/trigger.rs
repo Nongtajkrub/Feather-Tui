@@ -73,9 +73,9 @@ where
     match arg.as_ref() {
         Some(arg) => match arg.downcast_ref::<T>() {
             Some(casted_arg) => Ok(casted_arg),
-            None => Err(FtuiError::CallbackCastArgWrongType), 
+            None => Err(FtuiError::TriggerCastArgWrongType), 
         },
-        None => Err(FtuiError::CallbackCastArgNoArgument),
+        None => Err(FtuiError::TriggerCastArgNoArgument),
     }
 }
 
