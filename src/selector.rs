@@ -87,7 +87,10 @@ impl Selector {
         return Ok(false);
     }
 
-    pub fn update_trig_arg<T: 'static>(&mut self, up_arg: T, down_arg: T, selc_arg: T) {
+    pub fn update_trig_arg<T>(&mut self, up_arg: T, down_arg: T, selc_arg: T)
+    where
+        T: 'static,
+    {
         self.up_trig.update_arg(up_arg);
         self.down_trig.update_arg(down_arg);
         self.selc_trig.update_arg(selc_arg);
