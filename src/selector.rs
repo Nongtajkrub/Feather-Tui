@@ -65,8 +65,9 @@ impl Selector {
         options[self.on as usize].set_selc_on(true);
     }
 
-    fn selc(&mut self, options: &mut Vec<cpn::opt::Option>) {
-        options[self.on as usize].callback().call();
+    fn selc(&mut self, options: &mut Vec<cpn::opt::Option>) -> FtuiResult<()> {
+        options[self.on as usize].callback().call()?;
+        Ok(())
     }
 
     // return whether a move occure
@@ -80,7 +81,7 @@ impl Selector {
             return Ok(true);
         }
         if self.selc_trig.check()? {
-            self.selc(options);
+            self.selc(options)?;
             return Ok(true);
         }
 

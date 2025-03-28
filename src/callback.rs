@@ -1,5 +1,7 @@
 use std::any::Any;
 
+use crate::err::FtuiResult;
+
 /// This macro generates a function that take a reference to a `Box<dyn Any>`
 /// as an argument and return nothing. The function body (`$body`) is the code
 /// that will be execute when the callback is trigger.
@@ -24,7 +26,7 @@ use std::any::Any;
 #[macro_export]
 macro_rules! cbk_new_callback_func {
     ($func_name:ident, $arg_name:ident, $body:block) => {
-        fn $func_name($arg_name: &Option<Box<dyn std::any::Any>>) $body
+        fn $func_name($arg_name: &Option<Box<dyn std::any::Any>>) -> err::FtuiResult<()> $body
     };
 }
 
@@ -89,12 +91,14 @@ where
 /// cb.call(); // Prints: Callback Argument: 42
 /// ```
 pub struct Callback {
-    func: fn(&Option<Box<dyn Any>>) -> (),
+    func: fn(&Option<Box<dyn Any>>) -> FtuiResult<()>,
     arg: Option<Box<dyn Any>>,
 }
 
 impl Callback {
-    pub fn new<T>(func: fn(&Option<Box<dyn Any>>), arg: T) -> Self 
+    pub fn new<T>(
+        func: fn(&Option<Box<dyn Any>>) -> FtuiResult<()>, arg: T
+    ) -> Self 
     where
         T: 'static,
     {
@@ -104,14 +108,15 @@ impl Callback {
         }
     }
 
-    pub fn no_arg(func: fn(&Option<Box<dyn Any>>)) -> Self {
+    pub fn no_arg(func: fn(&Option<Box<dyn Any>>) -> FtuiResult<()>) -> Self {
         Callback {
             func,
             arg: None,
         }
     }
 
-    pub fn call(&self) {
-        (self.func)(&self.arg);
+    pub fn call(&self) -> FtuiResult<()> {
+        (self.func)(&self.arg)?;
+        Ok(())
     }
 }
