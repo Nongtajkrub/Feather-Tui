@@ -54,10 +54,14 @@ impl Container {
 
     // return whether an update occure
     pub fn looper(&mut self) -> FtuiResult<bool> {
-        return match self.selector.as_mut() {
-            Some(selector) => Ok(selector.looper(&mut self.options)?),
-            None => Err(FtuiError::ContainerLooperNoSelector),
-        };
+        if self.options.len() > 0 {
+            return match self.selector.as_mut() {
+                Some(selector) => Ok(selector.looper(&mut self.options)?),
+                None => Err(FtuiError::ContainerLooperNoSelector),
+            };
+        }
+
+        Ok(false)
     }
 
     pub fn set_header(&mut self, header: cpn::hed::Header) {
