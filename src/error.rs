@@ -121,6 +121,24 @@ pub enum FtuiError {
     #[error("The container's looper method requires a Selector.")]
     ContainerLooperNoSelector,
 
+    /// Occurs when calling `Container::selector_mut` on a container that does
+    /// not have a `Selector`.
+    ///
+    /// # Example
+    /// ```rust
+    /// use feather_tui as tui;
+    ///
+    /// fn main() -> tui::err::FtuiResult<()> {
+    ///     // Create a container without a selector. 
+    ///     let mut container = tui::con::Container::new();
+    ///     
+    ///     // Attempting to call `selector_mut` on a container without a selector
+    ///     // results in an error.
+    ///     container.selector_mut()?;
+    ///
+    ///     Ok(())
+    /// }
+    /// ```
     #[error("Container doesnot have a Selector.")]
     ContainerNoSelector,
 
