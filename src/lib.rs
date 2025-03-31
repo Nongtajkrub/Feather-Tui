@@ -18,6 +18,7 @@ pub mod container;
 pub mod renderer;
 /// Handles user input, non-blocking key events, and key code conversions with crossterm.
 pub mod input;
+/// Provides custom error types and a result type alias for error handling in `Feather-TUI`.
 pub mod error;
 
 mod     util;

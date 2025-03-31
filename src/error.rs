@@ -142,23 +142,122 @@ pub enum FtuiError {
     #[error("Container doesnot have a Selector.")]
     ContainerNoSelector,
 
+    /// Occurs when functions in the `input` module fail. Affected functions 
+    /// include `line`, `key`, and `key_char`. This enum wraps an error message
+    /// from `std::io::Error`.
+    ///
+    /// # Example
+    /// ```rust
+    /// use feather_tui as tui;
+    /// 
+    /// fn main() -> tui::err::FtuiResult<()> {
+    ///     // This function may return an error if an I/O operation fails.
+    ///     tui::inp::line("Prompt")?;
+    /// 
+    ///     // This function may return an error if an I/O operation fails.
+    ///     tui::inp::key()?;
+    /// 
+    ///     // This function may return an error if an I/O operation fails.
+    ///     tui::inp::key_char()?;
+    /// 
+    ///     Ok(())
+    /// }
+    /// ```
     #[error("Std Input Output Error: {0}")]
     StdInputOutputError(#[from] io::Error),
 
+    /// Occurs when calling the `trigger::cast_arg` function with an argument 
+    /// that is a `None`.
+    ///
+    /// # Notes
+    /// - The trigger function argument has the type `&Option<Box<dyn Any>>`.
+    ///
+    /// # Example
+    /// ```rust
+    /// use feather_tui as tui;
+    ///
+    /// // When creating a trigger using the no_arg constructor, the argument
+    /// // will be set to None.
+    /// tui::trg::Trigger::no_arg(trigger_func);
+    ///
+    /// tui::trg_new_trigger_func!(trigger_func, arg, {
+    ///     // An error occurs because arg is None.
+    ///     tui::trg::cast_arg::<T>(arg)?;
+    /// });
+    ///
+    /// ```
     #[error("Trigger function does not have an argument available for casting.")]
     TriggerCastArgNoArgument,
 
+    /// Occurs when calling the `trigger::cast_arg` function with an argument of
+    /// the wrong type.
+    ///
+    /// # Notes
+    /// - The trigger function argument has the type `&Option<Box<dyn Any>>`.
+    ///
+    /// # Example
+    /// ```rust
+    /// use feather_tui as tui;
+    ///
+    /// // Creating a trigger with an argument of 5, which is a u32.
+    /// tui::trg::Trigger::new(trigger_func, 5u32);
+    /// 
+    /// tui::trg_new_trigger_func!(trigger_func, arg, {
+    ///     // An error occurs because arg is a u32, but we're attempting to cast 
+    ///     // it to a char.
+    ///     tui::trg::cast_arg::<char>(arg)?;
+    /// });
+    /// ```
     #[error("Trigger function argument type mismatch unable to cast to the expected type.")]
     TriggerCastArgWrongType,
 
+    /// Occurs when calling the `callback::cast_arg` function with an argument 
+    /// that is a `None`.
+    ///
+    /// # Notes
+    /// - The callback function argument has the type `&Option<Box<dyn Any>>`.
+    ///
+    /// # Example
+    /// ```rust
+    /// use feather_tui as tui;
+    ///
+    /// // When creating a callback using the no_arg constructor, the argument
+    /// // will be set to None.
+    /// tui::cbk::Callback::no_arg(callback_func);
+    ///
+    /// tui::cbk_new_callback_func!(callback_func, arg, {
+    ///     // An error occurs because arg is None.
+    ///     tui::cbk::cast_arg::<T>(arg)?;
+    /// });
+    ///
+    /// ```
     #[error("Callback function does not have an argument available for casting.")]
     CallbackCastArgNoArgument,
 
+    /// Occurs when calling the `callback::cast_arg` function with an argument of
+    /// the wrong type.
+    ///
+    /// # Notes
+    /// - The callback function argument has the type `&Option<Box<dyn Any>>`.
+    ///
+    /// # Example
+    /// ```rust
+    /// use feather_tui as tui;
+    ///
+    /// // Creating a callback with an argument of 5, which is a u32.
+    /// tui::cbk::Callback::new(callback_func, 5u32);
+    /// 
+    /// tui::callback_new_callback_func!(callback_func, arg, {
+    ///     // An error occurs because arg is a u32, but we're attempting to cast 
+    ///     // it to a char.
+    ///     tui::cbk::cast_arg::<char>(arg)?;
+    /// });
+    /// ```
     #[error("Callback function argument type mismatch unable to cast to the expected type.")]
     CallbackCastArgWrongType,
 }
 
-/// A convenient alias for `Result<T, FtuiError>`.
+/// A convenient alias for `Resul`t<T, FtuiError>`.
 ///
 /// # Example
 /// ```rust
