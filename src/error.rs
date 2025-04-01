@@ -76,30 +76,6 @@ pub enum FtuiError {
     #[error("An Option label cannot be empty.")]
     OptionLabelEmpty,
 
-    /// Occurs when calling `Renderer::render` on a container that does not have
-    /// a `Header` component.
-    ///
-    /// # Example
-    /// ```rust
-    /// use feather_tui as tui;
-    ///
-    /// fn main() -> tui::err::FtuiResult<()> {
-    ///     // Create a container with no components.
-    ///     let mut container = tui::con::Container::new();
-    ///
-    ///     // Create a renderer.
-    ///     let renderer = tui::ren::Renderer::new(40, 20);
-    ///     
-    ///     // Attempting to render a container without a `Header` component
-    ///     // results in an error.
-    ///     renderer.render(&mut container)?;
-    ///
-    ///     Ok(())
-    /// }
-    /// ```
-    #[error("Renderer requires the container to have a header.")]
-    RendererContainerNoHeader,
-
     /// Occurs when calling `Container::loop` on a container that has `Option`
     /// components but does not have a `Selector`.
     ///
