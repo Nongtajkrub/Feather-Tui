@@ -19,16 +19,16 @@ pub(crate) const ESC_CYAN_B: &str = "\x1b[46m";
 pub(crate) const ESC_WHITE_B: &str = "\x1b[47m";
 
 // text styles
-pub(crate) const ESC_BOLD: &str = "\x1b[1m";
-pub(crate) const ESC_DIM: &str = "\x1b[2m";
-pub(crate) const ESC_ITALIC: &str = "\x1b[3m";
-pub(crate) const ESC_UNDERLINE: &str = "\x1b[4m";
-pub(crate) const ESC_BLINK: &str = "\x1b[5m";
-pub(crate) const ESC_REVERSED: &str = "\x1b[7m";
-pub(crate) const ESC_HIDDEN: &str = "\x1b[8m";
-pub(crate) const ESC_STRIKETHROUGH: &str = "\x1b[9m";
-pub(crate) const ESC_DOUBLE_UNDERLINE: &str = "\x1b[21m";
-pub(crate) const ESC_OVERLINE: &str = "\x1b[53m";
+pub(crate) const _ESC_BOLD: &str = "\x1b[1m";
+pub(crate) const _ESC_DIM: &str = "\x1b[2m";
+pub(crate) const _ESC_ITALIC: &str = "\x1b[3m";
+pub(crate) const _ESC_UNDERLINE: &str = "\x1b[4m";
+pub(crate) const _ESC_BLINK: &str = "\x1b[5m";
+pub(crate) const _ESC_REVERSED: &str = "\x1b[7m";
+pub(crate) const _ESC_HIDDEN: &str = "\x1b[8m";
+pub(crate) const _ESC_STRIKETHROUGH: &str = "\x1b[9m";
+pub(crate) const _ESC_DOUBLE_UNDERLINE: &str = "\x1b[21m";
+pub(crate) const _ESC_OVERLINE: &str = "\x1b[53m";
 
 // reset Code
 pub(crate) const ESC_RESET: &str = "\x1b[0m";
