@@ -121,10 +121,6 @@ impl Container {
         return &self.options;
     }
 
-    pub(crate) fn texts(&self) -> &Vec<cpn::txt::Text> {
-        return &self.texts;
-    }
-
     pub(crate) fn texts_mut(&mut self) -> &mut Vec<cpn::txt::Text> {
         return &mut self.texts;
     }
