@@ -233,11 +233,7 @@ impl Renderer {
     /// renderer.render(&mut container)?;
     /// ```
     pub fn render(&mut self, container: &mut con::Container) -> FtuiResult<()> {
-        match container.header().as_ref() {
-            Some(header) => self.render_header(header),
-            None => return Err(FtuiError::RendererContainerNoHeader),
-        };
-
+        container.header().as_ref().map(|header| self.render_header(header));
         self.render_options(container.options());
         self.render_text(container.texts_mut());
 
