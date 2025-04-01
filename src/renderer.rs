@@ -1,4 +1,4 @@
-use crate::{con, cpn, error::{FtuiError, FtuiResult}, util::ansi};
+use crate::{con, cpn, error::FtuiResult, util::ansi};
 
 use std::option::Option;
 
