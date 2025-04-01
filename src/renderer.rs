@@ -40,7 +40,6 @@ impl Line {
 
 /// Prepares the terminal for rendering. This function is typically used in 
 /// conjunction with `unready()`, similar to how `malloc` pairs with `free`.
-///
 /// It clears the terminal screen and moves the cursor to the home position,
 /// then hide it. This ensure a clean state before rendering.
 ///
@@ -62,10 +61,8 @@ pub fn ready() {
 
 /// Restores the terminal state after rendering is done. This function is 
 /// typically used in conjunction with `ready()`, similar to how `malloc` pairs
-/// with `free`.
-///
-/// It clears the terminal screen and moves the cursor to the home position,
-/// then unhide it. This ensure a clean state before rendering.
+/// with `free`. It clears the terminal screen and moves the cursor to the home
+/// position, then unhide it. This ensure a clean state before rendering.
 ///
 /// # Example
 /// ```rust
