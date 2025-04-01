@@ -233,43 +233,43 @@ impl Text {
         }
     }
 
-    pub fn set_line(&mut self, line: u16) {
+    pub(crate) fn set_line(&mut self, line: u16) {
         self.line = line;
     }
 
-    pub fn line(&self) -> u16 {
+    pub(crate) fn line(&self) -> u16 {
         return self.line;
     }
 
-    pub fn label(&self) -> &String {
+    pub(crate) fn label(&self) -> &String {
         return &self.label;
     }
 
-    pub fn len(&self) -> usize {
+    pub(crate) fn len(&self) -> usize {
         return self.label.len();
     }
 
-    pub fn set_pos(&mut self, pos: u16) {
+    pub(crate) fn set_pos(&mut self, pos: u16) {
         self.pos = pos;
     }
 
-    pub fn pos(&self) -> u16 {
+    pub(crate) fn pos(&self) -> u16 {
         return self.pos;
     }
 
-    pub fn pos_resolve(&self) -> bool {
+    pub(crate) fn pos_resolve(&self) -> bool {
         return self.pos_resolve;
     }
 
-    pub fn set_pos_resolve(&mut self, value: bool) {
+    pub(crate) fn set_pos_resolve(&mut self, value: bool) {
         self.pos_resolve = value;
     }
 
-    pub fn flags(&self) -> &TextFlags {
+    pub(crate) fn flags(&self) -> &TextFlags {
         return &self.flags;
     }
 
-    pub fn color(&self) -> &String {
+    pub(crate) fn color(&self) -> &String {
         return &self.color;
     }
 }

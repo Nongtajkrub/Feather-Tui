@@ -86,27 +86,27 @@ impl Option {
         })
     }
 
-    pub fn set_line(&mut self, line: u16) {
+    pub(crate) fn set_line(&mut self, line: u16) {
         self.line = line;
     }
 
-    pub fn line(&self) -> u16 {
+    pub(crate) fn line(&self) -> u16 {
         return self.line;
     }
 
-    pub fn label(&self) -> &String {
+    pub(crate) fn label(&self) -> &String {
         return &self.label;
     }
 
-    pub fn selc_on(&self) -> bool {
+    pub(crate) fn selc_on(&self) -> bool {
         return self.selc_on;
     }
 
-    pub fn callback(&self) -> &cbk::Callback {
+    pub(crate) fn callback(&self) -> &cbk::Callback {
         return &self.callback;
     }
 
-    pub fn set_selc_on(&mut self, value: bool) {
+    pub(crate) fn set_selc_on(&mut self, value: bool) {
         self.selc_on = value;
     }
 }

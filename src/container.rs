@@ -113,19 +113,19 @@ impl Container {
         self
     } 
 
-    pub fn header(&self) -> &Option<cpn::hed::Header>{
+    pub(crate) fn header(&self) -> &Option<cpn::hed::Header>{
         return &self.header;
     }
 
-    pub fn options(&self) -> &Vec<cpn::opt::Option> {
+    pub(crate) fn options(&self) -> &Vec<cpn::opt::Option> {
         return &self.options;
     }
 
-    pub fn texts(&self) -> &Vec<cpn::txt::Text> {
+    pub(crate) fn texts(&self) -> &Vec<cpn::txt::Text> {
         return &self.texts;
     }
 
-    pub fn texts_mut(&mut self) -> &mut Vec<cpn::txt::Text> {
+    pub(crate) fn texts_mut(&mut self) -> &mut Vec<cpn::txt::Text> {
         return &mut self.texts;
     }
 
