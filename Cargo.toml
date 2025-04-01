@@ -2,7 +2,7 @@
 name = "feather-tui"
 version = "1.0.3"
 edition = "2024"
-license = "MIT"
+license = "Apache-2.0"
 description = "A crate for building simple terminal-based user interfaces."
 homepage = "https://github.com/Nongtajkrub/termui"
 repository = "https://github.com/Nongtajkrub/termui"
