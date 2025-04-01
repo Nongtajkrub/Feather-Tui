@@ -3,8 +3,6 @@ use crate::{err::FtuiResult, ren};
 use crossterm as ct;
 use std::{io::{self, Write}, option::Option};
 
-pub const READ_KEY_FAIL_ERRMSG: &str = "Input: Fail to read key events from the terminal.";
-
 /// Reads a line of input from the user after displaying a prompt.
 ///
 /// # Parameters
@@ -55,11 +53,14 @@ pub fn line(promt: &str) -> FtuiResult<String> {
 /// ```rust
 /// use feather_tui as tui;
 ///
-/// // Get the user key input as `KeyCode` and print it out
-/// match tui::inp::key() {
-///     Ok(Some(key)) => println!("Key pressed: {:?}", key),
-///     Ok(None) => println!("No key press detected"),
-///     Err(e) => eprintln!("Error reading key: {}", e),
+/// fn main() -> tui::err::FtuiResult<()> {
+///     // Get the user key input as `KeyCode` and print it out
+///     match tui::inp::key()? {
+///         Some(key) => println!("Key pressed: {:?}", key),
+///         None => println!("No key press detected"),
+///     };
+///
+///     Ok(())
 /// }
 /// ```
 pub fn key() -> FtuiResult<Option<ct::event::KeyCode>> {
@@ -93,19 +94,23 @@ pub fn key() -> FtuiResult<Option<ct::event::KeyCode>> {
 /// ```rust
 /// use feather_tui as tui;
 ///
-/// // Capture user keyboard input as a KeyCode.
-/// // If reading fails, terminate with an error message.
-/// let key_code = inp::key().expect(inp::READ_KEY_FAIL_ERRMSG);
+/// fn main() -> tui::err::FtuiResult<()> {
+///     // Capture user keyboard input as a KeyCode.
+///     // If reading fails, terminate with an error.
+///     let key_code = inp::key()?;
 ///
-/// // If a key was pressed, attempt to convert it to a character.
-/// match key_code {
-///     Some(code) => match inp::keycode_to_char(code) {
-///         // Print the character if it's a printable key.
-///         Some(c) => println!("Key pressed: {}", c), 
-///         None => println!("Unprintable KeyCode"), 
-///     },
-///     // No key was pressed, exit the function.
-///     None => return, 
+///     // If a key was pressed, attempt to convert it to a character.
+///     match key_code {
+///         Some(code) => match inp::keycode_to_char(code) {
+///             // Print the character if it's a printable key.
+///             Some(c) => println!("Key pressed: {}", c), 
+///             None => println!("Unprintable KeyCode"), 
+///         },
+///         // No key was pressed, exit the function.
+///         None => return, 
+///     }
+///
+///     Ok(())
 /// }
 /// ```
 pub fn keycode_to_char(code: ct::event::KeyCode) -> Option<char> {
@@ -126,11 +131,13 @@ pub fn keycode_to_char(code: ct::event::KeyCode) -> Option<char> {
 /// ```rust
 /// use feather_tui as tui;
 ///
-/// // Capture user keyboard input as a character and print it out if possible. 
-/// match tui::inp::key_char() {
-///     Ok(Some(c)) => println!("Key pressed: {}", c),
-///     Ok(None) => println!("No key pressed or no printable key pressed"),
-///     Err(e) => eprintln!("Error reading key: {}", e),
+/// fn main() -> tui::err::FtuiResult<()> {
+///     // Capture user keyboard input as a character and print it out if
+///     // possible. 
+///     match tui::inp::key_char()? {
+///         Some(c) => println!("Key pressed: {}", c),
+///         None => println!("No key pressed or no printable key pressed"),
+///     }
 /// }
 /// ```
 pub fn key_char() -> FtuiResult<Option<char>> {
