@@ -3,9 +3,6 @@ use crate::{err::FtuiResult, ren};
 use crossterm as ct;
 use std::{io::{self, Write}, option::Option};
 
-#[deprecated(note = "This constant was never intended as a feature and will be removed soon.")]
-pub const READ_KEY_FAIL_ERRMSG: &str = "Input: Fail to read key events from the terminal.";
-
 /// Reads a line of input from the user after displaying a prompt.
 ///
 /// # Parameters
