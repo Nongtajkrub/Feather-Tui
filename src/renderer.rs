@@ -57,7 +57,7 @@ impl Line {
 pub fn ready() {
     print!(
         "{}{}{}",
-        ansi::ESC_CLEAR_TERM, ansi::ESC_CURSOR_HOME, ansi::ESC_CURSOR_HOME);
+        ansi::ESC_CLEAR_TERM, ansi::ESC_CURSOR_HIDE, ansi::ESC_CURSOR_HOME);
 }
 
 /// Restores the terminal state after rendering is done. This function is 
