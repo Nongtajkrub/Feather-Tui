@@ -1,12 +1,10 @@
 use crate::{con, cpn, error::FtuiResult, util::ansi};
 
-use std::option::Option;
-
 const BG_CHAR: &str = " ";
 
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct Line {
-    ansi: Option<String>,
+    ansi: Vec<&'static str>,
     width: u16,
     data: String,
 }
@@ -14,7 +12,7 @@ struct Line {
 impl Line {
     pub fn new(width: u16) -> Line {
         Line {
-            ansi: None,
+            ansi: vec![],
             width,
             data: Self::make_empty_line(width),
         }
@@ -24,8 +22,8 @@ impl Line {
         BG_CHAR.repeat(width as usize)
     }
 
-    pub fn set_ansi(&mut self, ansi: String) {
-        self.ansi = Some(ansi);
+    pub fn add_ansi(&mut self, value: &'static str) {
+        self.ansi.push(value);
     }
 
     pub fn edit(&mut self, data: &String, begin: u16) {
@@ -34,7 +32,7 @@ impl Line {
 
     pub fn clear(&mut self) {
         self.data = Self::make_empty_line(self.width);
-        self.ansi = None;
+        self.ansi.clear();
     }
 }
 
@@ -157,7 +155,7 @@ impl Renderer {
         let line = &mut self.lines[0];
 
         line.edit(header.label(), pos);
-        line.set_ansi(String::from(ansi::ESC_GREEN_B));
+        line.add_ansi(ansi::ESC_GREEN_B);
     }
 
     fn render_options(&mut self, options: &Vec<cpn::opt::Option>) {
@@ -167,7 +165,7 @@ impl Renderer {
             line.edit(option.label(), 0);
 
             if option.selc_on() {
-                line.set_ansi(String::from(ansi::ESC_BLUE_B));
+                line.add_ansi(ansi::ESC_BLUE_B);
             }
         }
     }
@@ -200,7 +198,8 @@ impl Renderer {
             let line = &mut self.lines[text.line() as usize];
 
             line.edit(text.label(), text.pos());
-            line.set_ansi(String::from(text.color()));
+            line.add_ansi(text.color());
+            text.styles().iter().for_each(|ansi| line.add_ansi(&ansi));
         }
     }
 
@@ -262,13 +261,11 @@ impl Renderer {
     /// renderer.draw();
     /// ```
     pub fn draw(&mut self) {
-        for line in self.lines.iter() {
-            if let Some(ansi) = &line.ansi {
-                println!("{}{}{}", ansi, line.data, ansi::ESC_COLOR_RESET);
-            } else {
-                println!("{}", line.data)
-            }
-        }
+        self.lines.iter().for_each(|line| 
+            println!(
+                "{}{}{}{}",
+                line.ansi.concat(),
+                line.data, ansi::ESC_COLOR_RESET, ansi::ESC_STYLE_RESET));
 
         print!("{}", ansi::ESC_CURSOR_HOME);
     }
