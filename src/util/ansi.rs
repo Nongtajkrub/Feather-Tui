@@ -30,7 +30,7 @@ pub(crate) const _ESC_HIDDEN: &str = "\x1b[8m";            // Not use
 pub(crate) const ESC_STRIKETHROUGH: &str = "\x1b[9m";
 pub(crate) const _ESC_DOUBLE_UNDERLINE: &str = "\x1b[21m"; // Not work
 pub(crate) const _ESC_OVERLINE: &str = "\x1b[53m";         // Not work
-pub(crate) const _ESC_STYLE_RESET: &str = "\x1B[0m";
+pub(crate) const ESC_STYLE_RESET: &str = "\x1B[0m";
 
 // cursors
 pub(crate) const ESC_CURSOR_HOME: &str = "\x1b[H";
