@@ -47,7 +47,7 @@ bitflags! {
         const STYLE_DIM    = 1 << 15;
         const STYLE_ITALIC = 1 << 16;
         const STYLE_UNDER  = 1 << 17;
-        const STYLE_BLINK  = 1 << 18;
+        const STYLE_STRIKE = 1 << 18;
     }
 }
 
@@ -175,7 +175,7 @@ impl Text {
             pos_resolve: false,
             pos: 0,
             color: Self::resolve_color(flags),
-            style: vec![],
+            style: Self::resolve_style(flags),
         })
     }
 
@@ -236,6 +236,10 @@ impl Text {
         } else {
             ""
         }
+    }
+
+    fn resolve_style(flags: TextFlags) -> Vec<&'static str> {
+        return vec![""];
     }
 
     pub(crate) fn set_line(&mut self, line: u16) {
