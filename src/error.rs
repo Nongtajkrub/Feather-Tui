@@ -118,6 +118,9 @@ pub enum FtuiError {
     #[error("Container doesnot have a Selector.")]
     ContainerNoSelector,
 
+    #[error("Container has more components than the renderer can accommodate.")]
+    RendererContainerTooBig,
+
     /// Occurs when functions in the `input` module fail. Affected functions 
     /// include `line`, `key`, and `key_char`. This enum wraps an error message
     /// from `std::io::Error`.

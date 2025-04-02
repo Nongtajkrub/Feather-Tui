@@ -128,4 +128,8 @@ impl Container {
     pub fn selector_mut(&mut self) -> FtuiResult<&mut slc::Selector> {
         self.selector.as_mut().ok_or(FtuiError::ContainerNoSelector)
     }
+
+    pub(crate) fn component_count(&self) -> u16 {
+        self.component_count
+    }
 }

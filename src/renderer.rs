@@ -1,4 +1,4 @@
-use crate::{con, cpn, error::FtuiResult, util::ansi};
+use crate::{con, cpn, error::{FtuiError, FtuiResult}, util::ansi};
 
 const BG_CHAR: &str = " ";
 
@@ -229,6 +229,10 @@ impl Renderer {
     /// renderer.render(&mut container)?;
     /// ```
     pub fn render(&mut self, container: &mut con::Container) -> FtuiResult<()> {
+        if container.component_count() > self.height {
+            return Err(FtuiError::RendererContainerTooBig);
+        }
+
         container.header().as_ref().map(|header| self.render_header(header));
         self.render_options(container.options());
         self.render_text(container.texts_mut());
