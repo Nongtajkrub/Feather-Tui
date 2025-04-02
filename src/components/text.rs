@@ -239,7 +239,25 @@ impl Text {
     }
 
     fn resolve_style(flags: TextFlags) -> Vec<&'static str> {
-        return vec![""];
+        let mut style: Vec<&'static str> = vec![];
+
+        if flags.contains(TextFlags::STYLE_BOLD) {
+            style.push(ansi::ESC_BOLD);
+        }
+        if flags.contains(TextFlags::STYLE_DIM) {
+            style.push(ansi::ESC_DIM);
+        }
+        if flags.contains(TextFlags::STYLE_ITALIC) {
+            style.push(ansi::ESC_ITALIC);
+        }
+        if flags.contains(TextFlags::STYLE_UNDER) {
+            style.push(ansi::ESC_UNDERLINE);
+        }
+        if flags.contains(TextFlags::STYLE_STRIKE) {
+            style.push(ansi::ESC_STRIKETHROUGH);
+        }
+
+        return style;
     }
 
     pub(crate) fn set_line(&mut self, line: u16) {
@@ -280,5 +298,9 @@ impl Text {
 
     pub(crate) fn color(&self) -> &'static str {
         return &self.color;
+    }
+
+    pub(crate) fn styles(&self) -> &Vec<&'static str> {
+        return &self.style;
     }
 }
