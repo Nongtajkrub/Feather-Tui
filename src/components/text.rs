@@ -3,7 +3,7 @@ use bitflags::bitflags;
 
 bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-    pub struct TextFlags: u16 {
+    pub struct TextFlags: u32 {
         // NONE can't be 0
         const NONE          = 1 << 0;
 
@@ -41,6 +41,13 @@ bitflags! {
             Self::COLOR_CYAN.bits() | Self::COLOR_BACK.bits();
         const COLOR_WHITE_BACK =
             Self::COLOR_WHITE.bits() | Self::COLOR_BACK.bits();
+
+        // styles
+        const STYLE_BOLD   = 1 << 14;
+        const STYLE_DIM    = 1 << 15;
+        const STYLE_ITALIC = 1 << 16;
+        const STYLE_UNDER  = 1 << 17;
+        const STYLE_BLINK  = 1 << 17;
     }
 }
 
@@ -88,7 +95,7 @@ pub struct Text {
     flags: TextFlags,
     pos_resolve: bool,
     pos: u16,
-    color: String,
+    color: &'static str,
 }
 
 /// Implementation of the `PartialEq` trait for the `Text` struct. This implementation
@@ -202,16 +209,12 @@ impl Text {
     }
 
     #[inline]
-    fn color_f_or_b(flags: TextFlags, b: &str, f: &str) -> String {
+    fn color_f_or_b(flags: TextFlags, b: &'static str, f: &'static str) -> &'static str {
         // if COLOR_BACK flag is not set text will default to foreground color
-        if flags.contains(TextFlags::COLOR_BACK) {
-            b.to_string() 
-        } else {
-            f.to_string()
-        }
+        if flags.contains(TextFlags::COLOR_BACK) { b } else { f }
     }
 
-    fn resolve_color(flags: TextFlags) -> String {
+    fn resolve_color(flags: TextFlags) -> &'static str {
         if flags.contains(TextFlags::COLOR_BLACK) {
             Self::color_f_or_b(flags, ansi::ESC_BLACK_B, ansi::ESC_BLACK_F)
         } else if flags.contains(TextFlags::COLOR_RED) {
@@ -229,7 +232,7 @@ impl Text {
         } else if flags.contains(TextFlags::COLOR_WHITE) {
             Self::color_f_or_b(flags, ansi::ESC_WHITE_B, ansi::ESC_WHITE_F)
         } else {
-            String::from("")
+            ""
         }
     }
 
@@ -269,7 +272,7 @@ impl Text {
         return &self.flags;
     }
 
-    pub(crate) fn color(&self) -> &String {
+    pub(crate) fn color(&self) -> &'static str {
         return &self.color;
     }
 }
