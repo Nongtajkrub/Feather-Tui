@@ -47,7 +47,7 @@ bitflags! {
         const STYLE_DIM    = 1 << 15;
         const STYLE_ITALIC = 1 << 16;
         const STYLE_UNDER  = 1 << 17;
-        const STYLE_BLINK  = 1 << 17;
+        const STYLE_BLINK  = 1 << 18;
     }
 }
 
@@ -96,6 +96,7 @@ pub struct Text {
     pos_resolve: bool,
     pos: u16,
     color: &'static str,
+    style: Vec<&'static str>,
 }
 
 /// Implementation of the `PartialEq` trait for the `Text` struct. This implementation
@@ -174,6 +175,7 @@ impl Text {
             pos_resolve: false,
             pos: 0,
             color: Self::resolve_color(flags),
+            style: vec![],
         })
     }
 

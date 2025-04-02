@@ -264,7 +264,7 @@ impl Renderer {
     pub fn draw(&mut self) {
         for line in self.lines.iter() {
             if let Some(ansi) = &line.ansi {
-                println!("{}{}{}", ansi, line.data, ansi::ESC_RESET);
+                println!("{}{}{}", ansi, line.data, ansi::ESC_COLOR_RESET);
             } else {
                 println!("{}", line.data)
             }
