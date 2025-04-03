@@ -1,4 +1,4 @@
-use crate::{components::header, con, cpn, error::{FtuiError, FtuiResult}, util::ansi};
+use crate::{con, cpn, error::{FtuiError, FtuiResult}, util::ansi};
 
 const BG_CHAR: &str = " ";
 
@@ -151,7 +151,7 @@ impl Renderer {
         (0..height).map(|_| Line::new(width)).collect()
     }
 
-    fn render_header(&mut self, header: &cpn::hed::Header) {
+    fn render_header(&mut self, header: &cpn::Header) {
         let pos: u16 = 
             ((self.width as f32 - header.len() as f32) / 2.0).round() as u16; 
 
@@ -159,7 +159,7 @@ impl Renderer {
         self.lines[0].add_ansi(ansi::ESC_GREEN_B);
     }
 
-    fn render_options(&mut self, options: &[cpn::opt::Option]) {
+    fn render_options(&mut self, options: &[cpn::Option]) {
         for option in options {
             let line = &mut self.lines[option.line() as usize];
 
@@ -171,11 +171,11 @@ impl Renderer {
         }
     }
     
-    fn resolve_text_pos(&self, text: &mut cpn::txt::Text) {
+    fn resolve_text_pos(&self, text: &mut cpn::Text) {
         // x pos
-        if text.flags().contains(cpn::txt::TextFlags::ALIGN_MIDDLE) {
+        if text.flags().contains(cpn::TextFlags::ALIGN_MIDDLE) {
             text.set_pos(((self.width as f32 - text.len() as f32) / 2.0).round() as u16);
-        } else if text.flags().contains(cpn::txt::TextFlags::ALIGN_RIGHT) {
+        } else if text.flags().contains(cpn::TextFlags::ALIGN_RIGHT) {
             text.set_pos(self.width - text.len() as u16);
         } else {
             // default to left alignment
@@ -183,14 +183,14 @@ impl Renderer {
         } 
 
         // y pos
-        if text.flags().contains(cpn::txt::TextFlags::ALIGN_BOTTOM) {
+        if text.flags().contains(cpn::TextFlags::ALIGN_BOTTOM) {
             text.set_line(self.height - 1);
         }
 
         text.set_pos_resolve(true);
     }
 
-    fn render_text(&mut self, texts: &mut [cpn::txt::Text]) {
+    fn render_text(&mut self, texts: &mut [cpn::Text]) {
         for text in texts.iter_mut() {
             if !text.pos_resolve() {
                 self.resolve_text_pos(text);
