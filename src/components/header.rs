@@ -59,7 +59,7 @@ impl Header {
     }
 
     pub(crate) fn len(&self) -> usize {
-        return self.label.len();
+        return self.len;
     }
 
     pub(crate) fn label(&self) -> &String {

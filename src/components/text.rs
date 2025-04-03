@@ -276,7 +276,7 @@ impl Text {
     }
 
     pub(crate) fn len(&self) -> usize {
-        return self.label.len();
+        return self.len;
     }
 
     pub(crate) fn set_pos(&mut self, pos: u16) {

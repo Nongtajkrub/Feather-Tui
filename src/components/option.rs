@@ -101,6 +101,10 @@ impl Option {
         return &self.label;
     }
 
+    pub(crate) fn len(&self) -> usize {
+        return self.len;
+    }
+
     pub(crate) fn selc_on(&self) -> bool {
         return self.selc_on;
     }
