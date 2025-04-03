@@ -142,25 +142,57 @@ impl Renderer {
         Renderer {
             width,
             height,
-            lines: Self::make_lines(width, height), 
+            lines: (0..height).map(|_| Line::new(width)).collect(), 
         }
     }
 
-    #[inline]
-    fn make_lines(width: u16, height: u16) -> Vec<Line> {
-        (0..height).map(|_| Line::new(width)).collect()
+    /// Caculate the position of a middle-aligned component. Will return error
+    /// if the component label exceed the renderer's width. 
+    fn calc_middle_align_pos(&self, len: usize) -> FtuiResult<u16> {
+        let pos = ((self.width as f32 - len as f32) / 2.0).round() as i32; 
+
+        if pos < 0 || pos > u16::MAX as i32 || pos as usize + len > self.width as usize {
+            Err(FtuiError::RendererContainerTooBig)
+        } else {
+            Ok(pos as u16)
+        }
     }
 
-    fn render_header(&mut self, header: &cpn::Header) {
-        let pos: u16 = 
-            ((self.width as f32 - header.len() as f32) / 2.0).round() as u16; 
+    /// Caculate the position of a left-aligned component. Will return error
+    /// if the component label exceed the renderer's width. 
+    fn calc_right_align_pos(&self, len: usize) -> FtuiResult<u16> {
+        if len > self.width as usize {
+            Err(FtuiError::RendererContainerTooBig)
+        } else {
+            Ok(self.width - len as u16)
+        }
+    }
 
-        self.lines[0].edit(header.label(), pos);
+    /// Caculate the position of a left-aligned component. Will return error
+    /// if the component label exceed the renderer's width. 
+    fn calc_left_align_pos(&self, len: usize) -> FtuiResult<u16> {
+        if len > self.width as usize {
+            Err(FtuiError::RendererContainerTooBig)
+        } else {
+            Ok(0)
+        }
+    }
+
+    fn render_header(&mut self, header: &cpn::Header) -> FtuiResult<()> {
+        let pos: u16 = self.calc_middle_align_pos(header.len())?;
+
+        self.lines[0].edit(header.label(), pos as u16);
         self.lines[0].add_ansi(ansi::ESC_GREEN_B);
+
+        Ok(())
     }
 
-    fn render_options(&mut self, options: &[cpn::Option]) {
+    fn render_options(&mut self, options: &[cpn::Option]) -> FtuiResult<()> {
         for option in options {
+            if option.len() > self.width as usize {
+                return Err(FtuiError::RendererContainerTooBig);
+            }
+            
             let line = &mut self.lines[option.line() as usize];
 
             line.edit(option.label(), 0);
@@ -169,17 +201,19 @@ impl Renderer {
                 line.add_ansi(ansi::ESC_BLUE_B);
             }
         }
+
+        Ok(())
     }
     
-    fn resolve_text_pos(&self, text: &mut cpn::Text) {
+    fn resolve_text_pos(&self, text: &mut cpn::Text) -> FtuiResult<()> {
         // x pos
         if text.flags().contains(cpn::TextFlags::ALIGN_MIDDLE) {
-            text.set_pos(((self.width as f32 - text.len() as f32) / 2.0).round() as u16);
+            text.set_pos(self.calc_middle_align_pos(text.len())?);
         } else if text.flags().contains(cpn::TextFlags::ALIGN_RIGHT) {
-            text.set_pos(self.width - text.len() as u16);
+            text.set_pos(self.calc_right_align_pos(text.len())?);
         } else {
             // default to left alignment
-            text.set_pos(0);
+            text.set_pos(self.calc_left_align_pos(text.len())?);
         } 
 
         // y pos
@@ -188,13 +222,13 @@ impl Renderer {
         }
 
         text.set_pos_resolve(true);
+
+        Ok(())
     }
 
-    fn render_text(&mut self, texts: &mut [cpn::Text]) {
+    fn render_text(&mut self, texts: &mut [cpn::Text]) -> FtuiResult<()> {
         for text in texts.iter_mut() {
-            if !text.pos_resolve() {
-                self.resolve_text_pos(text);
-            }
+            self.resolve_text_pos(text)?;
             
             let line = &mut self.lines[text.line() as usize];
 
@@ -202,6 +236,8 @@ impl Renderer {
             line.add_ansi(text.color());
             line.add_ansi_many(text.styles());
         }
+
+        Ok(())
     }
 
     /// Renders a `Container` into the `Renderer` buffer without drawing to the terminal.
@@ -234,9 +270,11 @@ impl Renderer {
             return Err(FtuiError::RendererContainerTooBig);
         }
 
-        container.header().as_ref().map(|header| self.render_header(header));
-        self.render_options(container.options());
-        self.render_text(container.texts_mut());
+        if let Some(header) = container.header().as_ref() {
+            self.render_header(header)?;
+        }
+        self.render_options(container.options())?;
+        self.render_text(container.texts_mut())?;
 
         Ok(())
     }
