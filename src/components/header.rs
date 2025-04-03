@@ -1,4 +1,5 @@
 use crate::err::{FtuiError, FtuiResult};
+use unicode_segmentation::UnicodeSegmentation;
 
 /// A UI component that serves as the header of a `Container`. It is displayed 
 /// at the top of the `Container` and is typically used to provide a title or
@@ -26,6 +27,7 @@ use crate::err::{FtuiError, FtuiResult};
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Header {
     label: String,
+    len: usize,
 }
 
 impl Header {
@@ -52,6 +54,7 @@ impl Header {
 
         Ok(Header { 
             label: label.to_string(), 
+            len: label.graphemes(true).count(),
         })
     }
 

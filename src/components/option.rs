@@ -1,4 +1,5 @@
 use crate::{cbk, err::{FtuiError, FtuiResult}};
+use unicode_segmentation::UnicodeSegmentation;
 
 /// A UI component representing an interactive option in a `Container`. 
 /// `Option` components are displayed in the order they are added to the
@@ -41,6 +42,7 @@ use crate::{cbk, err::{FtuiError, FtuiResult}};
 /// ```
 pub struct Option {
     label: String,
+    len: usize,
     line: u16,
     selc_on: bool,
     callback: cbk::Callback,
@@ -80,6 +82,7 @@ impl Option {
 
         Ok(Option {
             label: label.to_string(),
+            len: label.graphemes(true).count(),
             line: 0,
             selc_on: false,
             callback,

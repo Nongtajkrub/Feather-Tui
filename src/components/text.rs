@@ -1,5 +1,6 @@
 use crate::{error::{FtuiError, FtuiResult}, util::ansi};
 use bitflags::bitflags;
+use unicode_segmentation::UnicodeSegmentation;
 
 bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
@@ -91,6 +92,7 @@ impl Default for TextFlags {
 #[derive(Debug, Clone)]
 pub struct Text {
     label: String,
+    len: usize,
     line: u16,
     flags: TextFlags,
     pos_resolve: bool,
@@ -170,6 +172,7 @@ impl Text {
         
         Ok(Text {
             label: label.to_string(),
+            len: label.graphemes(true).count(),
             line: 0,
             flags,
             pos_resolve: false,
