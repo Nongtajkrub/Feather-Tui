@@ -146,42 +146,38 @@ impl Renderer {
         }
     }
 
-    /// Caculate the position of a middle-aligned component. Will return error
-    /// if the component label exceed the renderer's width. 
-    fn calc_middle_align_pos(&self, len: usize) -> FtuiResult<u16> {
-        let pos = ((self.width as f32 - len as f32) / 2.0).round() as i32; 
-
-        if pos < 0 || pos > u16::MAX as i32 || pos as usize + len > self.width as usize {
-            Err(FtuiError::RendererContainerTooBig)
-        } else {
-            Ok(pos as u16)
-        }
+    /// Caculate the position of a middle-aligned component.
+    #[inline] 
+    fn calc_middle_align_pos(width: u16, len: usize) -> u16 {
+        ((width as f32 - len as f32) / 2.0).round() as u16 
     }
 
-    /// Caculate the position of a left-aligned component. Will return error
-    /// if the component label exceed the renderer's width. 
-    fn calc_right_align_pos(&self, len: usize) -> FtuiResult<u16> {
+    /// Caculate the position of a left-aligned component.
+    #[inline]
+    fn calc_right_align_pos(width: u16, len: usize) ->u16 {
+        (width as usize - len) as u16
+    }
+
+    /// Caculate the position of a left-aligned component.
+    #[inline]
+    fn calc_left_align_pos() -> u16 {
+        0
+    }
+
+    fn ensure_label_inbound(&self, len: usize) -> FtuiResult<()> {
         if len > self.width as usize {
             Err(FtuiError::RendererContainerTooBig)
         } else {
-            Ok(self.width - len as u16)
-        }
-    }
-
-    /// Caculate the position of a left-aligned component. Will return error
-    /// if the component label exceed the renderer's width. 
-    fn calc_left_align_pos(&self, len: usize) -> FtuiResult<u16> {
-        if len > self.width as usize {
-            Err(FtuiError::RendererContainerTooBig)
-        } else {
-            Ok(0)
+            Ok(())
         }
     }
 
     fn render_header(&mut self, header: &cpn::Header) -> FtuiResult<()> {
-        let pos: u16 = self.calc_middle_align_pos(header.len())?;
+        self.ensure_label_inbound(header.len())?;
 
-        self.lines[0].edit(header.label(), pos as u16);
+        self.lines[0].edit(
+            header.label(),
+            Self::calc_middle_align_pos(self.width, header.len()));
         self.lines[0].add_ansi(ansi::ESC_GREEN_B);
 
         Ok(())
@@ -189,9 +185,7 @@ impl Renderer {
 
     fn render_options(&mut self, options: &[cpn::Option]) -> FtuiResult<()> {
         for option in options {
-            if option.len() > self.width as usize {
-                return Err(FtuiError::RendererContainerTooBig);
-            }
+            self.ensure_label_inbound(option.len())?;
             
             let line = &mut self.lines[option.line() as usize];
 
@@ -205,15 +199,15 @@ impl Renderer {
         Ok(())
     }
     
-    fn resolve_text_pos(&self, text: &mut cpn::Text) -> FtuiResult<()> {
+    fn resolve_text_pos(&self, text: &mut cpn::Text) {
         // x pos
         if text.flags().contains(cpn::TextFlags::ALIGN_MIDDLE) {
-            text.set_pos(self.calc_middle_align_pos(text.len())?);
+            text.set_pos(Self::calc_middle_align_pos(self.width, text.len()));
         } else if text.flags().contains(cpn::TextFlags::ALIGN_RIGHT) {
-            text.set_pos(self.calc_right_align_pos(text.len())?);
+            text.set_pos(Self::calc_right_align_pos(self.width, text.len()));
         } else {
             // default to left alignment
-            text.set_pos(self.calc_left_align_pos(text.len())?);
+            text.set_pos(Self::calc_left_align_pos());
         } 
 
         // y pos
@@ -222,13 +216,12 @@ impl Renderer {
         }
 
         text.set_pos_resolve(true);
-
-        Ok(())
     }
 
     fn render_text(&mut self, texts: &mut [cpn::Text]) -> FtuiResult<()> {
         for text in texts.iter_mut() {
-            self.resolve_text_pos(text)?;
+            self.ensure_label_inbound(text.len())?;
+            self.resolve_text_pos(text);
             
             let line = &mut self.lines[text.line() as usize];
 
