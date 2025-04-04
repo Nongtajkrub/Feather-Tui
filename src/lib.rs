@@ -31,3 +31,27 @@ pub use container  as con;
 pub use renderer   as ren;
 pub use input      as inp;
 pub use error      as err;
+
+#[cfg(feature = "reduce_abstraction")]
+pub use cpn::{Header, Option, Text, TextFlags};
+
+#[cfg(feature = "reduce_abstraction")]
+pub use cbk::Callback;
+
+#[cfg(feature = "reduce_abstraction")]
+pub use trg::Trigger;
+
+#[cfg(feature = "reduce_abstraction")]
+pub use slc::Selector;
+
+#[cfg(feature = "reduce_abstraction")]
+pub use con::Container;
+
+#[cfg(feature = "reduce_abstraction")]
+pub use ren::Renderer;
+
+#[cfg(feature = "reduce_abstraction")]
+pub use inp::{line, key, keycode_to_char, key_char};
+
+#[cfg(feature = "reduce_abstraction")]
+pub use err::{FtuiError, FtuiResult};

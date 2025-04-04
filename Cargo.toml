@@ -9,6 +9,10 @@ repository = "https://github.com/Nongtajkrub/termui"
 readme = "README.md"
 keywords = ["user_interface", "ui", "terminal", "cli", "simple"]
 
+[features]
+default = []
+reduce_abstraction = []
+
 [dependencies]
 bitflags = "2.9.0"
 crossterm = "0.28.1"
