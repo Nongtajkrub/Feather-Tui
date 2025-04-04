@@ -222,7 +222,7 @@ impl Renderer {
         for text in texts.iter_mut() {
             self.ensure_label_inbound(text.len())?;
             self.resolve_text_pos(text);
-            
+
             let line = &mut self.lines[text.line() as usize];
 
             line.edit(text.label(), text.pos());
