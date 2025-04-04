@@ -118,7 +118,36 @@ pub enum FtuiError {
     #[error("Container doesnot have a Selector.")]
     ContainerNoSelector,
 
-    #[error("Container has more components than the renderer can accommodate.")]
+    /// Occurs when attempting to call the `Renderer::render` method with a container
+    /// that exceeds the dimensions of the renderer. There are two cases where a
+    /// container is considered "too big":
+    /// 
+    /// 1. A component's label is longer than the renderer's width.
+    /// 2. The total number of components exceeds the renderer's height.
+    /// 
+    /// # Example
+    /// ```rust
+    /// use feather_tui as tui;
+    ///
+    /// fn main() -> tui::err::FtuiResult<()> {
+    ///     let mut container = tui::con::Container::new()
+    ///         .with_header("Header!")?
+    ///         .with_text("Label", None)?;
+    ///
+    ///     // This will cause an error because the label "Header!" is 7 characters
+    ///     // long, which is wider than the renderer width of 5.
+    ///     let mut renderer = tui::ren::Renderer::new(5, 10);
+    ///     renderer.render(&mut container)?;
+    ///
+    ///     // This will cause an error because the container has 2 components,
+    ///     // but the renderer can only display 1 line (height = 1).
+    ///     let mut renderer = tui::ren::Renderer::new(10, 1);
+    ///     renderer.render(&mut container)?;
+    ///
+    ///     Ok(())
+    /// }
+    /// ```
+    #[error("Container is bigger than what the renderer can accommodate.")]
     RendererContainerTooBig,
 
     /// Occurs when functions in the `input` module fail. Affected functions 
