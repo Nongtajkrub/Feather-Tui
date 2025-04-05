@@ -1,7 +1,5 @@
 use crate::{con, cpn, error::{FtuiError, FtuiResult}, util::ansi};
 
-const BG_CHAR: &str = " ";
-
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct Line {
     ansi: Vec<&'static str>,
@@ -20,7 +18,7 @@ impl Line {
 
     #[inline]
     fn make_empty_line(width: u16) -> String {
-        BG_CHAR.repeat(width as usize)
+        " ".repeat(width as usize)
     }
 
     #[inline]
