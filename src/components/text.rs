@@ -97,7 +97,6 @@ pub struct Text {
     flags: TextFlags,
     pos_resolve: bool,
     pos: u16,
-    color: &'static str,
     style: Vec<&'static str>,
 }
 
@@ -177,7 +176,6 @@ impl Text {
             flags,
             pos_resolve: false,
             pos: 0,
-            color: Self::resolve_color(flags),
             style: Self::resolve_style(flags),
         })
     }
@@ -219,31 +217,34 @@ impl Text {
         if flags.contains(TextFlags::COLOR_BACK) { b } else { f }
     }
 
-    fn resolve_color(flags: TextFlags) -> &'static str {
+    fn resolve_color(flags: TextFlags) -> Option<&'static str> {
         if flags.contains(TextFlags::COLOR_BLACK) {
-            Self::color_f_or_b(flags, ansi::ESC_BLACK_B, ansi::ESC_BLACK_F)
+            Some(Self::color_f_or_b(flags, ansi::ESC_BLACK_B, ansi::ESC_BLACK_F))
         } else if flags.contains(TextFlags::COLOR_RED) {
-            Self::color_f_or_b(flags, ansi::ESC_RED_B, ansi::ESC_RED_F)
+            Some(Self::color_f_or_b(flags, ansi::ESC_RED_B, ansi::ESC_RED_F))
         } else if flags.contains(TextFlags::COLOR_GREEN) {
-            Self::color_f_or_b(flags, ansi::ESC_GREEN_B, ansi::ESC_GREEN_F)
+            Some(Self::color_f_or_b(flags, ansi::ESC_GREEN_B, ansi::ESC_GREEN_F))
         } else if flags.contains(TextFlags::COLOR_YELLOW) {
-            Self::color_f_or_b(flags, ansi::ESC_YELLOW_B, ansi::ESC_YELLOW_F)
+            Some(Self::color_f_or_b(flags, ansi::ESC_YELLOW_B, ansi::ESC_YELLOW_F))
         } else if flags.contains(TextFlags::COLOR_BLUE) {
-            Self::color_f_or_b(flags, ansi::ESC_BLUE_B, ansi::ESC_BLUE_F)
+            Some(Self::color_f_or_b(flags, ansi::ESC_BLUE_B, ansi::ESC_BLUE_F))
         } else if flags.contains(TextFlags::COLOR_MAGENTA) {
-            Self::color_f_or_b(flags, ansi::ESC_MAGENTA_B, ansi::ESC_MAGENTA_F)
+            Some(Self::color_f_or_b(flags, ansi::ESC_MAGENTA_B, ansi::ESC_MAGENTA_F))
         } else if flags.contains(TextFlags::COLOR_CYAN) {
-            Self::color_f_or_b(flags, ansi::ESC_CYAN_B, ansi::ESC_CYAN_F)
+            Some(Self::color_f_or_b(flags, ansi::ESC_CYAN_B, ansi::ESC_CYAN_F))
         } else if flags.contains(TextFlags::COLOR_WHITE) {
-            Self::color_f_or_b(flags, ansi::ESC_WHITE_B, ansi::ESC_WHITE_F)
+            Some(Self::color_f_or_b(flags, ansi::ESC_WHITE_B, ansi::ESC_WHITE_F))
         } else {
-            ""
+            None
         }
     }
 
     fn resolve_style(flags: TextFlags) -> Vec<&'static str> {
         let mut style: Vec<&'static str> = vec![];
 
+        if let Some(color) = Self::resolve_color(flags) {
+            style.push(color);
+        }
         if flags.contains(TextFlags::STYLE_BOLD) {
             style.push(ansi::ESC_BOLD);
         }
@@ -297,10 +298,6 @@ impl Text {
 
     pub(crate) fn flags(&self) -> &TextFlags {
         return &self.flags;
-    }
-
-    pub(crate) fn color(&self) -> &'static str {
-        return &self.color;
     }
 
     pub(crate) fn styles(&self) -> &Vec<&'static str> {

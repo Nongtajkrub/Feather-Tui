@@ -28,9 +28,9 @@ impl Line {
         self.ansi.push(value);
     }
 
-    #[inline]
-    pub fn add_ansi_many(&mut self, value: &Vec<&'static str>) {
-        value.iter().for_each(|ansi| self.ansi.push(ansi));
+    pub fn add_ansi_many(&mut self, value: &[&'static str]) {
+        self.ansi.reserve(value.len());
+        self.ansi.extend(value.iter().copied());
     }
 
     #[inline]
@@ -154,7 +154,7 @@ impl Renderer {
 
     /// Caculate the position of a left-aligned component.
     #[inline]
-    fn calc_right_align_pos(width: u16, len: usize) ->u16 {
+    fn calc_right_align_pos(width: u16, len: usize) -> u16 {
         (width as usize - len) as u16
     }
 
@@ -226,7 +226,6 @@ impl Renderer {
             let line = &mut self.lines[text.line() as usize];
 
             line.edit(text.label(), text.pos());
-            line.add_ansi(text.color());
             line.add_ansi_many(text.styles());
         }
 
