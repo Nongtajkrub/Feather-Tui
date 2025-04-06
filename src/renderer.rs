@@ -212,8 +212,6 @@ impl Renderer {
         if text.flags().contains(cpn::TextFlags::ALIGN_BOTTOM) {
             text.set_line(self.height - 1);
         }
-
-        text.set_pos_resolve(true);
     }
 
     fn render_text(&mut self, texts: &mut [cpn::Text]) -> FtuiResult<()> {

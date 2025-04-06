@@ -95,7 +95,6 @@ pub struct Text {
     len: usize,
     line: u16,
     flags: TextFlags,
-    pos_resolve: bool,
     pos: u16,
     style: Vec<&'static str>,
 }
@@ -174,7 +173,6 @@ impl Text {
             len: label.graphemes(true).count(),
             line: 0,
             flags,
-            pos_resolve: false,
             pos: 0,
             style: Self::resolve_style(flags),
         })
@@ -286,14 +284,6 @@ impl Text {
 
     pub(crate) fn pos(&self) -> u16 {
         return self.pos;
-    }
-
-    pub(crate) fn pos_resolve(&self) -> bool {
-        return self.pos_resolve;
-    }
-
-    pub(crate) fn set_pos_resolve(&mut self, value: bool) {
-        self.pos_resolve = value;
     }
 
     pub(crate) fn flags(&self) -> &TextFlags {
