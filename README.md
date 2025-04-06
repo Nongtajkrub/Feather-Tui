@@ -51,5 +51,3 @@ Feather-Tui is a simple terminal UI library designed to provide building blocks 
 ## 🏗️ Dependencies
 
 `bitflags` `crossterm` `thiserror` `unicode-segmentation`
-
----
