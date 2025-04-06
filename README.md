@@ -26,7 +26,7 @@ Feather-Tui is a simple terminal UI library designed to provide building blocks 
 
 ## 📝 Changelog
 
-[This version introduces some enhancements! Click here to learn more.](https://github.com/Nongtajkrub/Feather-Tui/wiki/Changes#v102)
+[This version introduces some breaking changes! Click here to learn more.](https://github.com/Nongtajkrub/Feather-Tui/wiki/Changes#v200)
 
 ---
 
@@ -42,12 +42,14 @@ Feather-Tui is a simple terminal UI library designed to provide building blocks 
 
 ---
 
+## 🌱 Related Projects
+
+[Original C Version (part of my school management system)](https://github.com/nongtajkrub/school-management)
+
+---
+
 ## 🏗️ Dependencies
 
 `bitflags` `crossterm` `thiserror` `unicode-segmentation`
 
 ---
-
-## 🌱 Related Projects
-
-[Original C Version (part of my school management system)](https://github.com/nongtajkrub/school-management)
