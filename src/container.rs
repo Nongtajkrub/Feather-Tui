@@ -120,8 +120,8 @@ impl Container {
     }
 
     #[inline]
-    pub fn draw_full_screen(&mut self) -> FtuiResult<()> {
-        ren::Renderer::full_screen()?.simple_draw(self)?;
+    pub fn draw_fullscreen(&mut self) -> FtuiResult<()> {
+        ren::Renderer::fullscreen()?.simple_draw(self)?;
         Ok(())
     }
 

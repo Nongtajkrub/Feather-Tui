@@ -115,7 +115,7 @@ pub fn unready() {
 /// ```
 #[derive(Clone, Debug, PartialEq, Eq)] 
 pub struct Renderer {
-    full_screen: bool,
+    fullscreen: bool,
     width: u16,
     height: u16,
     lines: Vec<Line>,
@@ -140,18 +140,18 @@ impl Renderer {
     /// ```
     pub fn new(width: u16, height: u16) -> Renderer {
         Renderer {
-            full_screen: false,
+            fullscreen: false,
             width,
             height,
             lines: Self::make_lines(width, height), 
         }
     }
 
-    pub fn full_screen() -> FtuiResult<Renderer> {
+    pub fn fullscreen() -> FtuiResult<Renderer> {
         let (width, height) = ct::terminal::size()?;
 
         Ok(Renderer {
-            full_screen: true,
+            fullscreen: true,
             width,
             height,
             lines: Self::make_lines(width, height),
