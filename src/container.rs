@@ -1,5 +1,4 @@
-use crate::{cbk, cpn, error::{FtuiError, FtuiResult}, slc, ren};
-
+use crate::{cbk::Callback, cpn, error::{FtuiError, FtuiResult}, slc::Selector, ren::Renderer};
 use std::option::Option;
 
 /// `Container` acts as a layout manager for the UI elements (headers, options,
@@ -36,7 +35,7 @@ use std::option::Option;
 pub struct Container {
     header: Option<cpn::hed::Header>,
     options: Vec<cpn::opt::Option>,
-    selector: Option<slc::Selector>,
+    selector: Option<Selector>,
     texts: Vec<cpn::txt::Text>,
     component_count: u16,
 }
@@ -69,7 +68,7 @@ impl Container {
         self.component_count += 1;
     }
 
-    pub fn set_selector(&mut self, selector: slc::Selector) {
+    pub fn set_selector(&mut self, selector: Selector) {
         self.selector = Some(selector);
     }
 
@@ -95,33 +94,33 @@ impl Container {
     }
 
     pub fn with_option(
-        mut self, label: &str, callback: cbk::Callback
+        mut self, label: &str, callback: Callback
     ) -> FtuiResult<Self> {
         self.add_option(cpn::opt::Option::new(label, callback)?);
         Ok(self)
     }
 
     pub fn with_text(
-        mut self, label: &str, flags: impl Into<Option<cpn::txt::TextFlags>>
+        mut self, label: &str, flags: impl Into<Option<cpn::TextFlags>>
     ) -> FtuiResult<Self> {
         self.add_text(cpn::txt::Text::new(label, flags)?);
         Ok(self)
     }
 
-    pub fn with_selector(mut self, selector: slc::Selector) -> Self {
+    pub fn with_selector(mut self, selector: Selector) -> Self {
         self.set_selector(selector);
         self
     } 
 
     #[inline]
     pub fn draw(&mut self, width: u16, height: u16) -> FtuiResult<()> {
-        ren::Renderer::new(width, height).simple_draw(self)?;
+        Renderer::new(width, height).simple_draw(self)?;
         Ok(())
     }
 
     #[inline]
     pub fn draw_fullscreen(&mut self) -> FtuiResult<()> {
-        ren::Renderer::fullscreen()?.simple_draw(self)?;
+        Renderer::fullscreen()?.simple_draw(self)?;
         Ok(())
     }
 
@@ -137,7 +136,7 @@ impl Container {
         return &mut self.texts;
     }
 
-    pub fn selector_mut(&mut self) -> FtuiResult<&mut slc::Selector> {
+    pub fn selector_mut(&mut self) -> FtuiResult<&mut Selector> {
         self.selector.as_mut().ok_or(FtuiError::ContainerNoSelector)
     }
 
