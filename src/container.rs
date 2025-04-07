@@ -33,10 +33,10 @@ use std::option::Option;
 /// // The container can then be passed to a `Renderer` for display.
 /// ```
 pub struct Container {
-    header: Option<cpn::hed::Header>,
-    options: Vec<cpn::opt::Option>,
+    header: Option<cpn::Header>,
+    options: Vec<cpn::Option>,
     selector: Option<Selector>,
-    texts: Vec<cpn::txt::Text>,
+    texts: Vec<cpn::Text>,
     component_count: u16,
 }
 
@@ -63,7 +63,7 @@ impl Container {
         Ok(false)
     }
 
-    pub fn set_header(&mut self, header: cpn::hed::Header) {
+    pub fn set_header(&mut self, header: cpn::Header) {
         self.header = Some(header);
         self.component_count += 1;
     }
@@ -72,7 +72,7 @@ impl Container {
         self.selector = Some(selector);
     }
 
-    pub fn add_option(&mut self, mut option: cpn::opt::Option) {
+    pub fn add_option(&mut self, mut option: cpn::Option) {
         if self.options.len() == 0 {
             option.set_selc_on(true);
         }
@@ -82,28 +82,28 @@ impl Container {
         self.component_count += 1;
     }
 
-    pub fn add_text(&mut self, text: cpn::txt::Text) {
+    pub fn add_text(&mut self, text: cpn::Text) {
         self.texts.push(text);
         self.texts.last_mut().unwrap().set_line(self.component_count);
         self.component_count += 1;
     }
 
     pub fn with_header(mut self, label: &str) -> FtuiResult<Self> {
-        self.set_header(cpn::hed::Header::new(label)?);
+        self.set_header(cpn::Header::new(label)?);
         Ok(self)
     }
 
     pub fn with_option(
         mut self, label: &str, callback: Callback
     ) -> FtuiResult<Self> {
-        self.add_option(cpn::opt::Option::new(label, callback)?);
+        self.add_option(cpn::Option::new(label, callback)?);
         Ok(self)
     }
 
     pub fn with_text(
         mut self, label: &str, flags: impl Into<Option<cpn::TextFlags>>
     ) -> FtuiResult<Self> {
-        self.add_text(cpn::txt::Text::new(label, flags)?);
+        self.add_text(cpn::Text::new(label, flags)?);
         Ok(self)
     }
 
@@ -124,15 +124,15 @@ impl Container {
         Ok(())
     }
 
-    pub(crate) fn header(&self) -> &Option<cpn::hed::Header>{
+    pub(crate) fn header(&self) -> &Option<cpn::Header>{
         return &self.header;
     }
 
-    pub(crate) fn options(&self) -> &Vec<cpn::opt::Option> {
+    pub(crate) fn options(&self) -> &Vec<cpn::Option> {
         return &self.options;
     }
 
-    pub(crate) fn texts_mut(&mut self) -> &mut Vec<cpn::txt::Text> {
+    pub(crate) fn texts_mut(&mut self) -> &mut Vec<cpn::Text> {
         return &mut self.texts;
     }
 
