@@ -1,4 +1,4 @@
-use crate::{components::header, con, cpn, error::{FtuiError, FtuiResult}, util::ansi};
+use crate::{con, cpn, error::{FtuiError, FtuiResult}, util::ansi};
 use crossterm as ct;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -148,13 +148,13 @@ impl Renderer {
     }
 
     pub fn full_screen() -> FtuiResult<Renderer> {
-        let terminal_size = ct::terminal::size()?;
+        let (width, height) = ct::terminal::size()?;
 
         Ok(Renderer {
             full_screen: true,
-            width: terminal_size.0,
-            height: terminal_size.1 - 1,
-            lines: Self::make_lines(terminal_size.0, terminal_size.1 - 1),
+            width,
+            height,
+            lines: Self::make_lines(width, height),
         })
     }
 
@@ -310,27 +310,20 @@ impl Renderer {
     /// renderer.draw();
     /// ```
     pub fn draw(&mut self) {
-        self.lines.iter().for_each(|line| 
-            println!(
+        for (i, line) in self.lines.iter().enumerate() {
+            let output = format!(
                 "{}{}{}{}",
                 line.ansi.concat(),
-                line.data, ansi::ESC_COLOR_RESET, ansi::ESC_STYLE_RESET));
+                line.data, ansi::ESC_COLOR_RESET, ansi::ESC_STYLE_RESET);
+
+            if i == (self.height - 1) as usize {
+                print!("{}", output);
+            } else {
+                println!("{}", output);
+            }
+        }
 
         print!("{}", ansi::ESC_CURSOR_HOME);
-    }
-
-    /// Resize the screen and clear it. Returns whether resize occured.
-    fn resize_if_needed(&mut self) -> FtuiResult<bool> {
-        let terminal_size = ct::terminal::size()?;
-
-        if self.width != terminal_size.0 || self.height != terminal_size.1 - 1 {
-            self.width = terminal_size.0;
-            self.height = terminal_size.0 - 1;
-            Self::make_lines(self.width, self.height);
-            Ok(true)
-        } else {
-            Ok(false)
-        }
     }
 
     /// Clears the `Renderer` buffer. This method should be called before rendering.
@@ -358,14 +351,9 @@ impl Renderer {
     ///     renderer.draw();
     /// }
     /// ```
-    pub fn clear(&mut self) -> FtuiResult<()> {
-        // If full screen and resize occured.
-        if self.full_screen && self.resize_if_needed()? {
-            Ok(())
-        } else {
-            self.lines.iter_mut().for_each(|line| line.clear());
-            Ok(())
-        }
+    #[inline]
+    pub fn clear(&mut self) {
+        self.lines.iter_mut().for_each(|line| line.clear());
     }
 
     /// Executes a full rendering cycle in a single method call. This method 
@@ -400,7 +388,7 @@ impl Renderer {
     /// }
     /// ```
     pub fn simple_draw(&mut self, container: &mut con::Container) -> FtuiResult<()> {
-        self.clear()?;
+        self.clear();
         self.render(container)?;
         self.draw();
 
