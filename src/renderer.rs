@@ -85,6 +85,21 @@ pub fn unready() {
         ansi::ESC_CLEAR_TERM, ansi::ESC_CURSOR_HOME, ansi::ESC_CURSOR_SHOW);
 }
 
+/// Clears the terminal screen. This function clears the **terminal screen**, 
+/// which is different from `Renderer::clear` that clears only the renderer
+/// buffer.
+///
+/// # Example
+/// ```rust
+/// use feather_tui as tui;
+///
+/// // This clear the terminal using an `ANSI Escape Sequence`.
+/// tui::ren::clear();
+/// ```
+pub fn clear() {
+    print!("{}", ansi::ESC_CLEAR_TERM);
+}
+
 /// A `Renderer` is responsible for rendering the UI to the terminal. It takes 
 /// a `Container` and displays its components on the screen.
 ///
