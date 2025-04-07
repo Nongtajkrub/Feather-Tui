@@ -50,6 +50,8 @@ impl Line {
 ///
 /// # Example
 /// ```rust
+/// use feather_tui as tui;
+///
 /// tui::ren::ready();
 ///
 /// loop {
@@ -71,6 +73,8 @@ pub fn ready() {
 ///
 /// # Example
 /// ```rust
+/// use feather_tui as tui;
+///
 /// tui::ren::ready();
 ///
 /// loop {
