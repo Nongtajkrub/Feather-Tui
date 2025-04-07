@@ -1,4 +1,4 @@
-use crate::{cbk, cpn, error::{FtuiError, FtuiResult}, slc};
+use crate::{cbk, cpn, error::{FtuiError, FtuiResult}, slc, ren};
 
 use std::option::Option;
 
@@ -112,6 +112,18 @@ impl Container {
         self.set_selector(selector);
         self
     } 
+
+    #[inline]
+    pub fn draw(&mut self, width: u16, height: u16) -> FtuiResult<()> {
+        ren::Renderer::new(width, height).simple_draw(self)?;
+        Ok(())
+    }
+
+    #[inline]
+    pub fn draw_full_screen(&mut self) -> FtuiResult<()> {
+        ren::Renderer::full_screen()?.simple_draw(self)?;
+        Ok(())
+    }
 
     pub(crate) fn header(&self) -> &Option<cpn::hed::Header>{
         return &self.header;
