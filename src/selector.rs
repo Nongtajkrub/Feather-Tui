@@ -41,28 +41,33 @@ impl Selector {
         }
     }
 
-    fn move_up(&mut self, options: &mut Vec<cpn::Option>) {
+    fn move_up(&mut self, options: &mut Vec<cpn::Option>) -> bool {
         if self.on == 0 {
-            return;
+            return false;
         }
 
         // move the selector up
         options[self.on as usize].set_selc_on(false);
         self.on -= 1;
         options[self.on as usize].set_selc_on(true);
+
+        true
     }
 
-    fn move_down(&mut self, options: &mut Vec<cpn::Option>) {
+    fn move_down(&mut self, options: &mut Vec<cpn::Option>) -> bool {
         if self.on as usize == options.len() - 1 {
-            return;
+            return false;
         }
 
         // move selector down
         options[self.on as usize].set_selc_on(false);
         self.on += 1;
         options[self.on as usize].set_selc_on(true);
+
+        true
     }
 
+    /// Select action always trigger an update.
     fn selc(&mut self, options: &mut Vec<cpn::Option>) -> FtuiResult<()> {
         options[self.on as usize].callback().call()?;
         Ok(())
@@ -70,20 +75,16 @@ impl Selector {
 
     // return whether a move occure
     pub fn looper(&mut self, options: &mut Vec<cpn::Option>) -> FtuiResult<bool> {
-        if self.up_trig.check()? {
-            self.move_up(options);
-            return Ok(true);
-        }
-        if self.down_trig.check()? {
-            self.move_down(options);
-            return Ok(true);
-        }
-        if self.selc_trig.check()? {
+        if self.up_trig.check()? && self.move_up(options) {
+            Ok(true)
+        } else if self.down_trig.check()? && self.move_down(options) {
+            Ok(true)
+        } else if self.selc_trig.check()? {
             self.selc(options)?;
-            return Ok(true);
+            Ok(true)
+        } else {
+            Ok(false)
         }
-
-        return Ok(false);
     }
 
     pub fn update_trig_arg<T>(&mut self, up_arg: T, down_arg: T, selc_arg: T)
