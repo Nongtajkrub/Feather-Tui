@@ -1,4 +1,4 @@
-use crate::{cpn, err::FtuiResult, trg};
+use crate::{cpn, err::FtuiResult, trg::Trigger};
 
 /// A `Selector` is used within a `Container` to navigate and select `Option` 
 /// components. It allows movement up and down between options and selection of
@@ -25,16 +25,14 @@ use crate::{cpn, err::FtuiResult, trg};
 /// container.set_selector(selector);
 /// ```
 pub struct Selector {
-    up_trig: trg::Trigger,
-    down_trig: trg::Trigger,
-    selc_trig: trg::Trigger,
+    up_trig: Trigger,
+    down_trig: Trigger,
+    selc_trig: Trigger,
     on: u16,
 }
 
 impl Selector {
-    pub fn new(
-        up_trig: trg::Trigger, down_trig: trg::Trigger, selc_trig: trg::Trigger
-    ) -> Selector {
+    pub fn new(up_trig: Trigger, down_trig: Trigger, selc_trig: Trigger) -> Selector {
         Selector {
             up_trig,
             down_trig,
@@ -43,7 +41,7 @@ impl Selector {
         }
     }
 
-    fn move_up(&mut self, options: &mut Vec<cpn::opt::Option>) {
+    fn move_up(&mut self, options: &mut Vec<cpn::Option>) {
         if self.on == 0 {
             return;
         }
@@ -54,7 +52,7 @@ impl Selector {
         options[self.on as usize].set_selc_on(true);
     }
 
-    fn move_down(&mut self, options: &mut Vec<cpn::opt::Option>) {
+    fn move_down(&mut self, options: &mut Vec<cpn::Option>) {
         if self.on as usize == options.len() - 1 {
             return;
         }
@@ -65,13 +63,13 @@ impl Selector {
         options[self.on as usize].set_selc_on(true);
     }
 
-    fn selc(&mut self, options: &mut Vec<cpn::opt::Option>) -> FtuiResult<()> {
+    fn selc(&mut self, options: &mut Vec<cpn::Option>) -> FtuiResult<()> {
         options[self.on as usize].callback().call()?;
         Ok(())
     }
 
     // return whether a move occure
-    pub fn looper(&mut self, options: &mut Vec<cpn::opt::Option>) -> FtuiResult<bool> {
+    pub fn looper(&mut self, options: &mut Vec<cpn::Option>) -> FtuiResult<bool> {
         if self.up_trig.check()? {
             self.move_up(options);
             return Ok(true);
