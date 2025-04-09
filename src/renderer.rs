@@ -32,6 +32,17 @@ impl Line {
         self.data.extend(std::iter::repeat(c).take(self.width as usize));
     }
 
+    pub fn fill_dotted(&mut self, c: char) {
+        let repeat_count = (self.width as f32 / 2.0).floor() as usize;
+
+        self.data.clear();
+
+        for _ in 0..repeat_count {
+            self.data.push(c);
+            self.data.push(' ');
+        }
+    }
+
     #[inline]
     pub fn edit(&mut self, data: &String, begin: u16) {
         self.data.replace_range(begin as usize..data.len() + begin as usize, data);
@@ -227,16 +238,28 @@ impl Renderer {
         Ok(())
     }
 
+    #[inline]
+    fn apply_correct_seperator(&mut self, seperator: &cpn::Seperator, c: char) {
+        if seperator.is_dotted() {
+            self.lines[seperator.line() as usize].fill_dotted(c);
+        } else {
+            self.lines[seperator.line() as usize].fill(c); 
+        }
+    }
+    
     fn render_seperator(&mut self, seperators: &[cpn::Seperator]) {
         for seperator in seperators {
-            let line = &mut self.lines[seperator.line() as usize];
-
             match seperator.style() {
-                cpn::SeperatorStyle::Solid => line.add_ansi(ansi::ESC_WHITE_B),
-                cpn::SeperatorStyle::Medium => line.fill('━'),
-                cpn::SeperatorStyle::Thin => line.fill('─'),
-                cpn::SeperatorStyle::Double => line.fill('═'),
-                cpn::SeperatorStyle::Custom(c) => line.fill(c),
+                cpn::SeperatorStyle::Solid => 
+                    self.apply_correct_seperator(seperator, '█'), 
+                cpn::SeperatorStyle::Medium =>
+                    self.apply_correct_seperator(seperator, '━'),
+                cpn::SeperatorStyle::Thin =>
+                    self.apply_correct_seperator(seperator, '─'),
+                cpn::SeperatorStyle::Double => 
+                    self.apply_correct_seperator(seperator, '═'),
+                cpn::SeperatorStyle::Custom(c) =>
+                    self.apply_correct_seperator(seperator, c),
             }
         }
     }

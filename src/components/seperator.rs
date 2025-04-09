@@ -11,14 +11,24 @@ pub enum SeperatorStyle {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Seperator {
     line: u16,
+    dotted: bool,
     style: SeperatorStyle,
 }
 
 impl Seperator {
-    pub fn new(style: SeperatorStyle) -> Self {
+    pub fn normal(style: SeperatorStyle) -> Self {
         Seperator {
             line: 0,
+            dotted: false,
             style,
+        }
+    }
+
+    pub fn dotted(style: SeperatorStyle) -> Self {
+        Seperator {
+            line: 0,
+            dotted: true,
+            style
         }
     }
 
@@ -28,6 +38,10 @@ impl Seperator {
 
     pub(crate) fn line(&self) -> u16 {
         self.line
+    }
+
+    pub(crate) fn is_dotted(&self) -> bool {
+        self.dotted
     }
 
     pub(crate) fn style(&self) -> SeperatorStyle {

@@ -115,8 +115,13 @@ impl Container {
         Ok(self)
     }
 
-    pub fn with_seperator(mut self, style: cpn::SeperatorStyle) -> Self {
-        self.add_seperator(cpn::Seperator::new(style));
+    pub fn with_seperator_normal(mut self, style: cpn::SeperatorStyle) -> Self {
+        self.add_seperator(cpn::Seperator::normal(style));
+        self
+    }
+
+    pub fn with_selector_dotted(mut self, style: cpn::SeperatorStyle) -> Self {
+        self.add_seperator(cpn::Seperator::dotted(style));
         self
     }
 
