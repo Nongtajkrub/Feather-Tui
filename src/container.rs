@@ -37,6 +37,7 @@ pub struct Container {
     options: Vec<cpn::Option>,
     selector: Option<Selector>,
     texts: Vec<cpn::Text>,
+    seperators: Vec<cpn::Seperator>,
     component_count: u16,
 }
 
@@ -44,9 +45,10 @@ impl Container {
     pub fn new() -> Container {
         Container {
             header: None,
-            options: Vec::new(),
+            options: vec![],
             selector: None,
-            texts: Vec::new(),
+            texts: vec![],
+            seperators: vec![],
             component_count: 0,
         }
     }
@@ -88,6 +90,12 @@ impl Container {
         self.component_count += 1;
     }
 
+    pub fn add_seperator(&mut self, seperator: cpn::Seperator) {
+        self.seperators.push(seperator);
+        self.seperators.last_mut().unwrap().set_line(self.component_count);
+        self.component_count += 1;
+    }
+
     pub fn with_header(mut self, label: &str) -> FtuiResult<Self> {
         self.set_header(cpn::Header::new(label)?);
         Ok(self)
@@ -105,6 +113,11 @@ impl Container {
     ) -> FtuiResult<Self> {
         self.add_text(cpn::Text::new(label, flags)?);
         Ok(self)
+    }
+
+    pub fn with_seperator(mut self, style: cpn::SeperatorStyle) -> Self {
+        self.add_seperator(cpn::Seperator::new(style));
+        self
     }
 
     pub fn with_selector(mut self, selector: Selector) -> Self {
@@ -134,6 +147,10 @@ impl Container {
 
     pub(crate) fn texts_mut(&mut self) -> &mut Vec<cpn::Text> {
         return &mut self.texts;
+    }
+
+    pub(crate) fn seperators(&self) -> &Vec<cpn::Seperator> {
+        return &self.seperators;
     }
 
     pub fn selector_mut(&mut self) -> FtuiResult<&mut Selector> {
