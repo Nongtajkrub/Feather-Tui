@@ -227,6 +227,20 @@ impl Renderer {
         Ok(())
     }
 
+    fn render_seperator(&mut self, seperators: &[cpn::Seperator]) {
+        for seperator in seperators {
+            let line = &mut self.lines[seperator.line() as usize];
+
+            match seperator.style() {
+                cpn::SeperatorStyle::Solid => line.add_ansi(ansi::ESC_WHITE_B),
+                cpn::SeperatorStyle::Medium => line.fill('━'),
+                cpn::SeperatorStyle::Thin => line.fill('─'),
+                cpn::SeperatorStyle::Double => line.fill('═'),
+                cpn::SeperatorStyle::Custom(c) => line.fill(c),
+            }
+        }
+    }
+
     fn resolve_text_pos(&self, text: &mut cpn::Text) {
         // x pos
         if text.flags().contains(cpn::TextFlags::ALIGN_MIDDLE) {
@@ -293,6 +307,7 @@ impl Renderer {
         }
         self.render_options(container.options())?;
         self.render_text(container.texts_mut())?;
+        self.render_seperator(container.seperators());
 
         Ok(())
     }
