@@ -63,7 +63,7 @@ impl Line {
 pub fn ready() {
     print!(
         "{}{}{}",
-        ansi::ESC_CLEAR_TERM, ansi::ESC_CURSOR_HIDE, ansi::ESC_CURSOR_HOME);
+        ansi::ESC_CLEAR_TERM, ansi::ESC_CURSOR_HOME, ansi::ESC_CURSOR_HIDE);
 }
 
 /// Restores the terminal state after rendering is done. This function is 
@@ -97,7 +97,7 @@ pub fn unready() {
 /// ```rust
 /// use feather_tui as tui;
 ///
-/// // This clear the terminal using an `ANSI Escape Sequence`.
+/// // This clear the terminal.
 /// tui::ren::clear();
 /// ```
 pub fn clear() {
@@ -134,7 +134,6 @@ pub fn clear() {
 /// ```
 #[derive(Clone, Debug, PartialEq, Eq)] 
 pub struct Renderer {
-    fullscreen: bool,
     width: u16,
     height: u16,
     lines: Vec<Line>,
@@ -159,7 +158,6 @@ impl Renderer {
     /// ```
     pub fn new(width: u16, height: u16) -> Renderer {
         Renderer {
-            fullscreen: false,
             width,
             height,
             lines: Self::make_lines(width, height), 
@@ -170,7 +168,6 @@ impl Renderer {
         let (width, height) = ct::terminal::size()?;
 
         Ok(Renderer {
-            fullscreen: true,
             width,
             height,
             lines: Self::make_lines(width, height),
