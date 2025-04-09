@@ -290,7 +290,7 @@ impl Text {
         return &self.flags;
     }
 
-    pub(crate) fn styles(&self) -> &Vec<&'static str> {
+    pub(crate) fn styles(&self) -> &[&'static str] {
         return &self.style;
     }
 }

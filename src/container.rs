@@ -141,15 +141,15 @@ impl Container {
         return &self.header;
     }
 
-    pub(crate) fn options(&self) -> &Vec<cpn::Option> {
+    pub(crate) fn options(&self) -> &[cpn::Option] {
         return &self.options;
     }
 
-    pub(crate) fn texts_mut(&mut self) -> &mut Vec<cpn::Text> {
+    pub(crate) fn texts_mut(&mut self) -> &mut [cpn::Text] {
         return &mut self.texts;
     }
 
-    pub(crate) fn seperators(&self) -> &Vec<cpn::Seperator> {
+    pub(crate) fn seperators(&self) -> &[cpn::Seperator] {
         return &self.seperators;
     }
 
