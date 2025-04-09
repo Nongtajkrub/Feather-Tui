@@ -167,11 +167,7 @@ impl Renderer {
     pub fn fullscreen() -> FtuiResult<Renderer> {
         let (width, height) = ct::terminal::size()?;
 
-        Ok(Renderer {
-            width,
-            height,
-            lines: Self::make_lines(width, height),
-        })
+        Ok(Self::new(width, height))
     }
 
     fn make_lines(width: u16, height: u16) -> Vec<Line> {
@@ -337,9 +333,11 @@ impl Renderer {
             } else {
                 println!("{}", output);
             }
+
+            std::thread::sleep(std::time::Duration::from_millis(500));
         }
 
-        print!("{}", ansi::ESC_CURSOR_HOME);
+        println!("{}", ansi::ESC_CURSOR_HOME);
     }
 
     /// Clears the `Renderer` buffer. This method should be called before rendering.
