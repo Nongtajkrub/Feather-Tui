@@ -1,7 +1,6 @@
 use crate::{err::FtuiResult, ren};
-
+use std::io::{self, Write};
 use crossterm as ct;
-use std::{io::{self, Write}, option::Option};
 
 /// Reads a line of input from the user after displaying a prompt.
 ///
