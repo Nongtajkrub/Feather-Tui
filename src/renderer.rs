@@ -13,13 +13,8 @@ impl Line {
         Line {
             ansi: vec![],
             width,
-            data: Self::make_empty_line(width),
+            data: " ".repeat(width as usize),
         }
-    }
-
-    #[inline]
-    fn make_empty_line(width: u16) -> String {
-        " ".repeat(width as usize)
     }
 
     #[inline]
@@ -32,13 +27,18 @@ impl Line {
         self.ansi.extend(value.iter().copied());
     }
 
+    pub fn fill(&mut self, c: char) {
+        self.data.clear();
+        self.data.extend(std::iter::repeat(c).take(self.width as usize));
+    }
+
     #[inline]
     pub fn edit(&mut self, data: &String, begin: u16) {
         self.data.replace_range(begin as usize..data.len() + begin as usize, data);
     }
 
     pub fn clear(&mut self) {
-        self.data = Self::make_empty_line(self.width);
+        self.fill(' ');
         self.ansi.clear();
     }
 }
@@ -226,7 +226,7 @@ impl Renderer {
 
         Ok(())
     }
-    
+
     fn resolve_text_pos(&self, text: &mut cpn::Text) {
         // x pos
         if text.flags().contains(cpn::TextFlags::ALIGN_MIDDLE) {
@@ -333,8 +333,6 @@ impl Renderer {
             } else {
                 println!("{}", output);
             }
-
-            std::thread::sleep(std::time::Duration::from_millis(500));
         }
 
         println!("{}", ansi::ESC_CURSOR_HOME);
