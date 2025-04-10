@@ -80,10 +80,10 @@ impl Default for TextFlags {
 ///
 /// // Create a text component with custom styling
 /// let text = 
-///     tui::cpn::txt::Text::new(
+///     tui::cpn::Text::new(
 ///         "Text!",
-///         tui::cpn::txt::TextFlags::COLOR_CYAN_BACK |
-///         tui::cpn::txt::TextFlags::ALIGN_RIGHT);
+///         tui::cpn::TextFlags::COLOR_CYAN_BACK |
+///         tui::cpn::TextFlags::ALIGN_RIGHT);
 ///
 /// // Add the text component to a container
 /// let mut container = tui::con::Container::new();
@@ -110,20 +110,20 @@ pub struct Text {
 /// use feather_tui as tui; 
 ///
 /// // Create two `Text` instances with identical `label` and `flags`
-/// let text1 = tui::cpn::txt::Text::new("Text", tui::cpn::txt::TextFlags::NONE);
-/// let text2 = tui::cpn::txt::Text::new("Text", tui::cpn::txt::TextFlags::NONE);
+/// let text1 = tui::cpn::Text::new("Text", tui::cpn::TextFlags::NONE);
+/// let text2 = tui::cpn::Text::new("Text", tui::cpn::TextFlags::NONE);
 ///
 /// // Assert that both `text1` and `text2` are equal, since they have the same `label` and `flags`
 /// assert_eq!(text1, text2); // This will evaluate to true
 /// 
 /// // Create a new `Text` instance with a different flag (ALIGN_RIGHT)
-/// let text3 = tui::cpn::txt::Text::new("Text", tui::cpn::txt::TextFlags::ALIGN_RIGHT);
+/// let text3 = tui::cpn::Text::new("Text", tui::cpn::TextFlags::ALIGN_RIGHT);
 /// 
 /// // Assert that `text1` and `text3` are not equal, since their `flags` are different
 /// assert_ne!(text1, text3); // This will evaluate to true (text1 != text3)
 /// 
 /// // Create a new `Text` instance with a different `label`
-/// let text4 = tui::cpn::txt::Text::new("Hello", tui::cpn::txt::TextFlags::ALIGN_RIGHT);
+/// let text4 = tui::cpn::Text::new("Hello", tui::cpn::TextFlags::ALIGN_RIGHT);
 /// 
 /// // Assert that `text3` and `text4` are not equal, since their `label` is different
 /// assert_ne!(text3, text4); // This will evaluate to true (text3 != text4)
@@ -158,10 +158,10 @@ impl Text {
     /// // The text is right-aligned.
     /// // The background color is red.
     /// let text = 
-    ///     tui::cpn::txt::Text::new(
+    ///     tui::cpn::Text::new(
     ///         "Text",
-    ///         tui::cpn::txt::TextFlags::ALIGN_RIGHT | 
-    ///         tui::cpn::txt::TextFlags::COLOR_RED_BACK)?;
+    ///         tui::cpn::TextFlags::ALIGN_RIGHT | 
+    ///         tui::cpn::TextFlags::COLOR_RED_BACK)?;
     /// ```
     pub fn new(label: &str, flags: impl Into<Option<TextFlags>>) -> FtuiResult<Self> {
         let flags = flags.into().unwrap_or(TextFlags::NONE);

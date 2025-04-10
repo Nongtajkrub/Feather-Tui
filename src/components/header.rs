@@ -18,7 +18,7 @@ use unicode_segmentation::UnicodeSegmentation;
 /// use feather_tui as tui;
 ///
 /// // Create a header with the text "Welcome"
-/// let header = tui::cpn::hed::Header::new("Welcome")?;
+/// let header = tui::cpn::Header::new("Welcome")?;
 ///
 /// // Set the header for a container
 /// let mut container = tui::con::Container::new();
@@ -45,7 +45,7 @@ impl Header {
     /// use feather_tui as tui;
     ///
     /// // Create a Header with the label "Welcome".
-    /// let header = tui::cpn::hed::Header::new("Welcome")?;
+    /// let header = tui::cpn::Header::new("Welcome")?;
     /// ```
     pub fn new(label: &str) -> FtuiResult<Self> {
         if label.is_empty() {

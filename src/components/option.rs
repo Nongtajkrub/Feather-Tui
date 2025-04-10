@@ -30,7 +30,7 @@ use unicode_segmentation::UnicodeSegmentation;
 /// let callback = tui::cbk::Callback::no_arg(quit_option_callback);
 ///
 /// // Create an option labeled "Quit"
-/// let option = tui::cpn::opt::Option::new("Quit", callback)?;
+/// let option = tui::cpn::Option::new("Quit", callback)?;
 ///
 /// // Create a container and add the option
 /// let mut container = tui::con::Container::new();
@@ -73,7 +73,7 @@ impl Option {
     ///
     /// // Create an Option labeled "Quit".
     /// // When selected, it exit the program.
-    /// let option = tui::cpn::opt::Option::new("Quit", callback)?;
+    /// let option = tui::cpn::Option::new("Quit", callback)?;
     /// ```
     pub fn new(label: &str, callback: cbk::Callback) -> FtuiResult<Self> {
         if label.is_empty() {
