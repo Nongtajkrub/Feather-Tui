@@ -37,7 +37,7 @@ pub struct Container {
     options: Vec<cpn::Option>,
     selector: Option<Selector>,
     texts: Vec<cpn::Text>,
-    seperators: Vec<cpn::Seperator>,
+    separators: Vec<cpn::Separator>,
     component_count: u16,
 }
 
@@ -48,7 +48,7 @@ impl Container {
             options: vec![],
             selector: None,
             texts: vec![],
-            seperators: vec![],
+            separators: vec![],
             component_count: 0,
         }
     }
@@ -90,9 +90,9 @@ impl Container {
         self.component_count += 1;
     }
 
-    pub fn add_seperator(&mut self, seperator: cpn::Seperator) {
-        self.seperators.push(seperator);
-        self.seperators.last_mut().unwrap().set_line(self.component_count);
+    pub fn add_separator(&mut self, separator: cpn::Separator) {
+        self.separators.push(separator);
+        self.separators.last_mut().unwrap().set_line(self.component_count);
         self.component_count += 1;
     }
 
@@ -115,13 +115,13 @@ impl Container {
         Ok(self)
     }
 
-    pub fn with_seperator_normal(mut self, style: cpn::SeperatorStyle) -> Self {
-        self.add_seperator(cpn::Seperator::normal(style));
+    pub fn with_separator_normal(mut self, style: cpn::SeparatorStyle) -> Self {
+        self.add_separator(cpn::Separator::normal(style));
         self
     }
 
-    pub fn with_selector_dotted(mut self, style: cpn::SeperatorStyle) -> Self {
-        self.add_seperator(cpn::Seperator::dotted(style));
+    pub fn with_selector_dotted(mut self, style: cpn::SeparatorStyle) -> Self {
+        self.add_separator(cpn::Separator::dotted(style));
         self
     }
 
@@ -154,8 +154,8 @@ impl Container {
         return &mut self.texts;
     }
 
-    pub(crate) fn seperators(&self) -> &[cpn::Seperator] {
-        return &self.seperators;
+    pub(crate) fn separators(&self) -> &[cpn::Separator] {
+        return &self.separators;
     }
 
     pub fn selector_mut(&mut self) -> FtuiResult<&mut Selector> {

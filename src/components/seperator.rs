@@ -1,7 +1,7 @@
 /// An `enum` representing all possible styles for a `Separator` component.
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SeperatorStyle {
+pub enum SeparatorStyle {
     /// A solid block line.
     ///
     /// `███████████████████████████`
@@ -56,20 +56,20 @@ pub enum SeperatorStyle {
 /// container.add_separator(separator);
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Seperator {
+pub struct Separator {
     line: u16,
     dotted: bool,
-    style: SeperatorStyle,
+    style: SeparatorStyle,
 }
 
-impl Seperator {
-    /// Creates a standard (non-dotted) `Seperator` with the given style.
+impl Separator {
+    /// Creates a standard (non-dotted) `Separator` with the given style.
     ///
     /// # Parameters
-    /// - `style`: The visual style of the separator, specified as a `SeperatorStyle`.
+    /// - `style`: The visual style of the separator, specified as a `SeparatorStyle`.
     ///
     /// # Returns
-    /// `Seperator`: A new `Seperator` instance.
+    /// `Separator`: A new `Separator` instance.
     ///
     /// # Example
     /// ```rust
@@ -77,23 +77,23 @@ impl Seperator {
     ///
     /// // Create a normal separator with a solid style.
     /// let separator =
-    ///     tui::cpn::Seperator::normal(tui::cpn::sep::SeperatorStyle::Solid);
+    ///     tui::cpn::Separator::normal(tui::cpn::sep::SeparatorStyle::Solid);
     /// ```
-    pub fn normal(style: SeperatorStyle) -> Self {
-        Seperator {
+    pub fn normal(style: SeparatorStyle) -> Self {
+        Separator {
             line: 0,
             dotted: false,
             style,
         }
     }
 
-    /// Creates a dotted `Seperator` with the given style.
+    /// Creates a dotted `Separator` with the given style.
     ///
     /// # Parameters
-    /// - `style`: The visual style of the separator, specified as a `SeperatorStyle`.
+    /// - `style`: The visual style of the separator, specified as a `SeparatorStyle`.
     ///
     /// # Returns
-    /// `Seperator`: A new `Seperator` instance.
+    /// `Separator`: A new `Separator` instance.
     ///
     /// # Example
     /// ```rust
@@ -101,10 +101,10 @@ impl Seperator {
     ///
     /// // Create a dotted separator with a solid style.
     /// let separator =
-    ///     tui::cpn::Seperator::dotted(tui::cpn::sep::SeperatorStyle::Solid);
+    ///     tui::cpn::Separator::dotted(tui::cpn::sep::SeparatorStyle::Solid);
     /// ```
-    pub fn dotted(style: SeperatorStyle) -> Self {
-        Seperator {
+    pub fn dotted(style: SeparatorStyle) -> Self {
+        Separator {
             line: 0,
             dotted: true,
             style
@@ -123,7 +123,7 @@ impl Seperator {
         self.dotted
     }
 
-    pub(crate) fn style(&self) -> SeperatorStyle {
+    pub(crate) fn style(&self) -> SeparatorStyle {
         self.style
     }
 }

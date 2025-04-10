@@ -239,27 +239,27 @@ impl Renderer {
     }
 
     #[inline]
-    fn apply_correct_seperator(&mut self, seperator: &cpn::Seperator, c: char) {
-        if seperator.is_dotted() {
-            self.lines[seperator.line() as usize].fill_dotted(c);
+    fn apply_correct_separator(&mut self, separator: &cpn::Separator, c: char) {
+        if separator.is_dotted() {
+            self.lines[separator.line() as usize].fill_dotted(c);
         } else {
-            self.lines[seperator.line() as usize].fill(c); 
+            self.lines[separator.line() as usize].fill(c); 
         }
     }
     
-    fn render_seperator(&mut self, seperators: &[cpn::Seperator]) {
-        for seperator in seperators {
-            match seperator.style() {
-                cpn::SeperatorStyle::Solid => 
-                    self.apply_correct_seperator(seperator, '█'), 
-                cpn::SeperatorStyle::Medium =>
-                    self.apply_correct_seperator(seperator, '━'),
-                cpn::SeperatorStyle::Thin =>
-                    self.apply_correct_seperator(seperator, '─'),
-                cpn::SeperatorStyle::Double => 
-                    self.apply_correct_seperator(seperator, '═'),
-                cpn::SeperatorStyle::Custom(c) =>
-                    self.apply_correct_seperator(seperator, c),
+    fn render_separator(&mut self, separators: &[cpn::Separator]) {
+        for separator in separators {
+            match separator.style() {
+                cpn::SeparatorStyle::Solid => 
+                    self.apply_correct_separator(separator, '█'), 
+                cpn::SeparatorStyle::Medium =>
+                    self.apply_correct_separator(separator, '━'),
+                cpn::SeparatorStyle::Thin =>
+                    self.apply_correct_separator(separator, '─'),
+                cpn::SeparatorStyle::Double => 
+                    self.apply_correct_separator(separator, '═'),
+                cpn::SeparatorStyle::Custom(c) =>
+                    self.apply_correct_separator(separator, c),
             }
         }
     }
@@ -330,7 +330,7 @@ impl Renderer {
         }
         self.render_options(container.options())?;
         self.render_text(container.texts_mut())?;
-        self.render_seperator(container.seperators());
+        self.render_separator(container.separators());
 
         Ok(())
     }

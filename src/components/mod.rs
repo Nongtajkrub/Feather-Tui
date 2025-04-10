@@ -14,4 +14,4 @@ pub use seperator as sep;
 pub use hed::Header;
 pub use opt::Option;
 pub use txt::{Text, TextFlags};
-pub use sep::{Seperator, SeperatorStyle};
+pub use sep::{Separator, SeparatorStyle};
