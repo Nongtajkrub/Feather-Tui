@@ -1,4 +1,5 @@
 use crate::{con, cpn, error::{FtuiError, FtuiResult}, util::ansi};
+use std::io::{self, Write};
 use crossterm as ct;
 
 #[derive(Clone, Debug, PartialEq, Eq)]
@@ -59,6 +60,10 @@ impl Line {
 /// It clears the terminal screen and moves the cursor to the home position,
 /// then hide it. This ensure a clean state before rendering.
 ///
+/// # Returns
+/// - `Ok(())` if the operation completes successfully.
+/// - `Err(FtuiError)` if an error occurs during the operation.
+///
 /// # Example
 /// ```rust
 /// use feather_tui as tui;
@@ -71,10 +76,14 @@ impl Line {
 ///
 /// tui::ren::unready();
 /// ```
-pub fn ready() {
+pub fn ready() -> FtuiResult<()> {
     print!(
         "{}{}{}",
         ansi::ESC_CLEAR_TERM, ansi::ESC_CURSOR_HOME, ansi::ESC_CURSOR_HIDE);
+
+    io::stdout().flush()?;
+
+    Ok(())
 }
 
 /// Restores the terminal state after rendering is done. This function is 
@@ -82,6 +91,10 @@ pub fn ready() {
 /// with `free`. It clears the terminal screen and moves the cursor to the home
 /// position, then unhide it. This ensure a clean state before rendering.
 ///
+/// # Returns
+/// - `Ok(())` if the operation completes successfully.
+/// - `Err(FtuiError)` if an error occurs during the operation.
+/// 
 /// # Example
 /// ```rust
 /// use feather_tui as tui;
@@ -94,15 +107,23 @@ pub fn ready() {
 ///
 /// tui::ren::unready();
 /// ```
-pub fn unready() {
+pub fn unready() -> FtuiResult<()> {
     print!(
         "{}{}{}",
         ansi::ESC_CLEAR_TERM, ansi::ESC_CURSOR_HOME, ansi::ESC_CURSOR_SHOW);
+
+    io::stdout().flush()?;
+
+    Ok(())
 }
 
 /// Clears the terminal screen. This function clears the **terminal screen**, 
 /// which is different from `Renderer::clear` that clears only the renderer
 /// buffer.
+///
+/// # Returns
+/// - `Ok(())` if the operation completes successfully.
+/// - `Err(FtuiError)` if an error occurs during the operation.
 ///
 /// # Example
 /// ```rust
@@ -111,8 +132,12 @@ pub fn unready() {
 /// // This clear the terminal.
 /// tui::ren::clear();
 /// ```
-pub fn clear() {
+pub fn clear() -> FtuiResult<()> {
     print!("{}", ansi::ESC_CLEAR_TERM);
+
+    io::stdout().flush()?;
+
+    Ok(())
 }
 
 /// A `Renderer` is responsible for rendering the UI to the terminal. It takes 
@@ -359,7 +384,7 @@ impl Renderer {
     /// // but changes won't be reflected unless `render` is called.
     /// renderer.draw();
     /// ```
-    pub fn draw(&mut self) {
+    pub fn draw(&mut self) -> FtuiResult<()> {
         for (i, line) in self.lines.iter().enumerate() {
             let output = format!(
                 "{}{}{}{}",
@@ -373,7 +398,10 @@ impl Renderer {
             }
         }
 
-        println!("{}", ansi::ESC_CURSOR_HOME);
+        print!("{}", ansi::ESC_CURSOR_HOME);
+        io::stdout().flush()?;
+
+        Ok(())
     }
 
     /// Clears the `Renderer` buffer. This method should be called before rendering.
@@ -440,7 +468,7 @@ impl Renderer {
     pub fn simple_draw(&mut self, container: &mut con::Container) -> FtuiResult<()> {
         self.clear();
         self.render(container)?;
-        self.draw();
+        self.draw()?;
 
         Ok(())
     }
