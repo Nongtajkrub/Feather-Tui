@@ -2,6 +2,16 @@ use thiserror::Error;
 use std::io;
 
 /// An `enum` representing all possible errors that can occur in `Feather-TUI`.
+///
+/// # Derives
+/// `thiserror::Error`, `Debug`
+///
+/// # PartialEq Implementation
+/// This is necessary because the `StdInputOutputError` variant wraps a value of
+/// type `std::io::Error`, which does not implement `PartialEq`. As a result, we
+/// implement `PartialEq` manually, comparing all variants normally while treating
+/// any two `StdInputOutputError` values as equal regardless of their internal
+/// `io::Error`.
 #[repr(u8)]
 #[derive(Error, Debug)]
 pub enum FtuiError {
@@ -263,6 +273,58 @@ pub enum FtuiError {
     /// ```
     #[error("Callback function argument type mismatch unable to cast to the expected type.")]
     CallbackCastArgWrongType,
+}
+
+/// Implementation of the `PartialEq` trait for the `FtuiError` enum. This is necessary
+/// because the `StdInputOutputError` variant wraps a value of type `std::io::Error`,
+/// which does not implement `PartialEq`. As a result, we implement `PartialEq`
+/// manually, comparing all variants normally while treating any two `StdInputOutputError`
+/// values as equal regardless of their internal `io::Error`.
+///
+/// # Examples
+///
+/// ```rust
+/// use feather_tui as tui;
+///
+/// // Variants of the same type are considered equal.
+/// assert_eq!(
+///     tui::err::FtuiError::TextFlagNoneWithOther,
+///     tui::err::FtuiError::TextFlagNoneWithOther);
+///
+/// // Variants of different types are not equal.
+/// assert_ne!(
+///     tui::err::FtuiError::TextFlagNoneWithOther,
+///     tui::err::FtuiError::TextFlagMultipleColor);
+///
+/// // StdInputOutputError variants are treated as equal even if their inner errors differ.
+/// use std::io::{Error, ErrorKind};
+/// use tui::err::FtuiError;
+/// 
+/// assert_eq!(
+///     FtuiError::StdInputOutputError(Error::from(ErrorKind::NotFound)),
+///     FtuiError::StdInputOutputError(Error::from(ErrorKind::PermissionDenied)));
+/// ```
+impl PartialEq for FtuiError {
+    fn eq(&self, other: &Self) -> bool {
+        use FtuiError::*;
+
+        match (self, other) {
+            (TextFlagNoneWithOther, TextFlagNoneWithOther) => true,
+            (TextFlagMultipleColor, TextFlagMultipleColor) => true,
+            (HeaderLabelEmpty, HeaderLabelEmpty) => true,
+            (OptionLabelEmpty, OptionLabelEmpty) => true,
+            (ContainerLooperNoSelector, ContainerLooperNoSelector) => true,
+            (ContainerNoSelector, ContainerNoSelector) => true,
+            (RendererContainerTooBig, RendererContainerTooBig) => true,
+            (TriggerCastArgNoArgument, TriggerCastArgNoArgument) => true,
+            (TriggerCastArgWrongType, TriggerCastArgWrongType) => true,
+            (CallbackCastArgNoArgument, CallbackCastArgNoArgument) => true,
+            (CallbackCastArgWrongType, CallbackCastArgWrongType) => true,
+            (StdInputOutputError(_), StdInputOutputError(_)) => true,
+
+            _ => false,
+        }
+    }
 }
 
 /// A convenient alias for `Resul`t<T, FtuiError>`.
