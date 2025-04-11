@@ -25,7 +25,7 @@ use crossterm as ct;
 /// };
 /// ```
 pub fn line(promt: &str) -> FtuiResult<String> {
-    ren::unready();
+    ren::unready()?;
 
     print!("{} -> ", promt);
     
@@ -34,7 +34,7 @@ pub fn line(promt: &str) -> FtuiResult<String> {
     let mut line = String::new();
     io::stdin().read_line(&mut line)?;
 
-    ren::ready();
+    ren::ready()?;
     Ok(line)
 }
 
