@@ -73,7 +73,7 @@ impl Selector {
         Ok(())
     }
 
-    // return whether a move occure
+    /// Return whether an update occured.
     pub fn looper(&mut self, options: &mut Vec<cpn::Option>) -> FtuiResult<bool> {
         if self.up_trig.check()? && self.move_up(options) {
             Ok(true)
