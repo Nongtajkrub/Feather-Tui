@@ -1,6 +1,6 @@
 [package]
 name = "feather-tui"
-version = "3.0.0"
+version = "3.1.0"
 edition = "2024"
 license = "Apache-2.0"
 description = "A crate for building simple terminal-based user interfaces."
