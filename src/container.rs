@@ -53,7 +53,26 @@ impl Container {
         }
     }
 
-    // return whether an update occure
+    /// Updates the container and returns whether a change occurred.
+    ///
+    /// # Returns
+    /// - `Ok(bool)`: Returns whether an update occurred.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// use feather_tui as tui;
+    ///
+    /// fn main() -> tui::err::FtuiResult<()> {
+    ///     let mut container = tui::con::Container::new();
+    ///
+    ///     // Re-render the UI if an update occurred.
+    ///     if container.looper()? {
+    ///         render();
+    ///     }
+    ///     Ok(())
+    /// }
+    /// ```
     pub fn looper(&mut self) -> FtuiResult<bool> {
         if self.options.len() > 0 {
             return match self.selector.as_mut() {
@@ -65,11 +84,52 @@ impl Container {
         Ok(false)
     }
 
+    /// Assigns a header component for the container.
+    ///
+    /// # Parameters 
+    /// - `header`: The `Header` to assign to the container.
+    ///
+    /// # Example
+    /// ```rust
+    /// use feather_tui as tui;
+    ///
+    /// fn main() -> tui::err::FtuiResult<()> {
+    ///     let mut container = tui::con::Container::new();
+    ///
+    ///     let header = tui::cpn::Header::new("Header")?;
+    ///
+    ///     // Assign the header to the container.
+    ///     container.set_header(header);
+    ///
+    ///     Ok(())
+    /// }
+    /// ```
     pub fn set_header(&mut self, header: cpn::Header) {
         self.header = Some(header);
         self.component_count += 1;
     }
 
+    /// Assigns a selector to the container for handling user navigation.
+    ///
+    /// # Parameters 
+    /// - `selector`: The `Selector` to assign to the container.
+    ///
+    /// # Example
+    /// ```rust
+    /// use feather_tui as tui;
+    ///
+    /// fn main() -> tui::err::FtuiResult<()> {
+    ///     let mut container = tui::con::Container::new();
+    ///
+    ///     // Assume up_trig, down_trig, and selc_trig are defined elsewhere.
+    ///     let selector = tui::slc::Selector::new(up_trig, down_trig, selc_trig);
+    ///
+    ///     // Set the selector for the container.
+    ///     container.set_selector(selector);
+    ///
+    ///     Ok(())
+    /// }
+    /// ```
     pub fn set_selector(&mut self, selector: Selector) {
         self.selector = Some(selector);
     }
