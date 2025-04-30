@@ -1,7 +1,7 @@
 # 🦀 Feather-Tui
 
 ![Language](https://img.shields.io/badge/language-Rust-orange?logo=rust)
-![License](https://img.shields.io/badge/license-MIT-blue)
+![License](https://img.shields.io/badge/license-Apache--2.0-blue)
 ![Status](https://img.shields.io/badge/status-WIP-yellow)
 
 > A Rust rewrite of the terminal UI library I originally wrote in C for my school management project.
