@@ -1,6 +1,4 @@
-use std::option;
-
-use crate::{callback, cpn, err::FtuiResult, trg::Trigger};
+use crate::{cpn, err::FtuiResult, trg::Trigger};
 
 /// A `Selector` is used within a `Container` to navigate and select `Option` 
 /// components. It allows movement up and down between options and selection of
