@@ -162,7 +162,7 @@ impl Container {
     }
 
     pub fn with_option(
-        mut self, label: &str, callback: Callback
+        mut self, label: &str, callback: impl Into<Option<Callback>>
     ) -> FtuiResult<Self> {
         self.add_option(cpn::Option::new(label, callback)?);
         Ok(self)
