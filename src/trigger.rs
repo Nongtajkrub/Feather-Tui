@@ -126,7 +126,7 @@ impl Trigger {
         }
     }
 
-    pub fn check(&mut self) -> FtuiResult<bool> {
+    pub fn check(&self) -> FtuiResult<bool> {
         (self.func)(&self.arg)
     }
 
