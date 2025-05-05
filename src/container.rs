@@ -210,7 +210,7 @@ impl Container {
         Ok(())
     }
 
-    pub(crate) fn header(&self) -> &Option<cpn::Header>{
+    pub(crate) fn header(&self) -> &Option<cpn::Header> {
         return &self.header;
     }
 
@@ -228,6 +228,22 @@ impl Container {
 
     pub fn selector_mut(&mut self) -> FtuiResult<&mut Selector> {
         self.selector.as_mut().ok_or(FtuiError::ContainerNoSelector)
+    }
+
+    pub fn selector_up(&mut self) -> FtuiResult<bool> {
+        let selector = self.selector.as_mut().ok_or(FtuiError::ContainerNoSelector)?;
+        Ok(selector.move_up(&mut self.options))
+    }
+
+    pub fn selector_down(&mut self) -> FtuiResult<bool> {
+        let selector = self.selector.as_mut().ok_or(FtuiError::ContainerNoSelector)?;
+        Ok(selector.move_down(&mut self.options))
+    }
+
+    pub fn selector_select(&mut self) -> FtuiResult<bool> {
+        let selector = self.selector.as_mut().ok_or(FtuiError::ContainerNoSelector)?;
+        selector.selc(&mut self.options)?;
+        Ok(true)
     }
 
     pub(crate) fn component_count(&self) -> u16 {
