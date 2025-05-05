@@ -28,7 +28,7 @@ pub struct Selector {
     up_trig: Trigger,
     down_trig: Trigger,
     selc_trig: Trigger,
-    on: u16,
+    on: usize,
 }
 
 impl Selector {
@@ -47,29 +47,29 @@ impl Selector {
         }
 
         // move the selector up
-        options[self.on as usize].set_selc_on(false);
+        options[self.on].set_selc_on(false);
         self.on -= 1;
-        options[self.on as usize].set_selc_on(true);
+        options[self.on].set_selc_on(true);
 
         true
     }
 
     fn move_down(&mut self, options: &mut Vec<cpn::Option>) -> bool {
-        if self.on as usize == options.len() - 1 {
+        if self.on == options.len() - 1 {
             return false;
         }
 
         // move selector down
-        options[self.on as usize].set_selc_on(false);
+        options[self.on].set_selc_on(false);
         self.on += 1;
-        options[self.on as usize].set_selc_on(true);
+        options[self.on].set_selc_on(true);
 
         true
     }
 
     /// Select action always trigger an update.
     fn selc(&mut self, options: &mut Vec<cpn::Option>) -> FtuiResult<()> {
-        options[self.on as usize].callback().call()?;
+        options[self.on].callback().call()?;
         Ok(())
     }
 
