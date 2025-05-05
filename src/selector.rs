@@ -1,4 +1,6 @@
-use crate::{cpn, err::FtuiResult, trg::Trigger};
+use std::option;
+
+use crate::{callback, cpn, err::FtuiResult, trg::Trigger};
 
 /// A `Selector` is used within a `Container` to navigate and select `Option` 
 /// components. It allows movement up and down between options and selection of
@@ -69,7 +71,11 @@ impl Selector {
 
     /// Select action always trigger an update.
     fn selc(&mut self, options: &mut Vec<cpn::Option>) -> FtuiResult<()> {
-        options[self.on].callback().call()?;
+        if let Some(callback) = options[self.on].callback() {
+            callback.call()?;
+        } else {
+            options[self.on].set_is_selected(true);
+        }
         Ok(())
     }
 

@@ -45,7 +45,9 @@ pub struct Option {
     len: usize,
     line: u16,
     selc_on: bool,
-    callback: cbk::Callback,
+    is_selc: bool,
+    // Use `std::option::Option` to prevent conflict with `Option`.
+    callback: std::option::Option<cbk::Callback>,
 }
 
 impl Option {
@@ -75,7 +77,9 @@ impl Option {
     /// // When selected, it exit the program.
     /// let option = tui::cpn::Option::new("Quit", callback)?;
     /// ```
-    pub fn new(label: &str, callback: cbk::Callback) -> FtuiResult<Self> {
+    pub fn new(
+        label: &str, callback: impl Into<std::option::Option<cbk::Callback>>
+    ) -> FtuiResult<Self> {
         if label.is_empty() {
             return Err(FtuiError::OptionLabelEmpty);
         }
@@ -85,8 +89,17 @@ impl Option {
             len: label.graphemes(true).count(),
             line: 0,
             selc_on: false,
-            callback,
+            is_selc: false,
+            callback: callback.into(),
         })
+    }
+
+    pub fn set_is_selected(&mut self, value: bool) {
+        self.is_selc = value;
+    }
+
+    pub fn is_selected(&mut self) -> bool {
+        std::mem::take(&mut self.is_selc)
     }
 
     pub(crate) fn set_line(&mut self, line: u16) {
@@ -109,7 +122,7 @@ impl Option {
         return self.selc_on;
     }
 
-    pub(crate) fn callback(&self) -> &cbk::Callback {
+    pub(crate) fn callback(&self) -> &std::option::Option<cbk::Callback> {
         return &self.callback;
     }
 
