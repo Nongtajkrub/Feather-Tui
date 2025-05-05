@@ -71,9 +71,8 @@ impl Selector {
     fn selc(&mut self, options: &mut Vec<cpn::Option>) -> FtuiResult<()> {
         if let Some(callback) = options[self.on].callback() {
             callback.call()?;
-        } else {
-            options[self.on].set_is_selected(true);
         }
+        options[self.on].set_is_selected(true);
         Ok(())
     }
 
