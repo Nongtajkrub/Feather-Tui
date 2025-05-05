@@ -72,7 +72,6 @@ impl Selector {
         if let Some(callback) = options[self.on].callback() {
             callback.call()?;
         }
-        options[self.on].set_is_selected(true);
         Ok(())
     }
 

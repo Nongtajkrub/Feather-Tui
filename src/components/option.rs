@@ -45,7 +45,6 @@ pub struct Option {
     len: usize,
     line: u16,
     selc_on: bool,
-    is_selc: bool,
     // Use `std::option::Option` to prevent conflict with `Option`.
     callback: std::option::Option<cbk::Callback>,
 }
@@ -89,17 +88,8 @@ impl Option {
             len: label.graphemes(true).count(),
             line: 0,
             selc_on: false,
-            is_selc: false,
             callback: callback.into(),
         })
-    }
-
-    pub fn set_is_selected(&mut self, value: bool) {
-        self.is_selc = value;
-    }
-
-    pub fn is_selected(&mut self) -> bool {
-        std::mem::take(&mut self.is_selc)
     }
 
     pub(crate) fn set_line(&mut self, line: u16) {
