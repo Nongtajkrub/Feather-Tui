@@ -229,6 +229,9 @@ pub enum FtuiError {
     #[error("Trigger function argument type mismatch unable to cast to the expected type.")]
     TriggerCastArgWrongType,
 
+    #[error("")]
+    SelectorNoTriggers,
+
     /// Occurs when calling the `callback::cast_arg` function with an argument 
     /// that is a `None`.
     ///
@@ -318,6 +321,7 @@ impl PartialEq for FtuiError {
             (RendererContainerTooBig, RendererContainerTooBig) => true,
             (TriggerCastArgNoArgument, TriggerCastArgNoArgument) => true,
             (TriggerCastArgWrongType, TriggerCastArgWrongType) => true,
+            (SelectorNoTriggers, SelectorNoTriggers) => true,
             (CallbackCastArgNoArgument, CallbackCastArgNoArgument) => true,
             (CallbackCastArgWrongType, CallbackCastArgWrongType) => true,
             (StdInputOutputError(_), StdInputOutputError(_)) => true,

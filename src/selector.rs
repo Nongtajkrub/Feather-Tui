@@ -1,4 +1,4 @@
-use crate::{cpn, err::FtuiResult, trg::Trigger};
+use crate::{cpn, err::FtuiResult, error::FtuiError, trg::Trigger};
 
 /// A `Selector` is used within a `Container` to navigate and select `Option` 
 /// components. It allows movement up and down between options and selection of
@@ -25,23 +25,32 @@ use crate::{cpn, err::FtuiResult, trg::Trigger};
 /// container.set_selector(selector);
 /// ```
 pub struct Selector {
-    up_trig: Trigger,
-    down_trig: Trigger,
-    selc_trig: Trigger,
+    up_trig: Option<Trigger>,
+    down_trig: Option<Trigger>,
+    selc_trig: Option<Trigger>,
     on: usize,
 }
 
 impl Selector {
-    pub fn new(up_trig: Trigger, down_trig: Trigger, selc_trig: Trigger) -> Selector {
+    pub fn new(up_trig: Trigger, down_trig: Trigger, selc_trig: Trigger) -> Self {
         Selector {
-            up_trig,
-            down_trig,
-            selc_trig,
+            up_trig: Some(up_trig),
+            down_trig: Some(down_trig),
+            selc_trig: Some(selc_trig),
             on: 0,
         }
     }
 
-    fn move_up(&mut self, options: &mut Vec<cpn::Option>) -> bool {
+    pub fn no_trigger() -> Self {
+        Selector {
+            up_trig: None,
+            down_trig: None,
+            selc_trig: None,
+            on: 0,
+        }
+    }
+
+    pub(crate) fn move_up(&mut self, options: &mut Vec<cpn::Option>) -> bool {
         if self.on == 0 {
             return false;
         }
@@ -54,7 +63,7 @@ impl Selector {
         true
     }
 
-    fn move_down(&mut self, options: &mut Vec<cpn::Option>) -> bool {
+    pub(crate) fn move_down(&mut self, options: &mut Vec<cpn::Option>) -> bool {
         if self.on == options.len() - 1 {
             return false;
         }
@@ -68,7 +77,7 @@ impl Selector {
     }
 
     /// Select action always trigger an update.
-    fn selc(&mut self, options: &mut Vec<cpn::Option>) -> FtuiResult<()> {
+    pub(crate) fn selc(&mut self, options: &mut Vec<cpn::Option>) -> FtuiResult<()> {
         if let Some(callback) = options[self.on].callback() {
             callback.call()?;
         }
@@ -77,24 +86,47 @@ impl Selector {
 
     /// Return whether an update occured.
     pub fn looper(&mut self, options: &mut Vec<cpn::Option>) -> FtuiResult<bool> {
-        if self.up_trig.check()? && self.move_up(options) {
-            Ok(true)
-        } else if self.down_trig.check()? && self.move_down(options) {
-            Ok(true)
-        } else if self.selc_trig.check()? {
-            self.selc(options)?;
-            Ok(true)
-        } else {
-            Ok(false)
+        if let Some(up_trig) = self.up_trig.as_ref() {
+            if up_trig.check()? && self.move_up(options) {
+                return Ok(true);
+            }
         }
+
+        if let Some(down_trig) = self.down_trig.as_ref() {
+            if down_trig.check()? && self.move_down(options) {
+                return Ok(true);
+            }
+        }
+
+        if let Some(selc_trig) = self.selc_trig.as_ref() {
+            if selc_trig.check()? {
+                self.selc(options)?;
+                return Ok(true);
+            }
+        }
+
+        Ok(false)
     }
 
-    pub fn update_trig_arg<T>(&mut self, up_arg: T, down_arg: T, selc_arg: T)
+    pub fn update_trig_arg<T>(
+        &mut self, up_arg: T, down_arg: T, selc_arg: T
+    ) -> FtuiResult<()>
     where
         T: 'static,
     {
-        self.up_trig.update_arg(up_arg);
-        self.down_trig.update_arg(down_arg);
-        self.selc_trig.update_arg(selc_arg);
+        match (
+            self.up_trig.as_mut(),
+            self.down_trig.as_mut(),
+            self.selc_trig.as_mut(),
+        ) {
+            (Some(up_trig), Some(down_trig), Some(selc_trig)) => {
+                up_trig.update_arg(up_arg);
+                down_trig.update_arg(down_arg);
+                selc_trig.update_arg(selc_arg);
+
+                Ok(())
+            },
+            _ => Err(FtuiError::SelectorNoTriggers),
+        }
     }
 }
