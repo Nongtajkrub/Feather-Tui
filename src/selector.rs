@@ -1,4 +1,4 @@
-use crate::{cpn, err::FtuiResult, error::FtuiError, trg::Trigger};
+use crate::{cpn, err::{FtuiResult, FtuiError}, trg::Trigger};
 
 /// A `Selector` is used within a `Container` to navigate and select `Option` 
 /// components. It allows movement up and down between options and selection of
@@ -41,7 +41,7 @@ impl Selector {
         }
     }
 
-    pub fn no_trigger() -> Self {
+    pub fn no_triggers() -> Self {
         Selector {
             up_trig: None,
             down_trig: None,
