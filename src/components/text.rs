@@ -99,6 +99,13 @@ pub struct Text {
     style: Vec<&'static str>,
 }
 
+impl From<&str> for Text {
+    fn from(value: &str) -> Self {
+        // If flags is None no error can occur.
+        Text::new(value, None).unwrap()
+    }
+}
+
 /// Implementation of the `PartialEq` trait for the `Text` struct. This implementation
 /// defines equality based on two fields: `label` and `flags`.
 ///
