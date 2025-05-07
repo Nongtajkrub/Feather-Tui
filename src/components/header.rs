@@ -30,14 +30,6 @@ pub struct Header {
     len: usize,
 }
 
-impl TryFrom<&str> for Header {
-    type Error = FtuiError;
-    
-    fn try_from(value: &str) -> Result<Self, Self::Error> {
-        Header::new(value)
-    }
-}
-
 impl Header {
     /// Creates a new `Header` with the specified label.
     ///
