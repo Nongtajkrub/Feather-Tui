@@ -88,7 +88,7 @@ impl Selector {
     }
 
     /// Return whether an update occured.
-    pub fn looper(&mut self, options: &mut Vec<cpn::Option>) -> FtuiResult<bool> {
+    pub(crate) fn looper(&mut self, options: &mut Vec<cpn::Option>) -> FtuiResult<bool> {
         if !self.have_trigs {
             return Err(FtuiError::SelectorNoTriggers);
         }
