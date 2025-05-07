@@ -180,14 +180,6 @@ impl Container {
         self
     }
 
-    #[deprecated(
-        since = "3.1.0",
-        note = "Typo in method name use `with_separator_dotted` instead")]
-    pub fn with_selector_dotted(mut self, style: cpn::SeparatorStyle) -> Self {
-        self.add_separator(cpn::Separator::dotted(style));
-        self
-    }
-
     pub fn with_separator_dotted(mut self, style: cpn::SeparatorStyle) -> Self {
         self.add_separator(cpn::Separator::dotted(style));
         self
