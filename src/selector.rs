@@ -25,6 +25,7 @@ use crate::{cpn, err::{FtuiResult, FtuiError}, trg::Trigger};
 /// container.set_selector(selector);
 /// ```
 pub struct Selector {
+    have_trigs: bool,
     up_trig: Option<Trigger>,
     down_trig: Option<Trigger>,
     selc_trig: Option<Trigger>,
@@ -34,6 +35,7 @@ pub struct Selector {
 impl Selector {
     pub fn new(up_trig: Trigger, down_trig: Trigger, selc_trig: Trigger) -> Self {
         Selector {
+            have_trigs: true,
             up_trig: Some(up_trig),
             down_trig: Some(down_trig),
             selc_trig: Some(selc_trig),
@@ -43,6 +45,7 @@ impl Selector {
 
     pub fn no_triggers() -> Self {
         Selector {
+            have_trigs: false,
             up_trig: None,
             down_trig: None,
             selc_trig: None,
@@ -86,23 +89,21 @@ impl Selector {
 
     /// Return whether an update occured.
     pub fn looper(&mut self, options: &mut Vec<cpn::Option>) -> FtuiResult<bool> {
-        if let Some(up_trig) = self.up_trig.as_ref() {
-            if up_trig.check()? && self.move_up(options) {
-                return Ok(true);
-            }
+        if !self.have_trigs {
+            return Err(FtuiError::SelectorNoTriggers);
         }
 
-        if let Some(down_trig) = self.down_trig.as_ref() {
-            if down_trig.check()? && self.move_down(options) {
-                return Ok(true);
-            }
+        if self.up_trig.as_ref().unwrap().check()? && self.move_up(options) {
+            return Ok(true);
         }
 
-        if let Some(selc_trig) = self.selc_trig.as_ref() {
-            if selc_trig.check()? {
-                self.selc(options)?;
-                return Ok(true);
-            }
+        if self.down_trig.as_ref().unwrap().check()? && self.move_down(options) {
+            return Ok(true);
+        }
+
+        if self.selc_trig.as_ref().unwrap().check()? {
+            self.selc(options)?;
+            return Ok(true);
         }
 
         Ok(false)
@@ -114,19 +115,14 @@ impl Selector {
     where
         T: 'static,
     {
-        match (
-            self.up_trig.as_mut(),
-            self.down_trig.as_mut(),
-            self.selc_trig.as_mut(),
-        ) {
-            (Some(up_trig), Some(down_trig), Some(selc_trig)) => {
-                up_trig.update_arg(up_arg);
-                down_trig.update_arg(down_arg);
-                selc_trig.update_arg(selc_arg);
-
-                Ok(())
-            },
-            _ => Err(FtuiError::SelectorNoTriggers),
+        if !self.have_trigs {
+            return Err(FtuiError::SelectorNoTriggers);
         }
+
+        self.up_trig.as_mut().unwrap().update_arg(up_arg);
+        self.down_trig.as_mut().unwrap().update_arg(down_arg);
+        self.selc_trig.as_mut().unwrap().update_arg(selc_arg);
+
+        Ok(())
     }
 }
