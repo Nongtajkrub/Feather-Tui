@@ -5,7 +5,7 @@ use crossterm as ct;
 #[derive(Clone, Debug, PartialEq, Eq)]
 struct Line {
     ansi: Vec<&'static str>,
-    width: u16,
+    width: usize,
     data: String,
 }
 
@@ -13,7 +13,7 @@ impl Line {
     pub fn new(width: u16) -> Line {
         Line {
             ansi: vec![],
-            width,
+            width: width as usize,
             data: " ".repeat(width as usize),
         }
     }
@@ -30,7 +30,7 @@ impl Line {
 
     pub fn fill(&mut self, c: char) {
         self.data.clear();
-        self.data.extend(std::iter::repeat(c).take(self.width as usize));
+        self.data.extend(std::iter::repeat(c).take(self.width));
     }
 
     pub fn fill_dotted(&mut self, c: char) {
