@@ -128,6 +128,9 @@ pub enum FtuiError {
     #[error("Container doesnot have a Selector.")]
     ContainerNoSelector,
 
+    #[error("Fail to find option by ID")]
+    ContainerNoOptionById,
+
     /// Occurs when attempting to call the `Renderer::render` method with a container
     /// that exceeds the dimensions of the renderer. There are two cases where a
     /// container is considered "too big":

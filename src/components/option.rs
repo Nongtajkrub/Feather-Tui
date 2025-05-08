@@ -44,6 +44,7 @@ pub struct Option {
     label: String,
     len: usize,
     line: u16,
+    id: u16,
     selc_on: bool,
     // Use `std::option::Option` to prevent conflict with `Option`.
     callback: std::option::Option<cbk::Callback>,
@@ -86,6 +87,7 @@ impl Option {
         Ok(Option {
             label: label.to_string(),
             len: label.graphemes(true).count(),
+            id: 0,
             line: 0,
             selc_on: false,
             callback: callback.into(),
@@ -118,5 +120,13 @@ impl Option {
 
     pub(crate) fn set_selc_on(&mut self, value: bool) {
         self.selc_on = value;
+    }
+
+    pub(crate) fn id(&self) -> u16 {
+        self.id
+    }
+
+    pub(crate) fn set_id(&mut self, value: u16) {
+        self.id = value;
     }
 }

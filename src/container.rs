@@ -1,4 +1,7 @@
-use crate::{cbk::Callback, cpn, error::{FtuiError, FtuiResult}, slc::Selector, ren::Renderer};
+use crate::{
+    cbk::Callback, cpn, error::{FtuiError, FtuiResult}, slc::Selector,
+    ren::Renderer, util::id::IdGenerator
+};
 use std::option::Option;
 
 /// `Container` acts as a layout manager for the UI elements (headers, options,
@@ -33,6 +36,7 @@ use std::option::Option;
 /// // The container can then be passed to a `Renderer` for display.
 /// ```
 pub struct Container {
+    id_generator: IdGenerator<u16>,
     header: Option<cpn::Header>,
     options: Vec<cpn::Option>,
     selector: Option<Selector>,
@@ -44,6 +48,7 @@ pub struct Container {
 impl Container { 
     pub fn new() -> Container {
         Container {
+            id_generator: IdGenerator::new(),
             header: None,
             options: vec![],
             selector: None,
@@ -139,6 +144,26 @@ impl Container {
             option.set_selc_on(true);
         }
 
+        option.set_id(self.id_generator.get_id());
+
+        self.options.push(option);
+        self.options.last_mut().unwrap().set_line(self.component_count);
+        self.component_count += 1;
+    }
+
+    pub fn add_option_store_id(
+        &mut self, mut option: cpn::Option, store_id: &mut u16
+    ) {
+        let id = self.id_generator.get_id();
+
+        *store_id = id;
+
+        if self.options.len() == 0 {
+            option.set_selc_on(true);
+        }
+
+        option.set_id(id);
+
         self.options.push(option);
         self.options.last_mut().unwrap().set_line(self.component_count);
         self.component_count += 1;
@@ -165,6 +190,14 @@ impl Container {
         mut self, label: &str, callback: impl Into<Option<Callback>>
     ) -> FtuiResult<Self> {
         self.add_option(cpn::Option::new(label, callback)?);
+        Ok(self)
+    }
+
+    pub fn with_option_store_id(
+        mut self,
+        label: &str, callback: impl Into<Option<Callback>>, store_id: &mut u16
+    ) -> FtuiResult<Self> {
+        self.add_option_store_id(cpn::Option::new(label, callback)?, store_id);
         Ok(self)
     }
 
@@ -200,6 +233,13 @@ impl Container {
     pub fn draw_fullscreen(&mut self) -> FtuiResult<()> {
         Renderer::fullscreen()?.simple_draw(self)?;
         Ok(())
+    }
+
+    #[inline]
+    pub fn option_by_id(&self, id: u16) -> FtuiResult<&cpn::Option> {
+        self.options.iter()
+            .find(|option| option.id() == id)
+            .ok_or(FtuiError::ContainerNoOptionById)
     }
 
     pub(crate) fn header(&self) -> &Option<cpn::Header> {
