@@ -235,14 +235,14 @@ impl Container {
     }
 }
 
-pub struct ContainerOptionBuilder {
+pub struct ContainerBuilderId {
     builder: ContainerBuilder,
     id: u16,
 }
 
-impl ContainerOptionBuilder {
+impl ContainerBuilderId {
     pub fn new(builder: ContainerBuilder, id: u16) -> Self {
-        ContainerOptionBuilder {
+        ContainerBuilderId {
             builder,
             id,
         }
@@ -275,9 +275,9 @@ impl ContainerBuilder {
 
     pub fn option(
         mut self, label: &str, callback: impl Into<Option<Callback>>
-    ) -> FtuiResult<ContainerOptionBuilder> {
+    ) -> FtuiResult<ContainerBuilderId> {
         let id = self.container.add_option(cpn::Option::new(label, callback)?);
-        Ok(ContainerOptionBuilder::new(self, id))
+        Ok(ContainerBuilderId::new(self, id))
     }
 
     pub fn text(
