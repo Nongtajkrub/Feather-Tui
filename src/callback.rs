@@ -1,6 +1,5 @@
-use std::any::Any;
-
 use crate::err::{FtuiResult, FtuiError};
+use std::any::Any;
 
 /// This macro generates a function that take a reference to a `Box<dyn Any>`
 /// as an argument and return nothing. The function body (`$body`) is the code
@@ -69,13 +68,10 @@ pub fn cast_arg<T>(arg: &Option<Box<dyn Any>>) -> FtuiResult<&T>
 where
     T: 'static,
 {
-    match arg.as_ref() {
-        Some(arg) => match arg.downcast_ref::<T>() {
-            Some(casted_arg) => Ok(casted_arg),
-            None => Err(FtuiError::CallbackCastArgWrongType),
-        },
-        None => Err(FtuiError::CallbackCastArgNoArgument), 
-    }
+    arg.as_ref()
+        .ok_or(FtuiError::CallbackCastArgNoArgument)?
+        .downcast_ref::<T>()
+        .ok_or(FtuiError::CallbackCastArgWrongType)
 }
 
 /// A generic callback handler for executing functions with stored arguments.
