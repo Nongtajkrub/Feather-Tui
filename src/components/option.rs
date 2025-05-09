@@ -124,7 +124,7 @@ impl Option {
         self.selc_on = value;
     }
 
-    pub(crate) fn is_selc(&mut self) -> bool {
+    pub fn is_selc(&mut self) -> bool {
         if self.is_selc {
             self.is_selc = false;
             true
