@@ -46,6 +46,7 @@ pub struct Option {
     line: u16,
     id: u16,
     selc_on: bool,
+    is_selc: bool,
     // Use `std::option::Option` to prevent conflict with `Option`.
     callback: std::option::Option<cbk::Callback>,
 }
@@ -90,6 +91,7 @@ impl Option {
             id: 0,
             line: 0,
             selc_on: false,
+            is_selc: false,
             callback: callback.into(),
         })
     }
@@ -120,6 +122,19 @@ impl Option {
 
     pub(crate) fn set_selc_on(&mut self, value: bool) {
         self.selc_on = value;
+    }
+
+    pub(crate) fn is_selc(&mut self) -> bool {
+        if self.is_selc {
+            self.is_selc = false;
+            true
+        } else {
+            false
+        }
+    }
+
+    pub(crate) fn set_is_selc(&mut self, value: bool) {
+        self.is_selc = value;
     }
 
     pub(crate) fn id(&self) -> u16 {

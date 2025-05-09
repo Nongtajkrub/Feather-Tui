@@ -84,15 +84,12 @@ impl Selector {
         if let Some(callback) = options[self.on].callback() {
             callback.call()?;
         }
+        options[self.on].set_is_selc(true);
         Ok(())
     }
 
     /// Return whether an update occured.
     pub(crate) fn looper(&mut self, options: &mut Vec<cpn::Option>) -> FtuiResult<bool> {
-        if !self.have_trigs {
-            return Err(FtuiError::SelectorNoTriggers);
-        }
-
         if self.up_trig.as_ref().unwrap().check()? && self.move_up(options) {
             return Ok(true);
         }
