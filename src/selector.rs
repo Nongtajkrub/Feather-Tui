@@ -80,12 +80,12 @@ impl Selector {
     }
 
     /// Select action always trigger an update.
-    pub(crate) fn selc(&mut self, options: &mut Vec<cpn::Option>) -> FtuiResult<()> {
+    pub(crate) fn selc(&mut self, options: &mut Vec<cpn::Option>) -> FtuiResult<bool> {
         if let Some(callback) = options[self.on].callback() {
             callback.call()?;
         }
         options[self.on].set_is_selc(true);
-        Ok(())
+        Ok(true)
     }
 
     /// Return whether an update occured.
