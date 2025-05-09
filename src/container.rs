@@ -139,16 +139,20 @@ impl Container {
         self.selector = Some(selector);
     }
 
-    pub fn add_option(&mut self, mut option: cpn::Option) {
+    // Return added option ID.
+    pub fn add_option(&mut self, mut option: cpn::Option) -> u16 {
         if self.options.len() == 0 {
             option.set_selc_on(true);
         }
 
-        option.set_id(self.id_generator.get_id());
+        let id = self.id_generator.get_id();
+        option.set_id(id);
 
         self.options.push(option);
         self.options.last_mut().unwrap().set_line(self.component_count);
         self.component_count += 1;
+
+        id
     }
 
     pub fn add_text(&mut self, text: cpn::Text) {
@@ -224,6 +228,29 @@ impl Container {
     }
 }
 
+pub struct ContainerOptionBuilder {
+    builder: ContainerBuilder,
+    id: u16,
+}
+
+impl ContainerOptionBuilder {
+    pub fn new(builder: ContainerBuilder, id: u16) -> Self {
+        ContainerOptionBuilder {
+            builder,
+            id,
+        }
+    }
+
+    pub fn done(self) -> ContainerBuilder {
+        self.builder
+    }
+
+    pub fn store_id(self, at: &mut u16) -> ContainerBuilder {
+        *at = self.id;
+        self.builder
+    }
+}
+
 pub struct ContainerBuilder {
     container: Container,
 }
@@ -241,9 +268,9 @@ impl ContainerBuilder {
 
     pub fn option(
         mut self, label: &str, callback: impl Into<Option<Callback>>
-    ) -> FtuiResult<Self> {
-        self.container.add_option(cpn::Option::new(label, callback)?);
-        Ok(self)
+    ) -> FtuiResult<ContainerOptionBuilder> {
+        let id = self.container.add_option(cpn::Option::new(label, callback)?);
+        Ok(ContainerOptionBuilder::new(self, id))
     }
 
     pub fn text(
