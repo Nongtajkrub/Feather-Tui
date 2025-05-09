@@ -1,6 +1,5 @@
-use std::any::Any;
-
 use crate::err::{FtuiResult, FtuiError};
+use std::any::Any;
 
 /// This macro generates a function that takes a reference to a `Box<dyn Any>`
 /// as an argument and returns a `bool`. The function body (`$body`) determines
@@ -70,13 +69,10 @@ pub fn cast_arg<T>(arg: &Option<Box<dyn Any>>) -> FtuiResult<&T>
 where
     T: 'static,
 {
-    match arg.as_ref() {
-        Some(arg) => match arg.downcast_ref::<T>() {
-            Some(casted_arg) => Ok(casted_arg),
-            None => Err(FtuiError::TriggerCastArgWrongType), 
-        },
-        None => Err(FtuiError::TriggerCastArgNoArgument),
-    }
+    arg.as_ref()
+        .ok_or(FtuiError::TriggerCastArgNoArgument)?
+        .downcast_ref::<T>()
+        .ok_or(FtuiError::TriggerCastArgWrongType)
 }
 
 /// A generic trigger handler for evaluating conditions based on stored arguments.
