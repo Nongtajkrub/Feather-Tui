@@ -125,12 +125,7 @@ impl Option {
     }
 
     pub fn is_selc(&mut self) -> bool {
-        if self.is_selc {
-            self.is_selc = false;
-            true
-        } else {
-            false
-        }
+        std::mem::take(&mut self.is_selc)
     }
 
     pub(crate) fn set_is_selc(&mut self, value: bool) {
