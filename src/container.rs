@@ -1,5 +1,5 @@
 use crate::{
-    cbk::Callback, cpn, error::{FtuiError, FtuiResult}, slc::Selector,
+    cbk::Callback, trg::Trigger, cpn, error::{FtuiError, FtuiResult}, slc::Selector,
     ren::Renderer, util::id::IdGenerator
 };
 use std::option::Option;
@@ -151,24 +151,6 @@ impl Container {
         self.component_count += 1;
     }
 
-    pub fn add_option_store_id(
-        &mut self, mut option: cpn::Option, store_id: &mut u16
-    ) {
-        let id = self.id_generator.get_id();
-
-        *store_id = id;
-
-        if self.options.len() == 0 {
-            option.set_selc_on(true);
-        }
-
-        option.set_id(id);
-
-        self.options.push(option);
-        self.options.last_mut().unwrap().set_line(self.component_count);
-        self.component_count += 1;
-    }
-
     pub fn add_text(&mut self, text: cpn::Text) {
         self.texts.push(text);
         self.texts.last_mut().unwrap().set_line(self.component_count);
@@ -181,47 +163,6 @@ impl Container {
         self.component_count += 1;
     }
 
-    pub fn with_header(mut self, label: &str) -> FtuiResult<Self> {
-        self.set_header(cpn::Header::new(label)?);
-        Ok(self)
-    }
-
-    pub fn with_option(
-        mut self, label: &str, callback: impl Into<Option<Callback>>
-    ) -> FtuiResult<Self> {
-        self.add_option(cpn::Option::new(label, callback)?);
-        Ok(self)
-    }
-
-    pub fn with_option_store_id(
-        mut self,
-        label: &str, callback: impl Into<Option<Callback>>, store_id: &mut u16
-    ) -> FtuiResult<Self> {
-        self.add_option_store_id(cpn::Option::new(label, callback)?, store_id);
-        Ok(self)
-    }
-
-    pub fn with_text(
-        mut self, label: &str, flags: impl Into<Option<cpn::TextFlags>>
-    ) -> FtuiResult<Self> {
-        self.add_text(cpn::Text::new(label, flags)?);
-        Ok(self)
-    }
-
-    pub fn with_separator_normal(mut self, style: cpn::SeparatorStyle) -> Self {
-        self.add_separator(cpn::Separator::normal(style));
-        self
-    }
-
-    pub fn with_separator_dotted(mut self, style: cpn::SeparatorStyle) -> Self {
-        self.add_separator(cpn::Separator::dotted(style));
-        self
-    }
-
-    pub fn with_selector(mut self, selector: Selector) -> Self {
-        self.set_selector(selector);
-        self
-    } 
 
     #[inline]
     pub fn draw(&mut self, width: u16, height: u16) -> FtuiResult<()> {
@@ -280,5 +221,61 @@ impl Container {
 
     pub(crate) fn component_count(&self) -> u16 {
         self.component_count
+    }
+}
+
+pub struct ContainerBuilder {
+    container: Container,
+}
+
+impl ContainerBuilder {
+    #[inline]
+    pub fn new() -> Self {
+        ContainerBuilder { container: Container::new(), }
+    }
+
+    pub fn header(mut self, label: &str) -> FtuiResult<Self> {
+        self.container.set_header(cpn::Header::new(label)?);
+        Ok(self)
+    }
+
+    pub fn option(
+        mut self, label: &str, callback: impl Into<Option<Callback>>
+    ) -> FtuiResult<Self> {
+        self.container.add_option(cpn::Option::new(label, callback)?);
+        Ok(self)
+    }
+
+    pub fn text(
+        mut self, label: &str, flags: impl Into<Option<cpn::TextFlags>>
+    ) -> FtuiResult<Self> {
+        self.container.add_text(cpn::Text::new(label, flags)?);
+        Ok(self)
+    }
+
+    pub fn separator_normal(mut self, style: cpn::SeparatorStyle) -> Self {
+        self.container.add_separator(cpn::Separator::normal(style));
+        self
+    }
+
+    pub fn separator_dotted(mut self, style: cpn::SeparatorStyle) -> Self {
+        self.container.add_separator(cpn::Separator::dotted(style));
+        self
+    }
+
+    pub fn selector(
+        mut self, up_trig: Trigger, down_trig: Trigger, selc_trig: Trigger
+    ) -> Self {
+        self.container.set_selector(Selector::new(up_trig, down_trig, selc_trig));
+        self
+    }
+
+    pub fn selector_no_triggers(mut self) -> Self {
+        self.container.set_selector(Selector::no_triggers());
+        self
+    }
+
+    pub fn build(self) -> Container {
+        self.container
     }
 }
