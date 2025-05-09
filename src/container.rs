@@ -38,9 +38,9 @@ pub struct Container {
     id_generator: IdGenerator<u16>,
     header: Option<cpn::Header>,
     options: Vec<cpn::Option>,
-    selector: Option<Selector>,
     texts: Vec<cpn::Text>,
     separators: Vec<cpn::Separator>,
+    selector: Option<Selector>,
     component_count: u16,
 }
 
@@ -50,9 +50,9 @@ impl Container {
             id_generator: IdGenerator::new(),
             header: None,
             options: vec![],
-            selector: None,
             texts: vec![],
             separators: vec![],
+            selector: None,
             component_count: 0,
         }
     }
@@ -79,13 +79,13 @@ impl Container {
     /// ```
     pub fn looper(&mut self) -> FtuiResult<bool> {
         if self.options.len() > 0 {
-            return match self.selector.as_mut() {
-                Some(selector) => Ok(selector.looper(&mut self.options)?),
-                None => Err(FtuiError::ContainerLooperNoSelector),
-            };
+            Ok(self.selector
+                .as_mut()
+                .ok_or(FtuiError::ContainerLooperNoSelector)?
+                .looper(&mut self.options)?)
+        } else {
+            Ok(false)
         }
-
-        Ok(false)
     }
 
     /// Assigns a header component for the container.
@@ -140,14 +140,14 @@ impl Container {
 
     // Return added Option ID.
     pub fn add_option(&mut self, mut option: cpn::Option) -> u16 {
-        if self.options.len() == 0 {
+        let id = self.id_generator.get_id();
+        option.set_id(id);
+        option.set_line(self.component_count);
+
+        if self.options.is_empty() {
             option.set_selc_on(true);
         }
 
-        let id = self.id_generator.get_id();
-        option.set_id(id);
-
-        option.set_line(self.component_count);
         self.options.push(option);
         self.component_count += 1;
 
@@ -157,9 +157,9 @@ impl Container {
     // Return added Text ID.
     pub fn add_text(&mut self, mut text: cpn::Text) -> u16 {
         let id = self.id_generator.get_id();
-
         text.set_id(id);
         text.set_line(self.component_count);
+
         self.texts.push(text);
         self.component_count += 1;
 
@@ -173,13 +173,11 @@ impl Container {
     }
 
 
-    #[inline]
     pub fn draw(&mut self, width: u16, height: u16) -> FtuiResult<()> {
         Renderer::new(width, height).simple_draw(self)?;
         Ok(())
     }
 
-    #[inline]
     pub fn draw_fullscreen(&mut self) -> FtuiResult<()> {
         Renderer::fullscreen()?.simple_draw(self)?;
         Ok(())
@@ -213,44 +211,55 @@ impl Container {
             .ok_or(FtuiError::ContainerNoComponentById)
     }
 
-    pub(crate) fn header(&self) -> &Option<cpn::Header> {
-        return &self.header;
-    }
-
-    pub(crate) fn options(&self) -> &[cpn::Option] {
-        return &self.options;
-    }
-
-    pub(crate) fn texts_mut(&mut self) -> &mut [cpn::Text] {
-        return &mut self.texts;
-    }
-
-    pub(crate) fn separators(&self) -> &[cpn::Separator] {
-        return &self.separators;
-    }
-
+    #[inline]
     pub fn selector_mut(&mut self) -> FtuiResult<&mut Selector> {
-        self.selector.as_mut().ok_or(FtuiError::ContainerNoSelector)
+        self.selector
+            .as_mut()
+            .ok_or(FtuiError::ContainerNoSelector)
     }
 
+    #[inline]
     pub fn selector_up(&mut self) -> FtuiResult<bool> {
-        let selector = self.selector.as_mut().ok_or(FtuiError::ContainerNoSelector)?;
-        Ok(selector.move_up(&mut self.options))
+        Ok(self.selector
+            .as_mut()
+            .ok_or(FtuiError::ContainerNoSelector)?
+            .move_up(&mut self.options))
     }
 
+    #[inline]
     pub fn selector_down(&mut self) -> FtuiResult<bool> {
-        let selector = self.selector.as_mut().ok_or(FtuiError::ContainerNoSelector)?;
-        Ok(selector.move_down(&mut self.options))
+        Ok(self.selector
+            .as_mut()
+            .ok_or(FtuiError::ContainerNoSelector)?
+            .move_down(&mut self.options))
     }
 
+    #[inline]
     pub fn selector_select(&mut self) -> FtuiResult<bool> {
-        let selector = self.selector.as_mut().ok_or(FtuiError::ContainerNoSelector)?;
-        selector.selc(&mut self.options)?;
-        Ok(true)
+        Ok(self.selector
+            .as_mut()
+            .ok_or(FtuiError::ContainerNoSelector)?
+            .selc(&mut self.options)?)
     }
 
     pub(crate) fn component_count(&self) -> u16 {
         self.component_count
+    }
+
+    pub(crate) fn header(&self) -> &Option<cpn::Header> {
+        &self.header
+    }
+
+    pub(crate) fn options(&self) -> &[cpn::Option] {
+        &self.options
+    }
+
+    pub(crate) fn texts_mut(&mut self) -> &mut [cpn::Text] {
+        &mut self.texts
+    }
+
+    pub(crate) fn separators(&self) -> &[cpn::Separator] {
+        &self.separators
     }
 }
 
