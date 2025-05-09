@@ -148,22 +148,22 @@ impl Container {
         let id = self.id_generator.get_id();
         option.set_id(id);
 
+        option.set_line(self.component_count);
         self.options.push(option);
-        self.options.last_mut().unwrap().set_line(self.component_count);
         self.component_count += 1;
 
         id
     }
 
-    pub fn add_text(&mut self, text: cpn::Text) {
+    pub fn add_text(&mut self, mut text: cpn::Text) {
+        text.set_line(self.component_count);
         self.texts.push(text);
-        self.texts.last_mut().unwrap().set_line(self.component_count);
         self.component_count += 1;
     }
 
-    pub fn add_separator(&mut self, separator: cpn::Separator) {
+    pub fn add_separator(&mut self, mut separator: cpn::Separator) {
+        separator.set_line(self.component_count);
         self.separators.push(separator);
-        self.separators.last_mut().unwrap().set_line(self.component_count);
         self.component_count += 1;
     }
 
