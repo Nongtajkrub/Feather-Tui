@@ -181,8 +181,15 @@ impl Container {
     }
 
     #[inline]
-    pub fn option_by_id(&self, id: u16) -> FtuiResult<&cpn::Option> {
+    pub fn option(&self, id: u16) -> FtuiResult<&cpn::Option> {
         self.options.iter()
+            .find(|option| option.id() == id)
+            .ok_or(FtuiError::ContainerNoOptionById)
+    }
+
+    #[inline]
+    pub fn option_mut(&mut self, id: u16) -> FtuiResult<&mut cpn::Option> {
+        self.options.iter_mut()
             .find(|option| option.id() == id)
             .ok_or(FtuiError::ContainerNoOptionById)
     }
