@@ -2,7 +2,6 @@ use crate::{
     cbk::Callback, trg::Trigger, cpn, error::{FtuiError, FtuiResult}, slc::Selector,
     ren::Renderer, util::id::IdGenerator
 };
-use std::option::Option;
 
 /// `Container` acts as a layout manager for the UI elements (headers, options,
 /// text, and selector).
@@ -139,7 +138,7 @@ impl Container {
         self.selector = Some(selector);
     }
 
-    // Return added option ID.
+    // Return added Option ID.
     pub fn add_option(&mut self, mut option: cpn::Option) -> u16 {
         if self.options.len() == 0 {
             option.set_selc_on(true);
@@ -155,10 +154,16 @@ impl Container {
         id
     }
 
-    pub fn add_text(&mut self, mut text: cpn::Text) {
+    // Return added Text ID.
+    pub fn add_text(&mut self, mut text: cpn::Text) -> u16 {
+        let id = self.id_generator.get_id();
+
+        text.set_id(id);
         text.set_line(self.component_count);
         self.texts.push(text);
         self.component_count += 1;
+
+        id
     }
 
     pub fn add_separator(&mut self, mut separator: cpn::Separator) {
@@ -184,14 +189,28 @@ impl Container {
     pub fn option(&self, id: u16) -> FtuiResult<&cpn::Option> {
         self.options.iter()
             .find(|option| option.id() == id)
-            .ok_or(FtuiError::ContainerNoOptionById)
+            .ok_or(FtuiError::ContainerNoComponentById)
     }
 
     #[inline]
     pub fn option_mut(&mut self, id: u16) -> FtuiResult<&mut cpn::Option> {
         self.options.iter_mut()
             .find(|option| option.id() == id)
-            .ok_or(FtuiError::ContainerNoOptionById)
+            .ok_or(FtuiError::ContainerNoComponentById)
+    }
+
+    #[inline]
+    pub fn text(&self, id: u16) -> FtuiResult<&cpn::Text> {
+        self.texts.iter()
+            .find(|text| text.id() == id)
+            .ok_or(FtuiError::ContainerNoComponentById)
+    }
+
+    #[inline]
+    pub fn text_mut(&mut self, id: u16) -> FtuiResult<&mut cpn::Text> {
+        self.texts.iter_mut()
+            .find(|text| text.id() == id)
+            .ok_or(FtuiError::ContainerNoComponentById)
     }
 
     pub(crate) fn header(&self) -> &Option<cpn::Header> {
@@ -282,9 +301,9 @@ impl ContainerBuilder {
 
     pub fn text(
         mut self, label: &str, flags: impl Into<Option<cpn::TextFlags>>
-    ) -> FtuiResult<Self> {
-        self.container.add_text(cpn::Text::new(label, flags)?);
-        Ok(self)
+    ) -> FtuiResult<ContainerBuilderId> {
+        let id = self.container.add_text(cpn::Text::new(label, flags)?);
+        Ok(ContainerBuilderId::new(self, id))
     }
 
     pub fn separator_normal(mut self, style: cpn::SeparatorStyle) -> Self {

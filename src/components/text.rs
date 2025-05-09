@@ -93,6 +93,7 @@ impl Default for TextFlags {
 pub struct Text {
     label: String,
     len: usize,
+    id: u16,
     line: u16,
     flags: TextFlags,
     pos: u16,
@@ -171,6 +172,7 @@ impl Text {
         Ok(Text {
             label: label.to_string(),
             len: label.graphemes(true).count(),
+            id: 0,
             line: 0,
             flags,
             pos: 0,
@@ -262,6 +264,13 @@ impl Text {
         return style;
     }
 
+    pub fn set_label(&mut self, label: impl Into<String>) {
+        let label = label.into();
+
+        self.len = label.graphemes(true).count();
+        self.label = label;
+    }
+
     pub(crate) fn set_line(&mut self, line: u16) {
         self.line = line;
     }
@@ -292,5 +301,13 @@ impl Text {
 
     pub(crate) fn styles(&self) -> &[&'static str] {
         return &self.style;
+    }
+
+    pub(crate) fn id(&self) -> u16 {
+        self.id
+    }
+
+    pub(crate) fn set_id(&mut self, value: u16) {
+        self.id = value;
     }
 }
