@@ -1,7 +1,7 @@
 use num_integer::Integer;
 use std::ops::AddAssign;
 
-pub struct IdGenerator<T>
+pub(crate) struct IdGenerator<T>
 where 
     T: Integer + Copy + AddAssign + PartialEq + Eq,
 {
@@ -12,13 +12,13 @@ impl<T> IdGenerator<T>
 where 
     T: Integer + Copy + AddAssign + PartialEq + Eq,
 {
-    pub fn new() -> Self {
+    pub(crate) fn new() -> Self {
         IdGenerator {
             id: T::zero(),
         }
     }
 
-    pub fn get_id(&mut self) -> T {
+    pub(crate) fn get_id(&mut self) -> T {
         self.id += T::one();
         self.id
     }
