@@ -33,7 +33,7 @@ pub use input      as inp;
 pub use error      as err;
 
 #[cfg(feature = "reduce_abstraction")]
-pub use cpn::{Header, Option, Text, TextFlags};
+pub use cpn::{Header, Option, Text, TextFlags, Separator, SeparatorStyle};
 
 #[cfg(feature = "reduce_abstraction")]
 pub use cbk::Callback;
@@ -45,7 +45,7 @@ pub use trg::Trigger;
 pub use slc::Selector;
 
 #[cfg(feature = "reduce_abstraction")]
-pub use con::Container;
+pub use con::{Container, ContainerBuilder};
 
 #[cfg(feature = "reduce_abstraction")]
 pub use ren::Renderer;
