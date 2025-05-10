@@ -263,29 +263,6 @@ impl Container {
     }
 }
 
-pub struct ContainerBuilderId {
-    builder: ContainerBuilder,
-    id: u16,
-}
-
-impl ContainerBuilderId {
-    pub fn new(builder: ContainerBuilder, id: u16) -> Self {
-        ContainerBuilderId {
-            builder,
-            id,
-        }
-    }
-
-    pub fn done(self) -> ContainerBuilder {
-        self.builder
-    }
-
-    pub fn store_id(self, at: &mut u16) -> ContainerBuilder {
-        *at = self.id;
-        self.builder
-    }
-}
-
 pub struct ContainerBuilder {
     container: Container,
 }
@@ -303,16 +280,33 @@ impl ContainerBuilder {
 
     pub fn option(
         mut self, label: &str, callback: impl Into<Option<Callback>>
-    ) -> FtuiResult<ContainerBuilderId> {
-        let id = self.container.add_option(cpn::Option::new(label, callback)?);
-        Ok(ContainerBuilderId::new(self, id))
+    ) -> FtuiResult<Self> {
+        self.container.add_option(cpn::Option::new(label, callback)?);
+        Ok(self)
     }
 
     pub fn text(
         mut self, label: &str, flags: impl Into<Option<cpn::TextFlags>>
-    ) -> FtuiResult<ContainerBuilderId> {
-        let id = self.container.add_text(cpn::Text::new(label, flags)?);
-        Ok(ContainerBuilderId::new(self, id))
+    ) -> FtuiResult<Self> {
+        self.container.add_text(cpn::Text::new(label, flags)?);
+        Ok(self)
+    }
+
+    pub fn option_id(
+        mut self,
+        label: &str, callback: impl Into<Option<Callback>>, store_id: &mut u16
+    ) -> FtuiResult<Self> {
+        *store_id = self.container.add_option(cpn::Option::new(label, callback)?);
+        Ok(self)
+    }
+
+    pub fn text_id(
+        mut self,
+        label: &str,
+        flags: impl Into<Option<cpn::TextFlags>>, store_id: &mut u16
+    ) -> FtuiResult<Self> {
+        *store_id = self.container.add_text(cpn::Text::new(label, flags)?);
+        Ok(self)
     }
 
     pub fn separator_normal(mut self, style: cpn::SeparatorStyle) -> Self {
