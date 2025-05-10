@@ -3,37 +3,21 @@ use crate::{
     ren::Renderer, util::id::IdGenerator
 };
 
-/// `Container` acts as a layout manager for the UI elements (headers, options,
-/// text, and selector).
+/// `Container` is a data structure used to store and organize UI components,
+/// including `Header`, `Option`, `Text`, `Separator`, and `Selector`.
+/// It is created using a `ContainerBuilder`.
+///
+/// ---
 ///
 /// # Usage
+/// - Handle UI events with the `looper` method.
+/// - Render the UI using a `Renderer` (recommended).
+/// - Alternatively, use the `draw` or `draw_fullscreen` methods.
+/// - Access `Option` components by ID using `option` and `option_mut`.
+/// - Access `Text` components by ID using `text` and `text_mut`.
+/// - Navigate using `selector_up`, `selector_down`, and `selector_select`.
 ///
-/// The `Renderer` requires a `Container` object to render the UI to the terminal.  
-/// Components can be added to the container using method chaining, allowing for a  
-/// structured and organized layout.
-///
-/// # Example
-/// ```rust
-/// use feather_tui as tui;
-///
-/// // Define a container with a header, two options, a text component, 
-/// // and a selector.
-/// let mut container = tui::con::Container::new()
-///     .with_header("Header")?
-///     .with_option("Option1", tui::cbk::Callback::new(callback_func, arg))? 
-///     .with_option("Option2", tui::cbk::Callback::new(callback_func, arg))?
-///     .with_text(
-///         "Text",
-///         tui::cpn::txt::TextFlags::COLOR_YELLOW_BACK |
-///         tui::cpn::txt::TextFlags::ALIGN_RIGHT)?
-///     .with_selector(
-///         tui::sel::Selector::new(
-///             tui::trg::Trigger::new(up_trig_func, arg),
-///             tui::trg::Trigger::new(down_trig_func, arg),
-///             tui::trg::Trigger::new(selc_trig_func, arg)));
-///
-/// // The container can then be passed to a `Renderer` for display.
-/// ```
+/// ---
 pub struct Container {
     id_generator: IdGenerator<u16>,
     header: Option<cpn::Header>,
@@ -59,24 +43,23 @@ impl Container {
 
     /// Updates the container and returns whether a change occurred.
     ///
+    /// ---
+    ///
     /// # Returns
     /// - `Ok(bool)`: Returns whether an update occurred.
     /// - `Err(FtuiError)`: Returns an error.
     ///
+    /// ---
+    ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    ///
-    /// fn main() -> tui::err::FtuiResult<()> {
-    ///     let mut container = tui::con::Container::new();
-    ///
-    ///     // Re-render the UI if an update occurred.
-    ///     if container.looper()? {
-    ///         render();
-    ///     }
-    ///     Ok(())
+    /// // Re-render the UI if an update occurred.
+    /// if container.looper()? {
+    ///     render();
     /// }
     /// ```
+    ///
+    /// ---
     pub fn looper(&mut self) -> FtuiResult<bool> {
         if self.options.len() > 0 {
             Ok(self.selector
@@ -88,58 +71,17 @@ impl Container {
         }
     }
 
-    /// Assigns a header component for the container.
-    ///
-    /// # Parameters 
-    /// - `header`: The `Header` to assign to the container.
-    ///
-    /// # Example
-    /// ```rust
-    /// use feather_tui as tui;
-    ///
-    /// fn main() -> tui::err::FtuiResult<()> {
-    ///     let mut container = tui::con::Container::new();
-    ///
-    ///     let header = tui::cpn::Header::new("Header")?;
-    ///
-    ///     // Assign the header to the container.
-    ///     container.set_header(header);
-    ///
-    ///     Ok(())
-    /// }
-    /// ```
-    pub fn set_header(&mut self, header: cpn::Header) {
+    pub(crate) fn set_header(&mut self, header: cpn::Header) {
         self.header = Some(header);
         self.component_count += 1;
     }
 
-    /// Assigns a selector to the container for handling user navigation.
-    ///
-    /// # Parameters 
-    /// - `selector`: The `Selector` to assign to the container.
-    ///
-    /// # Example
-    /// ```rust
-    /// use feather_tui as tui;
-    ///
-    /// fn main() -> tui::err::FtuiResult<()> {
-    ///     let mut container = tui::con::Container::new();
-    ///
-    ///     // Assume up_trig, down_trig, and selc_trig are defined elsewhere.
-    ///     let selector = tui::slc::Selector::new(up_trig, down_trig, selc_trig);
-    ///
-    ///     // Set the selector for the container.
-    ///     container.set_selector(selector);
-    ///
-    ///     Ok(())
-    /// }
-    /// ```
-    pub fn set_selector(&mut self, selector: Selector) {
+    pub(crate) fn set_selector(&mut self, selector: Selector) {
         self.selector = Some(selector);
     }
 
     // Return added Option ID.
-    pub fn add_option(&mut self, mut option: cpn::Option) -> u16 {
+    pub(crate) fn add_option(&mut self, mut option: cpn::Option) -> u16 {
         let id = self.id_generator.get_id();
         option.set_id(id);
         option.set_line(self.component_count);
@@ -155,7 +97,7 @@ impl Container {
     }
 
     // Return added Text ID.
-    pub fn add_text(&mut self, mut text: cpn::Text) -> u16 {
+    pub(crate) fn add_text(&mut self, mut text: cpn::Text) -> u16 {
         let id = self.id_generator.get_id();
         text.set_id(id);
         text.set_line(self.component_count);
@@ -166,7 +108,7 @@ impl Container {
         id
     }
 
-    pub fn add_separator(&mut self, mut separator: cpn::Separator) {
+    pub(crate) fn add_separator(&mut self, mut separator: cpn::Separator) {
         separator.set_line(self.component_count);
         self.separators.push(separator);
         self.component_count += 1;
@@ -263,6 +205,27 @@ impl Container {
     }
 }
 
+/// `ContainerBuilder` is used to create `Container` instances using the builder
+/// pattern. This allows for a flexible and readable way to construct complex
+/// containers by chaining method calls.
+///
+/// ---
+///
+/// # Example
+/// ```rust
+/// // Create a container with a header, two options, a separator, some text,
+/// // and a selector.
+/// let container: Container = ContainerBuilder::new()
+///     .header(...)?
+///     .option(...)?
+///     .option(...)?
+///     .separator_normal(...)
+///     .text(...)?
+///     .selector(...)?
+///     .build();
+/// ```
+///
+/// ---
 pub struct ContainerBuilder {
     container: Container,
 }
@@ -273,11 +236,58 @@ impl ContainerBuilder {
         ContainerBuilder { container: Container::new(), }
     }
 
+    /// Sets a `Header` component for the `Container`.
+    ///
+    /// ---
+    ///
+    /// # Parameters
+    /// - `label`: A `&str` representing the text to display in the header.
+    ///
+    /// ---
+    ///
+    /// # Returns
+    /// - `Ok(ContainerBuilder)`: Returns `self`.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// ---
+    ///
+    /// # Example
+    /// ```rust
+    /// // Sets a `Header` component with the label "Welcome".
+    /// ContainerBuilder::new()
+    ///     .header("Welcome")?;
+    /// ```
+    ///
+    /// ---
     pub fn header(mut self, label: &str) -> FtuiResult<Self> {
         self.container.set_header(cpn::Header::new(label)?);
         Ok(self)
     }
 
+    /// Adds an `Option` component to the `Container`.
+    ///
+    /// ---
+    ///
+    /// # Parameters
+    /// - `label`: A `&str` representing the text displayed for this option.
+    /// - `callback`: An optional `Callback` invoked when the option is selected.
+    ///
+    /// ---
+    ///
+    /// # Returns
+    /// - `Ok(ContainerBuilder)`: Returns `self`.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// ---
+    ///
+    /// # Example
+    /// ```rust
+    /// // Add an `Option` component with the label "Option" and no `Callback`.
+    /// ContainerBuilder::new()
+    ///     .option("Option", None)?;
+    /// ```
+    ///
+    ///---
     pub fn option(
         mut self, label: &str, callback: impl Into<Option<Callback>>
     ) -> FtuiResult<Self> {
@@ -285,6 +295,34 @@ impl ContainerBuilder {
         Ok(self)
     }
 
+    /// Adds a `Text` component to the `Container`.
+    /// 
+    /// ---
+    ///
+    /// # Parameters
+    /// - `label`: A `&str` representing the text to display.
+    /// - `flags`: A set of `TextFlags`, combined using the bitwise OR operator.
+    ///
+    /// ---
+    ///
+    /// # Notes
+    /// - This is what bitwise OR operator look like -> `flag1 | flag2 | flag3 ...`
+    ///
+    /// # Returns
+    /// - `Ok(ContainerBuilder)`: Returns `self`.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// ---
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a `Text` component labeled "Text", right-aligned and with
+    /// // a magenta background.
+    /// ContainerBuilder::new()
+    ///     .text("Text", TextFlags::ALIGN_RIGHT | TextFlags::COLOR_MAGENTA_BACK)?;
+    /// ```
+    ///
+    /// --- 
     pub fn text(
         mut self, label: &str, flags: impl Into<Option<cpn::TextFlags>>
     ) -> FtuiResult<Self> {
@@ -292,6 +330,34 @@ impl ContainerBuilder {
         Ok(self)
     }
 
+    /// Adds an `Option` component to the `Container` and stores its ID.
+    ///
+    /// ---
+    /// 
+    /// # Parameters
+    /// - `label`: The text displayed for this option.
+    /// - `callback`: An optional `Callback` invoked when the option is selected.
+    /// - `store_id`: A `&mut u16` to store the created `Option` component ID.
+    /// 
+    /// ---
+    ///
+    /// # Returns
+    /// - `Ok(ContainerBuilder)`: Returns `self`.
+    /// - `Err(FtuiError)`: Returns an error if creation or insertion fails.
+    /// 
+    /// ---
+    ///
+    /// # Example
+    /// ```rust
+    /// let mut id = 0u16;
+    ///
+    /// // Add an `Option` labeled "Option" with no `Callback`,
+    /// // storing the generated ID in `id`.
+    /// ContainerBuilder::new()
+    ///     .option_id("Option", None, &mut id)?;
+    /// ```
+    ///
+    /// ---
     pub fn option_id(
         mut self,
         label: &str, callback: impl Into<Option<Callback>>, store_id: &mut u16
@@ -319,6 +385,44 @@ impl ContainerBuilder {
         self
     }
 
+    /// Set a `Selector` for the `Container` to handle user navigation.
+    ///
+    /// ---
+    ///
+    /// # Parameters 
+    /// - `up_trig`: A `Trigger` that moves the selector up when activated.
+    /// - `down_trig`: A `Trigger` that moves the selector down when activated.
+    /// - `selc_trig`: A `Trigger` that confirms the selection when activated.
+    ///
+    /// ---
+    ///
+    /// # Returns
+    /// - `ContainerBuilder`: Returns `self`.
+    /// 
+    /// ---
+    ///
+    /// # Example
+    /// ```rust
+    /// // A `Trigger` that always activate.
+    /// tui::trg_new_trigger_func!(always_true_trigger, _arg, {
+    ///     Ok(true)
+    /// });
+    /// 
+    /// // A `Trigger` that never activate .
+    /// tui::trg_new_trigger_func!(always_false_trigger, _arg, {
+    ///     Ok(false)
+    /// });
+    ///
+    /// // Set a `Selector` that always moves down.
+    /// ContainerBuilder::new()
+    ///     .selector(
+    ///         Trigger::no_arg(always_false_trigger),
+    ///         Trigger::no_arg(always_true_trigger),
+    ///         Trigger::no_arg(always_false_trigger),
+    ///     );
+    /// ```
+    ///
+    /// ---
     pub fn selector(
         mut self, up_trig: Trigger, down_trig: Trigger, selc_trig: Trigger
     ) -> Self {
@@ -326,6 +430,30 @@ impl ContainerBuilder {
         self
     }
 
+    /// Sets a `Selector` with no `Trigger`s for the `Container`.
+    ///
+    /// ---
+    ///
+    /// In this case, navigation must be handled manually using the following methods:
+    /// - `Container::selector_up`
+    /// - `Container::selector_down`
+    /// - `Container::selector_select`
+    ///
+    /// ---
+    ///
+    /// # Returns
+    /// - `ContainerBuilder`: Returns `self`.
+    ///
+    /// ---
+    ///
+    /// # Example
+    /// ```rust
+    /// // Set a `Selector` with no `Trigger`s.
+    /// ContainerBuilder::new()
+    ///     .selector_no_triggers();
+    /// ```
+    ///
+    /// ---
     pub fn selector_no_triggers(mut self) -> Self {
         self.container.set_selector(Selector::no_triggers());
         self
