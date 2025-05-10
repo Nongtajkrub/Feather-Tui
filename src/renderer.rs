@@ -228,6 +228,11 @@ impl Renderer {
         0
     }
 
+    #[inline]
+    fn calc_bottom_align_pos(height: u16) -> u16 {
+        height - 1
+    }
+
     fn ensure_label_inbound(&self, len: usize) -> FtuiResult<()> {
         if len > self.width as usize {
             Err(FtuiError::RendererContainerTooBig)
@@ -302,7 +307,7 @@ impl Renderer {
 
         // y pos
         if text.flags().contains(cpn::TextFlags::ALIGN_BOTTOM) {
-            text.set_line(self.height - 1);
+            text.set_line(Self::calc_bottom_align_pos(self.height));
         }
     }
 
