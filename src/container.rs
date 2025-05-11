@@ -295,20 +295,23 @@ impl Container {
     /// if the `Container` has one.
     /// 
     /// # Returns
-    /// - `Some(&mut Selector)`: A mutable reference to the `Selector` component.
-    /// - `None`: If no `Selector` exists in the `Container`.
+    /// - `Ok(&mut Selector)`: A mutable reference to the `Selector` component.
+    /// - `Err(FtuiError)`: Return an error.
     ///
     /// # Example
     /// ```rust
-    /// // Create a container without a `Selector`.
-    /// let mut container = ContainerBuilder::new().build();
+    /// // Create a container with a `Selector`.
+    /// let mut container = ContainerBuilder::new()
+    ///     .selector_no_triggers()
+    ///     .build();
     ///
-    /// // `selector_mut` returns `None` since no `Selector` was set.
-    /// assert_eq!(container.selector_mut(), None);
+    /// // Get a mutable reference to the `Selector`.
+    /// container.selector_mut()?;
     /// ```
     #[inline]
-    pub fn selector_mut(&mut self) -> Option<&mut Selector> {
+    pub fn selector_mut(&mut self) -> FtuiResult<&mut Selector> {
         self.selector.as_mut()
+            .ok_or(FtuiError::ContainerNoSelector)
     }
     
     /// Attempts to move the `Selector` up by one position, if possible.
