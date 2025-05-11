@@ -7,8 +7,6 @@ use crate::{
 /// including `Header`, `Option`, `Text`, `Separator`, and `Selector`.
 /// It is created using a `ContainerBuilder`.
 ///
-/// ---
-///
 /// # Usage
 /// - Handle UI events with the `looper` method.
 /// - Render the UI using a `Renderer` (recommended).
@@ -16,8 +14,6 @@ use crate::{
 /// - Access `Option` components by ID using `option` and `option_mut`.
 /// - Access `Text` components by ID using `text` and `text_mut`.
 /// - Navigate using `selector_up`, `selector_down`, and `selector_select`.
-///
-/// ---
 pub struct Container {
     id_generator: IdGenerator<u16>,
     header: Option<cpn::Header>,
@@ -43,13 +39,9 @@ impl Container {
 
     /// Updates the container and returns whether a change occurred.
     ///
-    /// ---
-    ///
     /// # Returns
     /// - `Ok(bool)`: Returns whether an update occurred.
     /// - `Err(FtuiError)`: Returns an error.
-    ///
-    /// ---
     ///
     /// # Example
     /// ```rust
@@ -58,8 +50,6 @@ impl Container {
     ///     render();
     /// }
     /// ```
-    ///
-    /// ---
     pub fn looper(&mut self) -> FtuiResult<bool> {
         if self.options.len() > 0 {
             Ok(self.selector
@@ -209,8 +199,6 @@ impl Container {
 /// pattern. This allows for a flexible and readable way to construct complex
 /// containers by chaining method calls.
 ///
-/// ---
-///
 /// # Example
 /// ```rust
 /// // Create a container with a header, two options, a separator, some text,
@@ -224,13 +212,20 @@ impl Container {
 ///     .selector(...)?
 ///     .build();
 /// ```
-///
-/// ---
 pub struct ContainerBuilder {
     container: Container,
 }
 
 impl ContainerBuilder {
+    /// Constructs a new `ContainerBuilder`. 
+    ///
+    /// # Return
+    /// `ContainerBuilder`: A new instance of `ContainerBuilder`.
+    ///
+    /// # Example
+    /// ```rust
+    /// let builder = ContainerBuilder::new();
+    /// ```
     #[inline]
     pub fn new() -> Self {
         ContainerBuilder { container: Container::new(), }
@@ -238,18 +233,12 @@ impl ContainerBuilder {
 
     /// Sets a `Header` component for the `Container`.
     ///
-    /// ---
-    ///
     /// # Parameters
     /// - `label`: A `&str` representing the text to display in the header.
-    ///
-    /// ---
     ///
     /// # Returns
     /// - `Ok(ContainerBuilder)`: Returns `self`.
     /// - `Err(FtuiError)`: Returns an error.
-    ///
-    /// ---
     ///
     /// # Example
     /// ```rust
@@ -257,8 +246,6 @@ impl ContainerBuilder {
     /// ContainerBuilder::new()
     ///     .header("Welcome")?;
     /// ```
-    ///
-    /// ---
     pub fn header(mut self, label: &str) -> FtuiResult<Self> {
         self.container.set_header(cpn::Header::new(label)?);
         Ok(self)
@@ -266,19 +253,13 @@ impl ContainerBuilder {
 
     /// Adds an `Option` component to the `Container`.
     ///
-    /// ---
-    ///
     /// # Parameters
     /// - `label`: A `&str` representing the text displayed for this option.
     /// - `callback`: An optional `Callback` invoked when the option is selected.
     ///
-    /// ---
-    ///
     /// # Returns
     /// - `Ok(ContainerBuilder)`: Returns `self`.
     /// - `Err(FtuiError)`: Returns an error.
-    ///
-    /// ---
     ///
     /// # Example
     /// ```rust
@@ -286,8 +267,6 @@ impl ContainerBuilder {
     /// ContainerBuilder::new()
     ///     .option("Option", None)?;
     /// ```
-    ///
-    ///---
     pub fn option(
         mut self, label: &str, callback: impl Into<Option<Callback>>
     ) -> FtuiResult<Self> {
@@ -297,13 +276,9 @@ impl ContainerBuilder {
 
     /// Adds a `Text` component to the `Container`.
     /// 
-    /// ---
-    ///
     /// # Parameters
     /// - `label`: A `&str` representing the text to display.
     /// - `flags`: A set of `TextFlags`, combined using the bitwise OR operator.
-    ///
-    /// ---
     ///
     /// # Notes
     /// - This is what bitwise OR operator look like -> `flag1 | flag2 | flag3 ...`
@@ -312,8 +287,6 @@ impl ContainerBuilder {
     /// - `Ok(ContainerBuilder)`: Returns `self`.
     /// - `Err(FtuiError)`: Returns an error.
     ///
-    /// ---
-    ///
     /// # Example
     /// ```rust
     /// // Create a `Text` component labeled "Text", right-aligned and with
@@ -321,8 +294,6 @@ impl ContainerBuilder {
     /// ContainerBuilder::new()
     ///     .text("Text", TextFlags::ALIGN_RIGHT | TextFlags::COLOR_MAGENTA_BACK)?;
     /// ```
-    ///
-    /// --- 
     pub fn text(
         mut self, label: &str, flags: impl Into<Option<cpn::TextFlags>>
     ) -> FtuiResult<Self> {
@@ -332,21 +303,15 @@ impl ContainerBuilder {
 
     /// Adds an `Option` component to the `Container` and stores its ID.
     ///
-    /// ---
-    /// 
     /// # Parameters
     /// - `label`: The text displayed for this option.
     /// - `callback`: An optional `Callback` invoked when the option is selected.
     /// - `store_id`: A `&mut u16` to store the created `Option` component ID.
     /// 
-    /// ---
-    ///
     /// # Returns
     /// - `Ok(ContainerBuilder)`: Returns `self`.
-    /// - `Err(FtuiError)`: Returns an error if creation or insertion fails.
+    /// - `Err(FtuiError)`: Returns an error.
     /// 
-    /// ---
-    ///
     /// # Example
     /// ```rust
     /// let mut id = 0u16;
@@ -356,8 +321,6 @@ impl ContainerBuilder {
     /// ContainerBuilder::new()
     ///     .option_id("Option", None, &mut id)?;
     /// ```
-    ///
-    /// ---
     pub fn option_id(
         mut self,
         label: &str, callback: impl Into<Option<Callback>>, store_id: &mut u16
@@ -366,6 +329,31 @@ impl ContainerBuilder {
         Ok(self)
     }
 
+    /// Adds a `Text` component to the `Container` and stores its ID.
+    /// 
+    /// # Parameters
+    /// - `label`: A `&str` representing the text to display.
+    /// - `flags`: A set of `TextFlags`, combined using the bitwise OR operator.
+    /// - `store_id`: A `&mut u16` to store the created `Text` component ID.
+    ///
+    /// # Notes
+    /// - This is what bitwise OR operator look like -> `flag1 | flag2 | flag3 ...`
+    ///
+    /// # Returns
+    /// - `Ok(ContainerBuilder)`: Returns `self`.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// let mut id = 0u16;
+    ///
+    /// // Create a `Text` component labeled "Text", right-aligned and with
+    /// // a magenta background. storing the generated ID in `id`.
+    /// ContainerBuilder::new()
+    ///     .text(
+    ///         "Text",
+    ///         TextFlags::ALIGN_RIGHT | TextFlags::COLOR_MAGENTA_BACK, &mut id)?;
+    /// ```
     pub fn text_id(
         mut self,
         label: &str,
@@ -375,11 +363,39 @@ impl ContainerBuilder {
         Ok(self)
     }
 
+    /// Add a standard (non-dotted) `Separator` with the given style.
+    ///
+    /// # Parameters
+    /// - `style`: The visual style of the separator, specified as a `SeparatorStyle`.
+    ///
+    /// # Returns
+    /// - `ContainerBuilder`: Returns `self`.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Add a normal separator with a solid style.
+    /// ContainerBuilder::new()
+    ///     separator_normal(SeparatorStyle::Solid);
+    /// ```
     pub fn separator_normal(mut self, style: cpn::SeparatorStyle) -> Self {
         self.container.add_separator(cpn::Separator::normal(style));
         self
     }
 
+    /// Add a dotted `Separator` with the given style.
+    ///
+    /// # Parameters
+    /// - `style`: The visual style of the separator, specified as a `SeparatorStyle`.
+    ///
+    /// # Returns
+    /// - `ContainerBuilder`: Returns `self`.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Add a dotted separator with a solid style.
+    /// ContainerBuilder::new()
+    ///     separator_dotted(SeparatorStyle::Solid);
+    /// ```
     pub fn separator_dotted(mut self, style: cpn::SeparatorStyle) -> Self {
         self.container.add_separator(cpn::Separator::dotted(style));
         self
@@ -387,20 +403,14 @@ impl ContainerBuilder {
 
     /// Set a `Selector` for the `Container` to handle user navigation.
     ///
-    /// ---
-    ///
     /// # Parameters 
     /// - `up_trig`: A `Trigger` that moves the selector up when activated.
     /// - `down_trig`: A `Trigger` that moves the selector down when activated.
     /// - `selc_trig`: A `Trigger` that confirms the selection when activated.
     ///
-    /// ---
-    ///
     /// # Returns
     /// - `ContainerBuilder`: Returns `self`.
     /// 
-    /// ---
-    ///
     /// # Example
     /// ```rust
     /// // A `Trigger` that always activate.
@@ -421,8 +431,6 @@ impl ContainerBuilder {
     ///         Trigger::no_arg(always_false_trigger),
     ///     );
     /// ```
-    ///
-    /// ---
     pub fn selector(
         mut self, up_trig: Trigger, down_trig: Trigger, selc_trig: Trigger
     ) -> Self {
@@ -432,19 +440,13 @@ impl ContainerBuilder {
 
     /// Sets a `Selector` with no `Trigger`s for the `Container`.
     ///
-    /// ---
-    ///
     /// In this case, navigation must be handled manually using the following methods:
     /// - `Container::selector_up`
     /// - `Container::selector_down`
     /// - `Container::selector_select`
     ///
-    /// ---
-    ///
     /// # Returns
     /// - `ContainerBuilder`: Returns `self`.
-    ///
-    /// ---
     ///
     /// # Example
     /// ```rust
@@ -452,13 +454,29 @@ impl ContainerBuilder {
     /// ContainerBuilder::new()
     ///     .selector_no_triggers();
     /// ```
-    ///
-    /// ---
     pub fn selector_no_triggers(mut self) -> Self {
         self.container.set_selector(Selector::no_triggers());
         self
     }
 
+    /// Finalizes the construction of a `Container`. This method should be called
+    /// after all desired components have been added using the builder pattern.
+    /// It consumes `self` and returns the completed `Container`.
+    ///
+    /// # Returns
+    /// - `Container`: Returns the created `Container`.
+    ///
+    /// # Example
+    /// ```rust
+    /// let container: Container = ContainerBuilder::new()
+    ///     .header(...)?
+    ///     .option(...)?
+    ///     .option(...)?
+    ///     .separator_normal(...)
+    ///     .text(...)?
+    ///     .selector(...)?
+    ///     .build(); // Finalize and retrieve the constructed container.
+    /// ```
     pub fn build(self) -> Container {
         self.container
     }
