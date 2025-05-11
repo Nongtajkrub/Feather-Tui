@@ -24,8 +24,17 @@ pub struct Container {
     component_count: u16,
 }
 
-impl Container { 
-    pub fn new() -> Container {
+impl Container {
+    /// Constructs a new `Container`. 
+    ///
+    /// # Returns
+    /// `Container`: A new instance of `Container`.
+    ///
+    /// # Example
+    /// ```rust
+    /// let _ = Container::new();
+    /// ```
+    pub(crate) fn new() -> Container {
         Container {
             id_generator: IdGenerator::new(),
             header: None,
@@ -45,6 +54,10 @@ impl Container {
     ///
     /// # Example
     /// ```rust
+    /// fn render() {
+    ///     todo!();
+    /// }
+    ///
     /// // Re-render the UI if an update occurred.
     /// if container.looper()? {
     ///     render();
@@ -104,17 +117,89 @@ impl Container {
         self.component_count += 1;
     }
 
-
+    
+    /// Renders the `Container` using a temporary `Renderer`. This method is ideal
+    /// for quick, one-off renderings where performance isn't critical. Internally,
+    /// it creates a new `Renderer` with the given dimensions and uses it to draw
+    /// the `Container`. If you need to render multiple times, consider using a
+    /// persistent `Renderer` for better performance.
+    ///
+    ///
+    /// # Parameters
+    /// - `width`: The width of the rendering area.
+    /// - `height`: The height of the rendering area.
+    ///
+    /// # Returns
+    /// - `Ok(())`: Returns nothing.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Good for quick one-off rendering like this.
+    /// fn render_ui() -> FtuiResult<()> {
+    ///     ContainerBuilder::new()
+    ///         .header(...)?
+    ///         .text(...)?
+    ///         .build()
+    ///         .draw(40, 20)?; // Render with dimensions 40x20.
+    ///
+    ///     Ok(())
+    /// }
+    /// ```
     pub fn draw(&mut self, width: u16, height: u16) -> FtuiResult<()> {
         Renderer::new(width, height).simple_draw(self)?;
         Ok(())
     }
 
+    /// Renders the `Container` using a temporary `Renderer`. This method is ideal
+    /// for quick, one-off renderings where performance isn't critical. Internally,
+    /// it creates a new fullscreen `Renderer` and uses it to draw the `Container`.
+    /// If you need to render multiple times, consider using a persistent `Renderer`
+    /// for better performance.
+    ///
+    /// # Returns
+    /// - `Ok(())`: Returns nothing.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Good for quick one-off rendering like this.
+    /// fn render_ui() -> FtuiResult<()> {
+    ///     ContainerBuilder::new()
+    ///         .header(...)?
+    ///         .text(...)?
+    ///         .build()
+    ///         .draw_fullscreen()?; // Render in fullscreen.
+    ///
+    ///     Ok(())
+    /// }
+    /// ```
     pub fn draw_fullscreen(&mut self) -> FtuiResult<()> {
         Renderer::fullscreen()?.simple_draw(self)?;
         Ok(())
     }
 
+    /// Query an `Option` component by its ID (`O(n)` lookup).
+    ///
+    /// # Parameters
+    /// - `id`: The ID of the `Option` component to query.
+    ///
+    /// # Returns
+    /// - `Ok(&Option)`: A reference to the `Option` component.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // A mutable `u16` to store the ID of a `Option` component.
+    /// let mut option_id = 0;
+    ///
+    /// let container = ContainerBuilder::new()
+    ///     .option_id(..., &mut option_id)?
+    ///     .build();
+    ///
+    /// // Query the option by its ID.
+    /// container.option(option_id)?;
+    /// ```
     #[inline]
     pub fn option(&self, id: u16) -> FtuiResult<&cpn::Option> {
         self.options.iter()
@@ -122,6 +207,27 @@ impl Container {
             .ok_or(FtuiError::ContainerNoComponentById)
     }
 
+    /// Query an `Option` component by its ID (`O(n)` lookup).
+    ///
+    /// # Parameters
+    /// - `id`: The ID of the `Option` component to query.
+    ///
+    /// # Returns
+    /// - `Ok(&Option)`: A mutable reference to the `Option` component.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // A mutable `u16` to store the ID of a `Option` component.
+    /// let mut option_id = 0;
+    ///
+    /// let container = ContainerBuilder::new()
+    ///     .option_id(..., &mut option_id)?
+    ///     .build();
+    ///
+    /// // Query the option by its ID.
+    /// container.option_mut(option_id)?;
+    /// ```
     #[inline]
     pub fn option_mut(&mut self, id: u16) -> FtuiResult<&mut cpn::Option> {
         self.options.iter_mut()
@@ -129,6 +235,27 @@ impl Container {
             .ok_or(FtuiError::ContainerNoComponentById)
     }
 
+    /// Query an `Text` component by its ID (`O(n)` lookup).
+    ///
+    /// # Parameters
+    /// - `id`: The ID of the `Text` component to query.
+    ///
+    /// # Returns
+    /// - `Ok(&Option)`: A reference to the `Text` component.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // A mutable `u16` to store the ID of a `Text` component.
+    /// let mut text_id: u16 = 0;
+    ///
+    /// let container = ContainerBuilder::new()
+    ///     .text_id(..., &mut text_id)?
+    ///     .build();
+    ///
+    /// // Query the option by its ID.
+    /// container.text(text_id)?;
+    /// ```
     #[inline]
     pub fn text(&self, id: u16) -> FtuiResult<&cpn::Text> {
         self.texts.iter()
@@ -136,6 +263,27 @@ impl Container {
             .ok_or(FtuiError::ContainerNoComponentById)
     }
 
+    /// Query an `Text` component by its ID (`O(n)` lookup).
+    ///
+    /// # Parameters
+    /// - `id`: The ID of the `Text` component to query.
+    ///
+    /// # Returns
+    /// - `Ok(&Option)`: A mutable reference to the `Text` component.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // A mutable `u16` to store the ID of a `Text` component.
+    /// let mut text_id: u16 = 0;
+    ///
+    /// let container = ContainerBuilder::new()
+    ///     .text_id(..., &mut text_id)?
+    ///     .build();
+    ///
+    /// // Query the option by its ID.
+    /// container.text_mut(text_id)?;
+    /// ```
     #[inline]
     pub fn text_mut(&mut self, id: u16) -> FtuiResult<&mut cpn::Text> {
         self.texts.iter_mut()
@@ -143,11 +291,24 @@ impl Container {
             .ok_or(FtuiError::ContainerNoComponentById)
     }
 
+    /// Returns a mutable reference to the `Selector` component, 
+    /// if the `Container` has one.
+    /// 
+    /// # Returns
+    /// - `Some(&mut Selector)`: A mutable reference to the `Selector` component.
+    /// - `None`: If no `Selector` exists in the `Container`.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a container without a `Selector`.
+    /// let mut container = ContainerBuilder::new().build();
+    ///
+    /// // `selector_mut` returns `None` since no `Selector` was set.
+    /// assert_eq!(container.selector_mut(), None);
+    /// ```
     #[inline]
-    pub fn selector_mut(&mut self) -> FtuiResult<&mut Selector> {
-        self.selector
-            .as_mut()
-            .ok_or(FtuiError::ContainerNoSelector)
+    pub fn selector_mut(&mut self) -> Option<&mut Selector> {
+        self.selector.as_mut()
     }
 
     #[inline]
@@ -224,7 +385,7 @@ impl ContainerBuilder {
     ///
     /// # Example
     /// ```rust
-    /// let builder = ContainerBuilder::new();
+    /// let _ = ContainerBuilder::new();
     /// ```
     #[inline]
     pub fn new() -> Self {
