@@ -310,7 +310,25 @@ impl Container {
     pub fn selector_mut(&mut self) -> Option<&mut Selector> {
         self.selector.as_mut()
     }
-
+    
+    /// Attempts to move the `Selector` up by one position, if possible.
+    ///
+    /// # Returns
+    /// - `Ok(true)`: The selector moved up successfully.
+    /// - `Ok(false)`: The selector could not move (already at the top).
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a container with one `Option` component and a `Selector`.
+    /// let mut container = ContainerBuilder::new()
+    ///     .option(...)? // This is where the `Selector` will be when initialize.
+    ///     .selector_no_triggers()
+    ///     .build();
+    ///
+    /// // The `Selector` cannot move up since it is at the top.
+    /// assert_eq!(container.selector_up()?, false);
+    /// ```
     #[inline]
     pub fn selector_up(&mut self) -> FtuiResult<bool> {
         Ok(self.selector
@@ -319,6 +337,25 @@ impl Container {
             .move_up(&mut self.options))
     }
 
+    /// Attempts to move the `Selector` down by one position, if possible.
+    ///
+    /// # Returns
+    /// - `Ok(true)`: The selector moved down successfully.
+    /// - `Ok(false)`: The selector could not move (already at the bottom).
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a container with two `Option`s component and a `Selector`.
+    /// let mut container = ContainerBuilder::new()
+    ///     .option(...)? // This is where the `Selector` will be when initialize.
+    ///     .option(...)?
+    ///     .selector_no_triggers()
+    ///     .build();
+    ///
+    /// // The `Selector` can move up since it is not at the bottom.
+    /// assert_eq!(container.selector_up()?, true);
+    /// ```
     #[inline]
     pub fn selector_down(&mut self) -> FtuiResult<bool> {
         Ok(self.selector
@@ -327,6 +364,24 @@ impl Container {
             .move_down(&mut self.options))
     }
 
+    /// Attempts to select the `Option` that the `Selector` is currently on. 
+    /// This operation should always succeed unless an error occurs internally.
+    ///
+    /// # Returns
+    /// - `Ok(true)`: The selection was successful.
+    /// - `Err(FtuiError)`: An error occurred during selection.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a container with on `Option` components and a `Selector`.
+    /// let mut container = ContainerBuilder::new()
+    ///     .option(...)? // The `Selector` starts at this `Option`.
+    ///     .selector_no_triggers()
+    ///     .build();
+    ///
+    /// // Selecting the current `Option` is always possible unless an error occurs.
+    /// assert_eq!(container.selector_select()?, true);
+    /// ```
     #[inline]
     pub fn selector_select(&mut self) -> FtuiResult<bool> {
         Ok(self.selector
