@@ -493,33 +493,6 @@ impl ContainerBuilder {
         Ok(self)
     }
 
-    /// Adds a `Text` component to the `Container`.
-    /// 
-    /// # Parameters
-    /// - `label`: A `&str` representing the text to display.
-    /// - `flags`: A set of `TextFlags`, combined using the bitwise OR operator.
-    ///
-    /// # Notes
-    /// - This is what bitwise OR operator look like -> `flag1 | flag2 | flag3 ...`
-    ///
-    /// # Returns
-    /// - `Ok(ContainerBuilder)`: Returns `self`.
-    /// - `Err(FtuiError)`: Returns an error.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a `Text` component labeled "Text", right-aligned and with
-    /// // a magenta background.
-    /// ContainerBuilder::new()
-    ///     .text("Text", TextFlags::ALIGN_RIGHT | TextFlags::COLOR_MAGENTA_BACK)?;
-    /// ```
-    pub fn text(
-        mut self, label: &str, flags: impl Into<Option<cpn::TextFlags>>
-    ) -> FtuiResult<Self> {
-        self.container.add_text(cpn::Text::new(label, flags)?);
-        Ok(self)
-    }
-
     /// Adds an `Option` component to the `Container` and stores its ID.
     ///
     /// # Parameters
@@ -545,6 +518,33 @@ impl ContainerBuilder {
         label: &str, callback: impl Into<Option<Callback>>, store_id: &mut u16
     ) -> FtuiResult<Self> {
         *store_id = self.container.add_option(cpn::Option::new(label, callback)?);
+        Ok(self)
+    }
+
+    /// Adds a `Text` component to the `Container`.
+    /// 
+    /// # Parameters
+    /// - `label`: A `&str` representing the text to display.
+    /// - `flags`: A set of `TextFlags`, combined using the bitwise OR operator.
+    ///
+    /// # Notes
+    /// - This is what bitwise OR operator look like -> `flag1 | flag2 | flag3 ...`
+    ///
+    /// # Returns
+    /// - `Ok(ContainerBuilder)`: Returns `self`.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a `Text` component labeled "Text", right-aligned and with
+    /// // a magenta background.
+    /// ContainerBuilder::new()
+    ///     .text("Text", TextFlags::ALIGN_RIGHT | TextFlags::COLOR_MAGENTA_BACK)?;
+    /// ```
+    pub fn text(
+        mut self, label: &str, flags: impl Into<Option<cpn::TextFlags>>
+    ) -> FtuiResult<Self> {
+        self.container.add_text(cpn::Text::new(label, flags)?);
         Ok(self)
     }
 
