@@ -1,6 +1,5 @@
 use crate::{
-    cbk::Callback, trg::Trigger, cpn, error::{FtuiError, FtuiResult}, slc::Selector,
-    ren::Renderer, util::id::IdGenerator
+    callback, cbk::Callback, cpn, error::{FtuiError, FtuiResult}, ren::Renderer, slc::Selector, trg::Trigger, util::id::IdGenerator
 };
 
 /// `Container` is a data structure used to store and organize UI components,
@@ -450,6 +449,11 @@ impl ContainerBuilder {
         ContainerBuilder { container: Container::new(), }
     }
 
+    pub fn header_expl(mut self, header: cpn::Header) -> Self {
+        self.container.set_header(header);
+        self
+    }
+
     /// Sets a `Header` component for the `Container`.
     ///
     /// # Parameters
@@ -465,9 +469,14 @@ impl ContainerBuilder {
     /// ContainerBuilder::new()
     ///     .header("Welcome")?;
     /// ```
-    pub fn header(mut self, label: &str) -> FtuiResult<Self> {
-        self.container.set_header(cpn::Header::new(label)?);
-        Ok(self)
+    #[inline]
+    pub fn header(self, label: &str) -> FtuiResult<Self> {
+        Ok(self.header_expl(cpn::Header::new(label)?))
+    }
+
+    pub fn option_expl(mut self, option: cpn::Option) -> Self {
+        self.container.add_option(option);
+        self
     }
 
     /// Adds an `Option` component to the `Container`.
@@ -486,11 +495,18 @@ impl ContainerBuilder {
     /// ContainerBuilder::new()
     ///     .option("Option", None)?;
     /// ```
+    #[inline]
     pub fn option(
-        mut self, label: &str, callback: impl Into<Option<Callback>>
+        self, label: &str, callback: impl Into<Option<Callback>>
     ) -> FtuiResult<Self> {
-        self.container.add_option(cpn::Option::new(label, callback)?);
-        Ok(self)
+        Ok(self.option_expl(cpn::Option::new(label, callback)?))
+    }
+
+    pub fn option_id_expl(
+        mut self, option: cpn::Option, store_id: &mut u16
+    ) -> Self {
+        *store_id = self.container.add_option(option);
+        self
     }
 
     /// Adds an `Option` component to the `Container` and stores its ID.
@@ -513,12 +529,17 @@ impl ContainerBuilder {
     /// ContainerBuilder::new()
     ///     .option_id("Option", None, &mut id)?;
     /// ```
+    #[inline]
     pub fn option_id(
-        mut self,
+        self,
         label: &str, callback: impl Into<Option<Callback>>, store_id: &mut u16
     ) -> FtuiResult<Self> {
-        *store_id = self.container.add_option(cpn::Option::new(label, callback)?);
-        Ok(self)
+        Ok(self.option_id_expl(cpn::Option::new(label, callback)?, store_id))
+    }
+
+    pub fn text_expl(mut self, text: cpn::Text) -> Self {
+        self.container.add_text(text);
+        self
     }
 
     /// Adds a `Text` component to the `Container`.
@@ -542,10 +563,14 @@ impl ContainerBuilder {
     ///     .text("Text", TextFlags::ALIGN_RIGHT | TextFlags::COLOR_MAGENTA_BACK)?;
     /// ```
     pub fn text(
-        mut self, label: &str, flags: impl Into<Option<cpn::TextFlags>>
+        self, label: &str, flags: impl Into<Option<cpn::TextFlags>>
     ) -> FtuiResult<Self> {
-        self.container.add_text(cpn::Text::new(label, flags)?);
-        Ok(self)
+        Ok(self.text_expl(cpn::Text::new(label, flags)?))
+    }
+
+    pub fn text_id_expl(mut self, text: cpn::Text, store_id: &mut u16) -> Self {
+        *store_id = self.container.add_text(text);
+        self
     }
 
     /// Adds a `Text` component to the `Container` and stores its ID.
@@ -574,12 +599,15 @@ impl ContainerBuilder {
     ///         TextFlags::ALIGN_RIGHT | TextFlags::COLOR_MAGENTA_BACK, &mut id)?;
     /// ```
     pub fn text_id(
-        mut self,
-        label: &str,
-        flags: impl Into<Option<cpn::TextFlags>>, store_id: &mut u16
+        self, 
+        label: &str, flags: impl Into<Option<cpn::TextFlags>>, store_id: &mut u16
     ) -> FtuiResult<Self> {
-        *store_id = self.container.add_text(cpn::Text::new(label, flags)?);
-        Ok(self)
+        Ok(self.text_id_expl(cpn::Text::new(label, flags)?, store_id))
+    }
+
+    pub fn separator_normal_expl(mut self, separator: cpn::Separator) -> Self {
+        self.container.add_separator(separator);
+        self
     }
 
     /// Add a standard (non-dotted) `Separator` with the given style.
@@ -596,8 +624,12 @@ impl ContainerBuilder {
     /// ContainerBuilder::new()
     ///     separator_normal(SeparatorStyle::Solid);
     /// ```
-    pub fn separator_normal(mut self, style: cpn::SeparatorStyle) -> Self {
-        self.container.add_separator(cpn::Separator::normal(style));
+    pub fn separator_normal(self, style: cpn::SeparatorStyle) -> Self {
+        self.separator_normal_expl(cpn::Separator::normal(style))
+    }
+
+    pub fn separator_dotted_expl(mut self, separator: cpn::Separator) -> Self {
+        self.container.add_separator(separator);
         self
     }
 
@@ -615,8 +647,12 @@ impl ContainerBuilder {
     /// ContainerBuilder::new()
     ///     separator_dotted(SeparatorStyle::Solid);
     /// ```
-    pub fn separator_dotted(mut self, style: cpn::SeparatorStyle) -> Self {
-        self.container.add_separator(cpn::Separator::dotted(style));
+    pub fn separator_dotted(self, style: cpn::SeparatorStyle) -> Self {
+        self.separator_dotted_expl(cpn::Separator::dotted(style))
+    }
+
+    pub fn selector_expl(mut self, selector: Selector) -> Self {
+        self.container.set_selector(selector);
         self
     }
 
@@ -651,10 +687,9 @@ impl ContainerBuilder {
     ///     );
     /// ```
     pub fn selector(
-        mut self, up_trig: Trigger, down_trig: Trigger, selc_trig: Trigger
+        self, up_trig: Trigger, down_trig: Trigger, selc_trig: Trigger
     ) -> Self {
-        self.container.set_selector(Selector::new(up_trig, down_trig, selc_trig));
-        self
+        self.selector_expl(Selector::new(up_trig, down_trig, selc_trig))
     }
 
     /// Sets a `Selector` with no `Trigger`s for the `Container`.
