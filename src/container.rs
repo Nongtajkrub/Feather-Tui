@@ -450,6 +450,25 @@ impl ContainerBuilder {
         ContainerBuilder { container: Container::new(), }
     }
 
+    /// Explicitly sets a `Header` component for the `Container`. Unlike the `header`
+    /// method, which takes a label and internally constructs a `Header`, this 
+    /// method allows you to directly provide a preconstructed `Header` component.
+    ///
+    /// # Parameters
+    /// - `header`: A `Header` component.
+    ///
+    /// # Returns
+    /// - `ContainerBuilder`: Returns `self`.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a `Header` component.
+    /// let header = Header::new(...)?;
+    ///
+    /// // Set a preconstructed `Header` component.
+    /// ContainerBuilder::new()
+    ///     .header_expl(header);
+    /// ```
     pub fn header_expl(mut self, header: cpn::Header) -> Self {
         self.container.set_header(header);
         self
@@ -475,6 +494,26 @@ impl ContainerBuilder {
         Ok(self.header_expl(cpn::Header::new(label)?))
     }
 
+    /// Explicitly add an `Option` component to the `Container`. Unlike the `option`
+    /// method, which takes a label and an optional callback to internally constructs
+    /// an `Option`, this method allows you to directly provide a preconstructed 
+    /// `Option` component.
+    ///
+    /// # Parameters
+    /// - `option`: An `Option` component.
+    ///
+    /// # Returns
+    /// - `ContainerBuilder`: Returns `self`.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create an `Option` component.
+    /// let option = Option::new(...)?;
+    ///
+    /// // Set a preconstructed `Option` component.
+    /// ContainerBuilder::new()
+    ///     .header_expl(option);
+    /// ```
     pub fn option_expl(mut self, option: cpn::Option) -> Self {
         self.container.add_option(option);
         self
@@ -503,6 +542,28 @@ impl ContainerBuilder {
         Ok(self.option_expl(cpn::Option::new(label, callback)?))
     }
 
+    /// Explicitly add an `Option` component to the `Container` and stores its ID. 
+    /// Unlike the `option` method, which takes a label and an optional callback
+    /// to internally constructs an `Option`, this method allows you to directly
+    /// provide a preconstructed `Option` component.
+    ///
+    /// # Parameters
+    /// - `option`: An `Option` component.
+    /// - `store_id`: A `&mut u16` to store the created `Option` component ID.
+    /// 
+    /// # Returns
+    /// - `Ok(ContainerBuilder)`: Returns `self`.
+    /// - `Err(FtuiError)`: Returns an error.
+    /// 
+    /// # Example
+    /// ```rust
+    /// let mut id = 0u16;
+    ///
+    /// // Add an `Option` labeled "Option" with no `Callback`,
+    /// // storing the generated ID in `id`.
+    /// ContainerBuilder::new()
+    ///     .option_id("Option", None, &mut id)?;
+    /// ```
     pub fn option_id_expl(
         mut self, option: cpn::Option, store_id: &mut u16
     ) -> Self {
@@ -563,6 +624,7 @@ impl ContainerBuilder {
     /// ContainerBuilder::new()
     ///     .text("Text", TextFlags::ALIGN_RIGHT | TextFlags::COLOR_MAGENTA_BACK)?;
     /// ```
+    #[inline]
     pub fn text(
         self, label: &str, flags: impl Into<Option<cpn::TextFlags>>
     ) -> FtuiResult<Self> {
@@ -599,6 +661,7 @@ impl ContainerBuilder {
     ///         "Text",
     ///         TextFlags::ALIGN_RIGHT | TextFlags::COLOR_MAGENTA_BACK, &mut id)?;
     /// ```
+    #[inline]
     pub fn text_id(
         self, 
         label: &str, flags: impl Into<Option<cpn::TextFlags>>, store_id: &mut u16
@@ -625,6 +688,7 @@ impl ContainerBuilder {
     /// ContainerBuilder::new()
     ///     separator_normal(SeparatorStyle::Solid);
     /// ```
+    #[inline]
     pub fn separator_normal(self, style: cpn::SeparatorStyle) -> Self {
         self.separator_normal_expl(cpn::Separator::normal(style))
     }
@@ -648,6 +712,7 @@ impl ContainerBuilder {
     /// ContainerBuilder::new()
     ///     separator_dotted(SeparatorStyle::Solid);
     /// ```
+    #[inline]
     pub fn separator_dotted(self, style: cpn::SeparatorStyle) -> Self {
         self.separator_dotted_expl(cpn::Separator::dotted(style))
     }
@@ -687,6 +752,7 @@ impl ContainerBuilder {
     ///         Trigger::no_arg(always_false_trigger),
     ///     );
     /// ```
+    #[inline]
     pub fn selector(
         self, up_trig: Trigger, down_trig: Trigger, selc_trig: Trigger
     ) -> Self {
