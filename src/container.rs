@@ -1,5 +1,6 @@
 use crate::{
-    callback, cbk::Callback, cpn, error::{FtuiError, FtuiResult}, ren::Renderer, slc::Selector, trg::Trigger, util::id::IdGenerator
+    cbk::Callback, cpn, error::{FtuiError, FtuiResult}, ren::Renderer,
+    trg::Trigger, util::id::IdGenerator
 };
 
 /// `Container` is a data structure used to store and organize UI components,
@@ -19,7 +20,7 @@ pub struct Container {
     options: Vec<cpn::Option>,
     texts: Vec<cpn::Text>,
     separators: Vec<cpn::Separator>,
-    selector: Option<Selector>,
+    selector: Option<cpn::Selector>,
     component_count: u16,
 }
 
@@ -78,7 +79,7 @@ impl Container {
         self.component_count += 1;
     }
 
-    pub(crate) fn set_selector(&mut self, selector: Selector) {
+    pub(crate) fn set_selector(&mut self, selector: cpn::Selector) {
         self.selector = Some(selector);
     }
 
@@ -308,7 +309,7 @@ impl Container {
     /// container.selector_mut()?;
     /// ```
     #[inline]
-    pub fn selector_mut(&mut self) -> FtuiResult<&mut Selector> {
+    pub fn selector_mut(&mut self) -> FtuiResult<&mut cpn::Selector> {
         self.selector.as_mut()
             .ok_or(FtuiError::ContainerNoSelector)
     }
@@ -651,7 +652,7 @@ impl ContainerBuilder {
         self.separator_dotted_expl(cpn::Separator::dotted(style))
     }
 
-    pub fn selector_expl(mut self, selector: Selector) -> Self {
+    pub fn selector_expl(mut self, selector: cpn::Selector) -> Self {
         self.container.set_selector(selector);
         self
     }
@@ -689,7 +690,7 @@ impl ContainerBuilder {
     pub fn selector(
         self, up_trig: Trigger, down_trig: Trigger, selc_trig: Trigger
     ) -> Self {
-        self.selector_expl(Selector::new(up_trig, down_trig, selc_trig))
+        self.selector_expl(cpn::Selector::new(up_trig, down_trig, selc_trig))
     }
 
     /// Sets a `Selector` with no `Trigger`s for the `Container`.
@@ -709,7 +710,7 @@ impl ContainerBuilder {
     ///     .selector_no_triggers();
     /// ```
     pub fn selector_no_triggers(mut self) -> Self {
-        self.container.set_selector(Selector::no_triggers());
+        self.container.set_selector(cpn::Selector::no_triggers());
         self
     }
 

@@ -10,8 +10,6 @@ pub mod components;
 pub mod callback;
 /// A generic trigger handler for evaluating conditions based on stored arguments.
 pub mod trigger;
-/// Used within a `Container` to navigate and select `Option`. 
-pub mod selector;
 /// Acts as a layout manager for the UI elements.
 pub mod container;
 /// Responsible for rendering the UI to the terminal.
@@ -26,23 +24,19 @@ mod     util;
 pub use components as cpn;
 pub use callback   as cbk;
 pub use trigger    as trg;
-pub use selector   as slc;
 pub use container  as con;
 pub use renderer   as ren;
 pub use input      as inp;
 pub use error      as err;
 
 #[cfg(feature = "reduce_abstraction")]
-pub use cpn::{Header, Option, Text, TextFlags, Separator, SeparatorStyle};
+pub use cpn::{Header, Option, Text, TextFlags, Separator, SeparatorStyle, Selector};
 
 #[cfg(feature = "reduce_abstraction")]
 pub use cbk::Callback;
 
 #[cfg(feature = "reduce_abstraction")]
 pub use trg::Trigger;
-
-#[cfg(feature = "reduce_abstraction")]
-pub use slc::Selector;
 
 #[cfg(feature = "reduce_abstraction")]
 pub use con::{Container, ContainerBuilder};
