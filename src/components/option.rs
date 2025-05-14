@@ -9,15 +9,12 @@ use unicode_segmentation::UnicodeSegmentation;
 /// # Usage
 ///
 /// The `Option` component is used within a `Container` to provide interactive  
-/// choices. Each option requires an associated callback function that defines  
-/// what happens when the option is selected.
+/// choices. 
 ///
 /// # Notes
 /// - A `Selector` is required to navigate and select options.
-/// - Each `Option` should have an associated `Callback` function.
 ///
 /// # Example
-/// 
 /// ```rust
 /// use feather_tui as tui;
 ///
