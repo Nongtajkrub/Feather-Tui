@@ -512,7 +512,7 @@ impl ContainerBuilder {
     ///
     /// // Set a preconstructed `Option` component.
     /// ContainerBuilder::new()
-    ///     .header_expl(option);
+    ///     .option_expl(option);
     /// ```
     pub fn option_expl(mut self, option: cpn::Option) -> Self {
         self.container.add_option(option);
@@ -543,7 +543,7 @@ impl ContainerBuilder {
     }
 
     /// Explicitly add an `Option` component to the `Container` and stores its ID. 
-    /// Unlike the `option` method, which takes a label and an optional callback
+    /// Unlike the `option_id` method, which takes a label and an optional callback
     /// to internally constructs an `Option`, this method allows you to directly
     /// provide a preconstructed `Option` component.
     ///
@@ -559,10 +559,12 @@ impl ContainerBuilder {
     /// ```rust
     /// let mut id = 0u16;
     ///
-    /// // Add an `Option` labeled "Option" with no `Callback`,
-    /// // storing the generated ID in `id`.
+    /// // Create an `Option` component.
+    /// let option = Option::new(...)?;
+    ///
+    /// // Add the create `Option` component and storing the generated ID in `id`.
     /// ContainerBuilder::new()
-    ///     .option_id("Option", None, &mut id)?;
+    ///     .option_id(option, &mut id)?;
     /// ```
     pub fn option_id_expl(
         mut self, option: cpn::Option, store_id: &mut u16
@@ -599,6 +601,25 @@ impl ContainerBuilder {
         Ok(self.option_id_expl(cpn::Option::new(label, callback)?, store_id))
     }
 
+    /// Explicitly add a `Text` component to the `Container`. Unlike the `text`
+    /// method, which takes a label and flags to internally constructs an `Text`,
+    /// this method allows you to directly provide a preconstructed `Text` component.
+    ///
+    /// # Parameters
+    /// - `text`: A `Text` component.
+    ///
+    /// # Returns
+    /// - `ContainerBuilder`: Returns `self`.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create an `Text` component.
+    /// let text = Text::new(...)?;
+    ///
+    /// // Set a preconstructed `Text` component.
+    /// ContainerBuilder::new()
+    ///     .text_expl(text);
+    /// ```
     pub fn text_expl(mut self, text: cpn::Text) -> Self {
         self.container.add_text(text);
         self
@@ -631,6 +652,29 @@ impl ContainerBuilder {
         Ok(self.text_expl(cpn::Text::new(label, flags)?))
     }
 
+    /// Explicitly add a `Text` component to the `Container` and stores its ID. 
+    /// Unlike the `text_id` method, which takes a label and flags to internally
+    /// constructs an `Text`, this method allows you to directly provide a
+    /// preconstructed `Text` component.
+    ///
+    /// # Parameters
+    /// - `text`: An `Text` component.
+    /// - `store_id`: A `&mut u16` to store the created `Option` component ID.
+    /// 
+    /// # Returns
+    /// - `ContainerBuilder`: Returns `self`.
+    /// 
+    /// # Example
+    /// ```rust
+    /// let mut id = 0u16;
+    ///
+    /// // Create an `Text` component.
+    /// let text = Text::new(...)?;
+    ///
+    /// // Add the create `Text` component and storing the generated ID in `id`.
+    /// ContainerBuilder::new()
+    ///     .text_id_expl(text, &mut id)?;
+    /// ```
     pub fn text_id_expl(mut self, text: cpn::Text, store_id: &mut u16) -> Self {
         *store_id = self.container.add_text(text);
         self
@@ -669,6 +713,26 @@ impl ContainerBuilder {
         Ok(self.text_id_expl(cpn::Text::new(label, flags)?, store_id))
     }
 
+    /// Explicitly add a normal `Separator` component to the `Container`. 
+    /// Unlike the `Separator` method, which takes a style and internally 
+    /// constructs a `Separator`, this method allows you to directly provide a
+    /// preconstructed `Separator` component.
+    ///
+    /// # Parameters
+    /// - `separator`: A `Separator` component.
+    ///
+    /// # Returns
+    /// - `ContainerBuilder`: Returns `self`.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a normal `Separator` component.
+    /// let separator = Separator::normal(...)?;
+    ///
+    /// // Set a preconstructed `Header` component.
+    /// ContainerBuilder::new()
+    ///     .separator_normal_expl(separator);
+    /// ```
     pub fn separator_normal_expl(mut self, separator: cpn::Separator) -> Self {
         self.container.add_separator(separator);
         self
@@ -693,6 +757,26 @@ impl ContainerBuilder {
         self.separator_normal_expl(cpn::Separator::normal(style))
     }
 
+    /// Explicitly add a dotted `Separator` component to the `Container`. 
+    /// Unlike the `Separator` method, which takes a style and internally 
+    /// constructs a `Separator`, this method allows you to directly provide a
+    /// preconstructed `Separator` component.
+    ///
+    /// # Parameters
+    /// - `separator`: A `Separator` component.
+    ///
+    /// # Returns
+    /// - `ContainerBuilder`: Returns `self`.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a dotted `Separator` component.
+    /// let separator = Separator::dotted(...)?;
+    ///
+    /// // Set a preconstructed `Header` component.
+    /// ContainerBuilder::new()
+    ///     .separator_dotted_expl(separator);
+    /// ```
     pub fn separator_dotted_expl(mut self, separator: cpn::Separator) -> Self {
         self.container.add_separator(separator);
         self
@@ -717,6 +801,25 @@ impl ContainerBuilder {
         self.separator_dotted_expl(cpn::Separator::dotted(style))
     }
 
+    /// Explicitly sets a `Selector` component for the `Container`. Unlike the `selector`
+    /// method, which takes triggers and internally constructs a `selector`, this 
+    /// method allows you to directly provide a preconstructed `Selector` component.
+    ///
+    /// # Parameters
+    /// - `selector`: A `Selector` component.
+    ///
+    /// # Returns
+    /// - `ContainerBuilder`: Returns `self`.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a `Header` component.
+    /// let selector = Selector::new(...)?;
+    ///
+    /// // Set a preconstructed `Selector` component.
+    /// ContainerBuilder::new()
+    ///     .selector_expl(selector);
+    /// ```
     pub fn selector_expl(mut self, selector: cpn::Selector) -> Self {
         self.container.set_selector(selector);
         self
