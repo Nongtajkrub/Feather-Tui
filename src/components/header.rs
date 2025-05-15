@@ -2,28 +2,13 @@ use crate::err::{FtuiError, FtuiResult};
 use unicode_segmentation::UnicodeSegmentation;
 
 /// A UI component that serves as the header of a `Container`. It is displayed 
-/// at the top of the `Container` and is typically used to provide a title or
-/// context for the container.
+/// at the top of the `Container`.
 ///
 /// # Usage
-///
-/// The `Header` component is required to create a `Container` object.
+/// provide a title or context for the container.
 ///
 /// # Derives
-///
 /// `Debug`, `Clone`, `PartialEq`, `Eq`
-///
-/// # Example
-/// ```rust
-/// use feather_tui as tui;
-///
-/// // Create a header with the text "Welcome"
-/// let header = tui::cpn::Header::new("Welcome")?;
-///
-/// // Set the header for a container
-/// let mut container = tui::con::Container::new();
-/// container.set_header(header);
-/// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Header {
     label: String,
@@ -42,10 +27,8 @@ impl Header {
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    ///
     /// // Create a Header with the label "Welcome".
-    /// let header = tui::cpn::Header::new("Welcome")?;
+    /// let _ = Header::new("Welcome")?;
     /// ```
     pub fn new(label: &str) -> FtuiResult<Self> {
         if label.is_empty() {
