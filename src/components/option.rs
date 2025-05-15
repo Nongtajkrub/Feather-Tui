@@ -12,31 +12,7 @@ use unicode_segmentation::UnicodeSegmentation;
 /// choices. 
 ///
 /// # Notes
-/// - A `Selector` is required to navigate and select options.
-///
-/// # Example
-/// ```rust
-/// use feather_tui as tui;
-///
-/// // Define a callback function that exits the program when invoked 
-/// tui::cbk_new_callback_func!(quit_option_callback, _arg, {
-///    std::process::exit(0);
-/// });
-///
-/// // Create a Callback
-/// let callback = tui::cbk::Callback::no_arg(quit_option_callback);
-///
-/// // Create an option labeled "Quit"
-/// let option = tui::cpn::Option::new("Quit", callback)?;
-///
-/// // Create a container and add the option
-/// let mut container = tui::con::Container::new();
-/// container.add_option(option);
-///
-/// // Set the selector for the container
-/// // (Assuming a selector is created elsewhere)
-/// container.set_selector(selector);
-/// ```
+/// - A `Selector` component is required to navigate and select options.
 pub struct Option {
     label: String,
     len: usize,
@@ -53,7 +29,7 @@ impl Option {
     ///
     /// # Parameters
     /// - `label`: A `&str` representing the text displayed for this option.
-    /// - `callback`: A `Callback` that will be invoked when the option is selected. 
+    /// - `callback`: A `Callback` to invoked when the option is selected (optional). 
     ///
     /// # Returns
     /// `Ok(Option)`: A new `Option` instance.
@@ -61,19 +37,24 @@ impl Option {
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
+    /// use your_crate::{Callback, Option}; // Replace with your actual path.
     ///
-    /// // Define a callback function that exits the program when invoked 
-    /// tui::tui_cbk_new_callback_func!(quit_option_callback, _arg, {
-    ///    std::process::exit(0);
+    /// // Define a callback function that quits the program when invoked.
+    /// cbk_new_callback_func!(quit_option_callback, _arg, {
+    ///     std::process::exit(0);
     /// });
-    ///
-    /// // Create a Callback that stores the number 5.
-    /// let callback = tui::cbk::Callback::no_arg(quit_option_callback);
-    ///
-    /// // Create an Option labeled "Quit".
-    /// // When selected, it exit the program.
-    /// let option = tui::cpn::Option::new("Quit", callback)?;
+    /// 
+    /// // Create a `Callback` with no arguments.
+    /// let callback = Callback::no_arg(quit_option_callback);
+    /// 
+    /// // Create an `Option` component labeled "Quit".
+    /// // When selected, it exits the program.
+    /// let _ = Option::new("Quit", callback)?;
+    /// 
+    /// // Create an `Option` component labeled "Nothing".
+    /// // This option has no associated callback.
+    /// // You can detect its selection using the `is_selc()` method.
+    /// let _ = Option::new("Nothing", None)?;
     /// ```
     pub fn new(
         label: &str, callback: impl Into<std::option::Option<cbk::Callback>>
@@ -121,6 +102,37 @@ impl Option {
         self.selc_on = value;
     }
 
+    /// Returns whether the `Option` component was selected. This method acts
+    /// like a latch or semaphore in multithreading contexts. It returns the
+    /// current state of the `is_selc` flag and then resets it to `false`. 
+    /// This method is useful for `Option` components with no `Callback`.
+    ///
+    /// # Notes 
+    /// Imagine the following timeline:
+    ///
+    /// Time (ms):    0        500         2000          ...
+    ///               |---------|------------|------------>
+    /// is_selc:      |  false  |    true    |    false
+    ///
+    /// At time 500ms, some internal event sets `is_selc = true`.
+    /// When `is_selc()` is called (e.g., at 2000ms), it returns `true`
+    /// and immediately resets the flag to `false`.
+    ///
+    /// # Returns
+    /// - `true`: if the option was selected since the last check.
+    /// - `false`: otherwise.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create an `Option` component with no callback.
+    /// let mut option = Option::new(..., None)?;
+    ///
+    /// // Check if the option was selected.
+    /// if option.is_selc() {
+    ///     // Perform an action.
+    ///     todo!();
+    /// }
+    /// ```
     pub fn is_selc(&mut self) -> bool {
         std::mem::take(&mut self.is_selc)
     }
