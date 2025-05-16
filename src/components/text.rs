@@ -3,6 +3,11 @@ use bitflags::bitflags;
 use unicode_segmentation::UnicodeSegmentation;
 
 bitflags! {
+    /// Flags used to style a `Text` component. Multiple flags can be combined 
+    /// using the bitwise OR operator to apply multiple styles simultaneously.
+    ///
+    /// # Note
+    /// The bitwise OR operator combines flags like this: `flag1 | flag2 | flag3`
     #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
     pub struct TextFlags: u32 {
         // NONE can't be 0
@@ -148,7 +153,7 @@ impl Text {
     /// - `flags`: A set of `TextFlags` combined using the bitwise OR operator.
     ///
     /// # Notes
-    /// - This is what bitwise OR operator look like -> `flag1 | flag2 | flag3 ...`
+    /// The bitwise OR operator combines flags like this: `flag1 | flag2 | flag3`
     ///
     /// # Returns
     /// - `Ok(Text)`: Returns a `Text` instance
