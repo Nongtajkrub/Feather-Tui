@@ -40,21 +40,6 @@ pub enum SeparatorStyle {
 ///
 /// # Usage
 /// The `Separator` component is useful for dividing sections in your terminal UI.
-///
-/// # Example
-/// ```rust
-/// use feather_tui as tui;
-///
-/// // Create a normal separator with a solid style.
-/// let separator = tui::cpn::Separator::normal(tui::cpn::SeparatorStyle::Solid);
-///
-/// // Create a dotted separator with a solid style.
-/// let separator = tui::cpn::Separator::dotted(tui::cpn::SeparatorStyle::Solid);
-///
-/// // Add the separator to a container.
-/// let mut container = tui::con::Container::new();
-/// container.add_separator(separator);
-/// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Separator {
     line: u16,
@@ -73,11 +58,8 @@ impl Separator {
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    ///
     /// // Create a normal separator with a solid style.
-    /// let separator =
-    ///     tui::cpn::Separator::normal(tui::cpn::sep::SeparatorStyle::Solid);
+    /// let _ = Separator::normal(SeparatorStyle::Solid);
     /// ```
     pub fn normal(style: SeparatorStyle) -> Self {
         Separator {
@@ -97,11 +79,8 @@ impl Separator {
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    ///
     /// // Create a dotted separator with a solid style.
-    /// let separator =
-    ///     tui::cpn::Separator::dotted(tui::cpn::sep::SeparatorStyle::Solid);
+    /// let _ = Separator::dotted(SeparatorStyle::Solid);
     /// ```
     pub fn dotted(style: SeparatorStyle) -> Self {
         Separator {
