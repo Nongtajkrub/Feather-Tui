@@ -37,8 +37,6 @@ impl Option {
     ///
     /// # Example
     /// ```rust
-    /// use your_crate::{Callback, Option}; // Replace with your actual path.
-    ///
     /// // Define a callback function that quits the program when invoked.
     /// cbk_new_callback_func!(quit_option_callback, _arg, {
     ///     std::process::exit(0);
