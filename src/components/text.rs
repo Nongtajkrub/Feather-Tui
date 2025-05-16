@@ -6,48 +6,70 @@ bitflags! {
     #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
     pub struct TextFlags: u32 {
         // NONE can't be 0
+        /// No flags.
         const NONE          = 1 << 0;
 
-        // alignment
+        /// Aligns text to the right of the renderer.
         const ALIGN_RIGHT   = 1 << 1;
+        /// Centers text horizontally in the renderer.
         const ALIGN_MIDDLE  = 1 << 2;
+        /// Aligns text to the bottom of the renderer.
         const ALIGN_BOTTOM  = 1 << 3;
 
-        // color settings
+        // Applies colors to the background of the text instead of foreground.
         const COLOR_BACK    = 1 << 4;
 
-        // colors
+        /// Apply the black color to the text component.
         const COLOR_BLACK   = 1 << 6;
+        /// Apply the red color to the text component.
         const COLOR_RED     = 1 << 7;
+        /// Apply the green color to the text component.
         const COLOR_GREEN   = 1 << 8;
+        /// Apply the yellow color to the text component.
         const COLOR_YELLOW  = 1 << 9;
+        /// Apply the blue color to the text component.
         const COLOR_BLUE    = 1 << 10;
+        /// Apply the magenta color to the text component.
         const COLOR_MAGENTA = 1 << 11;
+        /// Apply the cyan color to the text component.
         const COLOR_CYAN    = 1 << 12;
+        /// Apply the white color to the text component.
         const COLOR_WHITE   = 1 << 13;
 
+        /// Apply the black color to the text component background.
         const COLOR_BLACK_BACK = 
             Self::COLOR_BLACK.bits() | Self::COLOR_BACK.bits();
+        /// Apply the red color to the text component background.
         const COLOR_RED_BACK = 
             Self::COLOR_RED.bits() | Self::COLOR_BACK.bits();
+        /// Apply the green color to the text component background.
         const COLOR_GREEN_BACK = 
             Self::COLOR_GREEN.bits() | Self::COLOR_BACK.bits();
+        /// Apply the yellow color to the text component background.
         const COLOR_YELLOW_BACK = 
             Self::COLOR_YELLOW.bits() | Self::COLOR_BACK.bits();
+        /// Apply the blue color to the text component background.
         const COLOR_BLUE_BACK =
             Self::COLOR_BLUE.bits() | Self::COLOR_BACK.bits();
+        /// Apply the magneta color to the text component background.
         const COLOR_MAGENTA_BACK =
             Self::COLOR_MAGENTA.bits() | Self::COLOR_BACK.bits();
+        /// Apply the cyan color to the text component background.
         const COLOR_CYAN_BACK =
             Self::COLOR_CYAN.bits() | Self::COLOR_BACK.bits();
+        /// Apply the white color to the text component background.
         const COLOR_WHITE_BACK =
             Self::COLOR_WHITE.bits() | Self::COLOR_BACK.bits();
 
-        // styles
+        /// Make the text component bold
         const STYLE_BOLD   = 1 << 14;
+        /// Dim the text component
         const STYLE_DIM    = 1 << 15;
+        /// Make the text component italic.
         const STYLE_ITALIC = 1 << 16;
+        /// Underlined the text component.
         const STYLE_UNDER  = 1 << 17;
+        /// Applies strike through to the text component.
         const STYLE_STRIKE = 1 << 18;
     }
 }
