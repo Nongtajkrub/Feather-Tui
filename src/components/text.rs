@@ -63,7 +63,6 @@ impl Default for TextFlags {
 /// customized using `TextFlags` to adjust alignment, color, and other styling options.
 ///
 /// # Usage
-///
 /// The `Text` component is used within a `Container` to display static text elements.  
 ///
 /// # Derives
@@ -72,23 +71,6 @@ impl Default for TextFlags {
 /// # PartialEq Implementation
 ///
 /// Only the `label` and `flags` are considered when comparing `Text` instances.
-///
-/// # Example
-///
-/// ```rust
-/// use feather_tui as tui;
-///
-/// // Create a text component with custom styling
-/// let text = 
-///     tui::cpn::Text::new(
-///         "Text!",
-///         tui::cpn::TextFlags::COLOR_CYAN_BACK |
-///         tui::cpn::TextFlags::ALIGN_RIGHT);
-///
-/// // Add the text component to a container
-/// let mut container = tui::con::Container::new();
-/// container.add_text(text);
-/// ```
 #[derive(Debug, Clone)]
 pub struct Text {
     label: String,
@@ -144,7 +126,6 @@ impl Text {
     /// - `flags`: A set of `TextFlags` combined using the bitwise OR operator.
     ///
     /// # Notes
-    ///
     /// - This is what bitwise OR operator look like -> `flag1 | flag2 | flag3 ...`
     ///
     /// # Returns
@@ -153,16 +134,11 @@ impl Text {
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    ///
     /// // Create a `Text` component labeled "Text".
     /// // The text is right-aligned.
     /// // The background color is red.
-    /// let text = 
-    ///     tui::cpn::Text::new(
-    ///         "Text",
-    ///         tui::cpn::TextFlags::ALIGN_RIGHT | 
-    ///         tui::cpn::TextFlags::COLOR_RED_BACK)?;
+    /// let _ = Text::new(
+    ///     "Text", TextFlags::ALIGN_RIGHT | TextFlags::COLOR_RED_BACK)?;
     /// ```
     pub fn new(label: &str, flags: impl Into<Option<TextFlags>>) -> FtuiResult<Self> {
         let flags = flags.into().unwrap_or(TextFlags::NONE);
@@ -181,17 +157,17 @@ impl Text {
     }
 
     fn ensure_compatible_flags(flags: &TextFlags) -> FtuiResult<()> {
-        // NONE Flags alone is always compatible
+        // NONE Flags alone is always compatible.
         if *flags == TextFlags::NONE {
             return Ok(());
         }
 
-        // NONE Flags should not be combined with any other flags
+        // NONE Flags should not be combined with any other flags.
         if flags.contains(TextFlags::NONE) && *flags != TextFlags::NONE {
             return Err(FtuiError::TextFlagNoneWithOther);
         }
 
-        // Only one color can be set
+        // Only one color can be set.
         if flags
             .intersection(
                 TextFlags::COLOR_BLACK |
@@ -264,6 +240,19 @@ impl Text {
         return style;
     }
 
+    /// Updates the label of the `Text` component.
+    ///
+    /// # Parameters
+    /// - `label`: The new label.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a `Text` component with the label "Text" and no flags.
+    /// let mut text = Text::new("Text", None)?;
+    ///
+    /// // Update the label to "New Label".
+    /// text.set_label("New Label");
+    /// ```
     pub fn set_label(&mut self, label: impl Into<String>) {
         let label = label.into();
 
