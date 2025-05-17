@@ -15,11 +15,9 @@ use std::any::Any;
 /// 
 /// # Example
 /// ```rust
-/// use feather_tui as tui;
-/// 
 /// // A callback function that accept a u32 an print it out.
-/// tui::cbk_new_callback_func!(print_num, arg, {
-///    println!("{}", tui::cbk::cast_arg::<u32>(arg)?);
+/// cbk_new_callback_func!(print_num, arg, {
+///    println!("{}", cbk::cast_arg::<u32>(arg)?);
 ///    Ok(())
 /// });
 /// ```
@@ -44,25 +42,19 @@ macro_rules! cbk_new_callback_func {
 /// # Notes
 /// - This function should only be use in a callback function. 
 ///
-/// # Usage
-/// use this function within a callback function to cast the argument to the
-/// expected type.
-///
 /// # Example
 /// ```rust
-/// use feather_tui as tui;
-///
 /// // A callback function that accept a u32 an print it out.
-/// tui::cbk_new_callback_func!(print_num, arg, {
-///    println!("{}", tui::cbk::cast_arg::<u32>(arg)?);
+/// cbk_new_callback_func!(print_num, arg, {
+///    println!("{}", cbk::cast_arg::<u32>(arg)?);
 ///    Ok(())
 /// });
 /// 
-/// tui::cbk::Callback::new(print_num, 5u32).call()?; // print 5
-/// tui::cbk::Callback::new(print_num, 6u32).call()?; // print 6
+/// Callback::new(print_num, 5u32).call()?; // print 5
+/// Callback::new(print_num, 6u32).call()?; // print 6
 ///     
-/// tui::cbk::Callback::new(print_num, "String").call()?; // Panic
-/// tui::cbk::Callback::no_arg(print_num).call()?;        // Panic
+/// Callback::new(print_num, "String").call()?; // Error (Wrong type)
+/// Callback::no_arg(print_num).call()?;        // Error (No argument)
 /// ```
 pub fn cast_arg<T>(arg: &Option<Box<dyn Any>>) -> FtuiResult<&T> 
 where
@@ -74,34 +66,35 @@ where
         .ok_or(FtuiError::CallbackCastArgWrongType)
 }
 
-/// A generic callback handler for executing functions with stored arguments.
-/// 
-/// `Callback` allows you to associate a function with an argument and invoke 
-/// it later. 
+/// A generic callback handler for executing functions with stored arguments. 
+/// `Callback` allows you to associate a function with an optional argument and
+/// invoke it later. 
 ///
 /// # Usage
 /// `Callback` is use for creating a `Option` component. The callback will be
 /// trigger when the `Option` component is selected.
-/// 
-/// # Example
-/// ```rust
-/// use feather_tui as tui;
-/// 
-/// // Define a callback function that print out the argument that is was given 
-/// tui::cbk_new_callback_func!(print_num, arg, {
-///    println!("{}", tui::cbk::cast_arg::<u32>(arg)?);
-///    Ok(())
-/// });
-/// 
-/// let cb = tui::cbk::Callback::new(print_num, 42u32);
-/// cb.call()?; // Prints: Callback Argument: 42
-/// ```
 pub struct Callback {
     func: fn(&Option<Box<dyn Any>>) -> FtuiResult<()>,
     arg: Option<Box<dyn Any>>,
 }
 
 impl Callback {
+    /// Constructs a new `Callback` with an associated argument.
+    ///
+    /// # Parameters
+    /// - `func`: A callback function created using the `cbk_new_callback_func!` macro.  
+    /// - `arg`: The argument value to associate with the `Callback` (`T: 'static`).
+    ///
+    /// # Example
+    /// ```rust
+    /// // Define a callback function using the macro.
+    /// cbk_new_callback_func!(callback_function, arg, {
+    ///     ...
+    /// });
+    ///
+    /// // Create a `Callback` with an associated `u32` value.
+    /// let _ = Callback::new(callback_function, 5u32);
+    /// ```
     pub fn new<T>(
         func: fn(&Option<Box<dyn Any>>) -> FtuiResult<()>, arg: T
     ) -> Self 
@@ -114,6 +107,21 @@ impl Callback {
         }
     }
 
+    /// Constructs a new `Callback` without an associated argument.
+    ///
+    /// # Parameters
+    /// - `func`: A callback function created using the `cbk_new_callback_func!` macro.  
+    ///
+    /// # Example
+    /// ```rust
+    /// // Define a callback function using the macro.
+    /// cbk_new_callback_func!(callback_function, arg, {
+    ///     ...
+    /// });
+    ///
+    /// // Create a `Callback` without a associated argument.
+    /// let _ = Callback::no_arg(callback_function);
+    /// ```
     pub fn no_arg(func: fn(&Option<Box<dyn Any>>) -> FtuiResult<()>) -> Self {
         Callback {
             func,
@@ -121,11 +129,51 @@ impl Callback {
         }
     }
 
+    /// Invoke the `Callback`. Typically used for testing purposes.
+    ///
+    /// # Returns
+    /// - `Ok(())`: Returns nothing.
+    /// - `Err(FtuiError)`: Returns an error.  
+    ///
+    /// # Example
+    /// ```rust
+    /// // Define a callback function that accepts a `u32` and prints it.
+    /// cbk_new_callback_func!(print_num, arg, {
+    ///     println!("{}", tui::cbk::cast_arg::<u32>(arg)?);
+    ///     Ok(())
+    /// });
+    /// 
+    /// // Create a `Callback` with an argument of 5 and invoke it.
+    /// Callback::new(print_num, 5u32).call()?; // Prints: 5
+    /// ```
     pub fn call(&self) -> FtuiResult<()> {
         (self.func)(&self.arg)?;
         Ok(())
     }
 
+    /// Updates the argument associated with this `Callback`.
+    ///
+    /// # Parameters
+    /// - `arg`: The new argument value to associate with the `Callback` (`T' static`).
+    ///
+    /// # Example
+    /// ```rust
+    /// // Define a callback function that accepts a `u32` and prints it.
+    /// cbk_new_callback_func!(print_num, arg, {
+    ///     println!("{}", tui::cbk::cast_arg::<u32>(arg)?);
+    ///     Ok(())
+    /// });
+    /// 
+    /// // Create a `Callback` with an initial argument.
+    /// let mut callback = Callback::new(print_num, 5u32); 
+    ///
+    /// callback.call()?; // Prints: 5
+    ///
+    /// // Update the argument to a new value.
+    /// callback.update_arg(6u32);
+    ///
+    /// callback.call()?; // Prints: 6
+    /// ```
     pub fn update_arg<T>(&mut self, arg: T)
     where
         T: 'static
@@ -133,6 +181,7 @@ impl Callback {
         self.arg = Some(Box::new(arg));
     }
 
+    /// Remove the argument associated with the `Callback`.
     pub fn remove_arg(&mut self) {
         self.arg = None;
     }
