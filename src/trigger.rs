@@ -44,10 +44,6 @@ macro_rules! trg_new_trigger_func {
 /// # Notes
 /// - This function should only be use in a trigger function. 
 ///
-/// # Usage
-/// use this function within a trigger function to cast the argument to the
-/// expected type.
-///
 /// # Example
 /// ```rust
 /// // A trigger function that take in a u32 an evaluate whether it is five.
@@ -55,8 +51,8 @@ macro_rules! trg_new_trigger_func {
 ///     Ok(*trg::cast_arg::<u32>(arg)? == 5)
 /// });
 ///
-/// Trigger::new(is_five, 5u32).check()?; // Evaluate to true
-/// Trigger::new(is_five, 6u32).check()?; // Evaluate to false
+/// assert_eq!(Trigger::new(is_five, 5u32).check()?, true); // Evaluate to true
+/// assert_eq!(Trigger::new(is_five, 6u32).check()?, false); // Evaluate to false
 ///                                           
 /// Trigger::new(is_five, "String").check()?; // Error (Wrong type) 
 /// Trigger::no_arg(is_five).check()?;        // Error (No argument)
@@ -133,7 +129,12 @@ impl Trigger {
         }
     }
 
-    /// Check whether the `Trigger` evaluate to `true` or `false`.
+    /// Check whether the `Trigger` evaluate to `true` or `false`. Typically used
+    /// for testing purposes.
+    ///
+    /// # Returns
+    /// - `Ok(bool)`: Whether the trigger condition was met.
+    /// - `Err(FtuiError)`: Returns an error.  
     ///
     /// # Example
     /// ```rust
@@ -142,8 +143,8 @@ impl Trigger {
     ///     Ok(*trg::cast_arg::<u32>(arg)? == 5)
     /// });
     ///
-    /// Trigger::new(is_five, 5u32).check()?; // Evaluate to true
-    /// Trigger::new(is_five, 6u32).check()?; // Evaluate to false
+    /// assert_eq!(Trigger::new(is_five, 5u32).check()?, true);  // Evaluates to true
+    /// assert_eq!(Trigger::new(is_five, 6u32).check()?, false); // Evaluates to false
     /// ```
     pub fn check(&self) -> FtuiResult<bool> {
         (self.func)(&self.arg)
@@ -164,12 +165,12 @@ impl Trigger {
     /// // Create a `Trigger` with an initial argument value of 5.
     /// let mut trigger = Trigger::new(is_five, 5u32);
     ///
-    /// assert!(trigger.check()?); // Evaluates to true.
+    /// assert_eq!(trigger.check()?, true); // Evaluates to true.
     ///
     /// // Update the argument to a different value.
     /// trigger.update_arg(6u32);
     ///
-    /// assert!(!trigger.check()?); // Now evaluates to false.
+    /// assert_eq!(trigger.check()?, false); // Now evaluates to false.
     /// ```
     pub fn update_arg<T>(&mut self, arg: T) 
     where

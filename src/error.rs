@@ -19,14 +19,9 @@ pub enum FtuiError {
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    /// 
-    /// fn main() -> tui::err::FtuiResult<()> {
+    /// fn main() -> FtuiResult<()> {
     ///     // Using `TextFlags::NONE` with TextFlags::COLOR_RED results in an error.
-    ///     tui::cpn::txt::Text::new(
-    ///         "Label",
-    ///         tui::cpn::txt::TextFlags::NONE |
-    ///         tui::cpn::txt::TextFlags::COLOR_RED)?;
+    ///     Text::new("Label", TextFlags::NONE | TextFlags::COLOR_RED)?;
     /// 
     ///     Ok(())
     /// }
@@ -38,14 +33,9 @@ pub enum FtuiError {
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    /// 
-    /// fn main() -> tui::err::FtuiResult<()> {
+    /// fn main() -> FtuiResult<()> {
     ///     // Setting both `COLOR_BLUE` and `COLOR_RED` results in an error.
-    ///     tui::cpn::txt::Text::new(
-    ///         "Label",
-    ///         tui::cpn::txt::TextFlags::COLOR_BLUE |
-    ///         tui::cpn::txt::TextFlags::COLOR_RED)?;
+    ///     Text::new("Label", TextFlags::COLOR_BLUE | TextFlags::COLOR_RED)?;
     /// 
     ///     Ok(())
     /// }
@@ -57,11 +47,9 @@ pub enum FtuiError {
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    ///
-    /// fn main() -> tui::err::FtuiResult<()> {
+    /// fn main() -> FtuiResult<()> {
     ///     // Creating a header with an empty label results in an error.
-    ///     tui::cpn::hed::Header::new("")?;
+    ///     Header::new("")?;
     ///     
     ///     Ok(())
     /// }
@@ -73,12 +61,10 @@ pub enum FtuiError {
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    ///
-    /// fn main() -> tui::err::FtuiResult<()> {
+    /// fn main() -> FtuiResult<()> {
     ///     // Creating an option with an empty label results in an error.
     ///     // Assuming the callback is created elsewhere.
-    ///     tui::cpn::opt::Option::new("", callback)?;
+    ///     Option::new("", ...)?;
     ///     
     ///     Ok(())
     /// }
@@ -91,12 +77,10 @@ pub enum FtuiError {
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    ///
-    /// fn main() -> tui::err::FtuiResult<()> {
+    /// fn main() -> FtuiResult<()> {
     ///     // Create a container with an option component. 
-    ///     let mut container = tui::con::Container::new()
-    ///         .with_option("Option!", callback)?;
+    ///     let mut container = ContainerBuilder::new() 
+    ///         .option(...)?;
     ///     
     ///     // Attempting to call the loop method without a selector
     ///     container.looper()?;
@@ -112,11 +96,9 @@ pub enum FtuiError {
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    ///
-    /// fn main() -> tui::err::FtuiResult<()> {
+    /// fn main() -> FtuiResult<()> {
     ///     // Create a container without a selector. 
-    ///     let mut container = tui::con::Container::new();
+    ///     let mut container = ContainerBuilder::new().build();
     ///     
     ///     // Attempting to call `selector_mut` on a container without a selector
     ///     // results in an error.
@@ -266,15 +248,13 @@ pub enum FtuiError {
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    ///
     /// // Creating a callback with an argument of 5, which is a u32.
-    /// tui::cbk::Callback::new(callback_func, 5u32);
+    /// Callback::new(callback_func, 5u32);
     /// 
-    /// tui::callback_new_callback_func!(callback_func, arg, {
+    /// callback_new_callback_func!(callback_func, arg, {
     ///     // An error occurs because arg is a u32, but we're attempting to cast 
     ///     // it to a char.
-    ///     tui::cbk::cast_arg::<char>(arg)?;
+    ///     cbk::cast_arg::<char>(arg)?;
     /// });
     /// ```
     #[error("Callback function argument type mismatch unable to cast to the expected type.")]
@@ -290,21 +270,16 @@ pub enum FtuiError {
 /// # Examples
 ///
 /// ```rust
-/// use feather_tui as tui;
-///
 /// // Variants of the same type are considered equal.
 /// assert_eq!(
-///     tui::err::FtuiError::TextFlagNoneWithOther,
-///     tui::err::FtuiError::TextFlagNoneWithOther);
+///     FtuiError::TextFlagNoneWithOther, FtuiError::TextFlagNoneWithOther);
 ///
 /// // Variants of different types are not equal.
 /// assert_ne!(
-///     tui::err::FtuiError::TextFlagNoneWithOther,
-///     tui::err::FtuiError::TextFlagMultipleColor);
+///     FtuiError::TextFlagNoneWithOther, FtuiError::TextFlagMultipleColor);
 ///
 /// // StdInputOutputError variants are treated as equal even if their inner errors differ.
 /// use std::io::{Error, ErrorKind};
-/// use tui::err::FtuiError;
 /// 
 /// assert_eq!(
 ///     FtuiError::StdInputOutputError(Error::from(ErrorKind::NotFound)),
@@ -334,14 +309,12 @@ impl PartialEq for FtuiError {
     }
 }
 
-/// A convenient alias for `Resul`t<T, FtuiError>`.
+/// A convenient alias for `Result<T, FtuiError>`.
 ///
 /// # Example
 /// ```rust
-/// use feather_tui as tui;
-///
 /// // A main function that returns a Result<(), FtuiError>.
-/// fn main() -> tui::err::FtuiResult<()> {
+/// fn main() -> FtuiResult<()> {
 ///     Ok(())
 /// }
 // ```

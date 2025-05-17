@@ -49,3 +49,11 @@ pub use inp::{line, key, keycode_to_char, key_char};
 
 #[cfg(feature = "reduce_abstraction")]
 pub use err::{FtuiError, FtuiResult};
+
+fn main() -> err::FtuiResult<()> {
+    let mut container = con::ContainerBuilder::new().build();
+
+    container.selector_mut()?.up_trig_mut()?.remove_arg();
+
+    Ok(())
+}
