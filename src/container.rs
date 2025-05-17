@@ -64,14 +64,18 @@ impl Container {
     /// }
     /// ```
     pub fn looper(&mut self) -> FtuiResult<bool> {
-        if self.options.len() > 0 {
-            Ok(self.selector
-                .as_mut()
-                .ok_or(FtuiError::ContainerLooperNoSelector)?
-                .looper(&mut self.options)?)
-        } else {
-            Ok(false)
+        if self.options.is_empty() {
+            return Ok(false);
         }
+
+        self.selector
+            .as_mut()
+            .ok_or(FtuiError::ContainerLooperNoSelector)?
+            .looper(&mut self.options)
+            .or_else(|e| match e {
+                FtuiError::SelectorNoTriggers => Ok(false),
+                _ => Err(e),
+            })
     }
 
     pub(crate) fn set_header(&mut self, header: cpn::Header) {
@@ -337,7 +341,7 @@ impl Container {
         Ok(self.selector
             .as_mut()
             .ok_or(FtuiError::ContainerNoSelector)?
-            .move_up(&mut self.options))
+            .up(&mut self.options))
     }
 
     /// Attempts to move the `Selector` down by one position, if possible.
@@ -364,7 +368,7 @@ impl Container {
         Ok(self.selector
             .as_mut()
             .ok_or(FtuiError::ContainerNoSelector)?
-            .move_down(&mut self.options))
+            .down(&mut self.options))
     }
 
     /// Attempts to select the `Option` that the `Selector` is currently on. 
@@ -390,7 +394,7 @@ impl Container {
         Ok(self.selector
             .as_mut()
             .ok_or(FtuiError::ContainerNoSelector)?
-            .selc(&mut self.options)?)
+            .select(&mut self.options)?)
     }
 
     pub(crate) fn component_count(&self) -> u16 {
