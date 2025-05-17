@@ -15,8 +15,6 @@ use std::any::Any;
 /// 
 /// # Example
 /// ```
-/// use feather_tui as tui;
-///
 /// // Define a trigger function that print the argument than evaluate whether
 /// // the argument is 5
 /// trg_new_trigger_func!(func_name, arg, {
@@ -52,18 +50,16 @@ macro_rules! trg_new_trigger_func {
 ///
 /// # Example
 /// ```rust
-/// use feather_tui as tui;
-///
 /// // A trigger function that take in a u32 an evaluate whether it is five.
-/// tui::trg_new_trigger_func!(is_five, arg, {
-///     Ok(*tui::trg::cast_arg::<u32>(arg)? == 5)
+/// trg_new_trigger_func!(is_five, arg, {
+///     Ok(*trg::cast_arg::<u32>(arg)? == 5)
 /// });
 ///
-/// tui::trg::Trigger::new(is_five, 5u32).check()?; // Evaluate to true
-/// tui::trg::Trigger::new(is_five, 6u32).check()?; // Evaluate to false
+/// Trigger::new(is_five, 5u32).check()?; // Evaluate to true
+/// Trigger::new(is_five, 6u32).check()?; // Evaluate to false
 ///                                           
-/// tui::trg::Trigger::new(is_five, "String").check()?; // Error (Wrong type) 
-/// tui::trg::Trigger::no_arg(is_five).check()?;        // Error (No argument)
+/// Trigger::new(is_five, "String").check()?; // Error (Wrong type) 
+/// Trigger::no_arg(is_five).check()?;        // Error (No argument)
 /// ```
 pub fn cast_arg<T>(arg: &Option<Box<dyn Any>>) -> FtuiResult<&T> 
 where
@@ -75,34 +71,34 @@ where
         .ok_or(FtuiError::TriggerCastArgWrongType)
 }
 
-/// A generic trigger handler for evaluating conditions based on stored arguments.
-/// `Trigger` allows you to define a condition as a function, associate it with
-/// an argument, and check whether the condition is met.
+/// A generic trigger handler for evaluating conditions. `Trigger` allows you
+/// to define a condition as a function, associate it with an optional argument,
+/// and check whether the condition is met.
 ///
 /// # Usage
 /// Trigger is use for creating a `Selector` object.
-///
-/// # Example
-///   
-/// ```
-/// use feather_tui as tui;
-/// 
-/// tui::tui_trg_new_trigger_func!(trigger, arg, {
-///     arg.downcast_ref::<u32>().unwrap() == 5
-/// });
-/// 
-/// let mut trig = tui::trg::Trigger::new(trigger, 5u32);
-///
-/// trig.check()?; // Condition is met return True
-/// trig.update_arg(6);
-/// trig.check()?; // Condition no longer met return False
-/// ```
 pub struct Trigger {
     func: fn(&Option<Box<dyn Any>>) -> FtuiResult<bool>,
     arg: Option<Box<dyn Any>>,
 }
 
 impl Trigger {
+    /// Constructs a new `Trigger` with an associated argument.
+    ///
+    /// # Parameters
+    /// - `func`: A trigger function created using the `trg_new_trigger_func!` macro.  
+    /// - `arg`: The argument value to associate with the `Trigger` (`T: 'static`).
+    ///
+    /// # Example
+    /// ```rust
+    /// // Define a trigger function using the macro.
+    /// trg_new_trigger_func!(trigger_function, arg, {
+    ///     ...
+    /// });
+    ///
+    /// // Create a `Trigger` with an associated `u32` value.
+    /// let _ = Trigger::new(trigger_function, 5u32);
+    /// ```
     pub fn new<T>(
         func: fn(&Option<Box<dyn Any>>) -> FtuiResult<bool>, arg: T
     ) -> Self
@@ -115,6 +111,21 @@ impl Trigger {
         }
     }
 
+    /// Constructs a new `Trigger` without an associated argument.
+    ///
+    /// # Parameters
+    /// - `func`: A trigger function created using the `trg_new_trigger_func!` macro.  
+    ///
+    /// # Example
+    /// ```rust
+    /// // Define a trigger function using the macro.
+    /// trg_new_trigger_func!(trigger_function, arg, {
+    ///     ...
+    /// });
+    ///
+    /// // Create a `Trigger` without an associated argument.
+    /// let _ = Trigger::no_arg(trigger_function);
+    /// ```
     pub fn no_arg(func: fn(&Option<Box<dyn Any>>) -> FtuiResult<bool>) -> Self {
         Trigger {
             func,
@@ -122,10 +133,44 @@ impl Trigger {
         }
     }
 
+    /// Check whether the `Trigger` evaluate to `true` or `false`.
+    ///
+    /// # Example
+    /// ```rust
+    /// // A trigger function that take in a u32 an evaluate whether it is five.
+    /// trg_new_trigger_func!(is_five, arg, {
+    ///     Ok(*trg::cast_arg::<u32>(arg)? == 5)
+    /// });
+    ///
+    /// Trigger::new(is_five, 5u32).check()?; // Evaluate to true
+    /// Trigger::new(is_five, 6u32).check()?; // Evaluate to false
+    /// ```
     pub fn check(&self) -> FtuiResult<bool> {
         (self.func)(&self.arg)
     }
 
+    /// Updates the argument associated with the `Trigger`.  
+    ///
+    /// # Parameters
+    /// - `arg`: The new argument value to associate with the `Trigger` (`T' static`).
+    ///
+    /// # Example
+    /// ```rust
+    /// // Define a trigger function that checks if the argument is 5.
+    /// trg_new_trigger_func!(is_five, arg, {
+    ///     Ok(*trg::cast_arg::<u32>(arg)? == 5)
+    /// });
+    ///
+    /// // Create a `Trigger` with an initial argument value of 5.
+    /// let mut trigger = Trigger::new(is_five, 5u32);
+    ///
+    /// assert!(trigger.check()?); // Evaluates to true.
+    ///
+    /// // Update the argument to a different value.
+    /// trigger.update_arg(6u32);
+    ///
+    /// assert!(!trigger.check()?); // Now evaluates to false.
+    /// ```
     pub fn update_arg<T>(&mut self, arg: T) 
     where
         T: 'static
@@ -133,6 +178,7 @@ impl Trigger {
         self.arg = Some(Box::new(arg));
     }
 
+    /// Remove the argument associated with the `Trigger`.
     pub fn remove_arg(&mut self) {
         self.arg = None;
     }
