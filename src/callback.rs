@@ -26,7 +26,7 @@ macro_rules! cbk_new_callback_func {
     ($func_name:ident, $arg_name:ident, $body:block) => {
         fn $func_name(
             $arg_name: &Option<Box<dyn std::any::Any>>
-        ) -> feather_tui::err::FtuiResult<()> $body
+        ) -> feather_tui::error::FtuiResult<()> $body
     };
 }
 
