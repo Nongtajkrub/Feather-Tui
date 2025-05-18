@@ -1,4 +1,4 @@
-use crate::err::{FtuiError, FtuiResult};
+use crate::error::{FtuiError, FtuiResult};
 use unicode_segmentation::UnicodeSegmentation;
 
 /// A UI component that serves as the header of a `Container`. It is displayed 

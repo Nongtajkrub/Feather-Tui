@@ -1,4 +1,6 @@
-use crate::{con, cpn, error::{FtuiError, FtuiResult}, util::ansi};
+use crate::{
+    container as con, components as cpn, error::{FtuiError, FtuiResult}, util::ansi
+};
 use std::io::{self, Write};
 use crossterm as ct;
 

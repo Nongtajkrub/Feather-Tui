@@ -1,6 +1,6 @@
 use crate::{
-    cbk::Callback, cpn, error::{FtuiError, FtuiResult}, ren::Renderer,
-    trg::Trigger, util::id::IdGenerator
+    callback::Callback, components as cpn, error::{FtuiError, FtuiResult},
+    renderer::Renderer, trigger::Trigger, util::id::IdGenerator
 };
 
 /// `Container` is a data structure used to store and organize UI components,

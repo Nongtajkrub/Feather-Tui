@@ -21,39 +21,48 @@ pub mod error;
 
 mod     util;
 
+// Shorten modules name.
+
+#[cfg(feature = "shorten_mod_name")]
 pub use components as cpn;
-pub use callback   as cbk;
-pub use trigger    as trg;
-pub use container  as con;
-pub use renderer   as ren;
-pub use input      as inp;
-pub use error      as err;
+
+#[cfg(feature = "shorten_mod_name")]
+pub use callback as cbk;
+
+#[cfg(feature = "shorten_mod_name")]
+pub use trigger as trg;
+
+#[cfg(feature = "shorten_mod_name")]
+pub use container as con;
+
+#[cfg(feature = "shorten_mod_name")]
+pub use renderer as ren;
+
+#[cfg(feature = "shorten_mod_name")]
+pub use input as inp;
+
+#[cfg(feature = "shorten_mod_name")]
+pub use error as err;
+
+// Reducing abstraction.
 
 #[cfg(feature = "reduce_abstraction")]
-pub use cpn::{Header, Option, Text, TextFlags, Separator, SeparatorStyle, Selector};
+pub use components::{Header, Option, Text, TextFlags, Separator, SeparatorStyle, Selector};
 
 #[cfg(feature = "reduce_abstraction")]
-pub use cbk::Callback;
+pub use callback::Callback;
 
 #[cfg(feature = "reduce_abstraction")]
-pub use trg::Trigger;
+pub use trigger::Trigger;
 
 #[cfg(feature = "reduce_abstraction")]
-pub use con::{Container, ContainerBuilder};
+pub use container::{Container, ContainerBuilder};
 
 #[cfg(feature = "reduce_abstraction")]
-pub use ren::Renderer;
+pub use renderer::Renderer;
 
 #[cfg(feature = "reduce_abstraction")]
-pub use inp::{line, key, keycode_to_char, key_char};
+pub use input::{line, key, keycode_to_char, key_char};
 
 #[cfg(feature = "reduce_abstraction")]
-pub use err::{FtuiError, FtuiResult};
-
-fn main() -> err::FtuiResult<()> {
-    let mut container = con::ContainerBuilder::new().build();
-
-    container.selector_mut()?.up_trig_mut()?.remove_arg();
-
-    Ok(())
-}
+pub use error::{FtuiError, FtuiResult};

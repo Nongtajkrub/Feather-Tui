@@ -1,4 +1,4 @@
-use crate::{cbk, err::{FtuiError, FtuiResult}};
+use crate::{callback as cbk, error::{FtuiError, FtuiResult}};
 use unicode_segmentation::UnicodeSegmentation;
 
 /// A UI component representing an interactive option in a `Container`. 

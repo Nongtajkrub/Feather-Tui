@@ -1,4 +1,4 @@
-use crate::err::{FtuiResult, FtuiError};
+use crate::error::{FtuiResult, FtuiError};
 use std::any::Any;
 
 /// This macro generates a function that take a reference to a `Box<dyn Any>`

@@ -1,4 +1,4 @@
-use crate::{err::FtuiResult, ren};
+use crate::{error::FtuiResult, renderer as ren};
 use std::io::{self, Write};
 use crossterm as ct;
 

@@ -1,8 +1,7 @@
-use crate::{cpn, err::{FtuiResult, FtuiError}, trg::Trigger};
+use crate::{components as cpn, error::{FtuiResult, FtuiError}, trigger::Trigger};
 
-/// A `Selector` is used within a `Container` to navigate and select `Option` 
-/// components. It allows movement up and down between options and selection of
-/// an option.
+/// A UI component use for navigating and selecting `Option` components.
+/// It allows movement up and down between options and selection of an option.
 ///
 /// # Usage
 /// A `Selector` is required for `Option` components in a `Container` to work.

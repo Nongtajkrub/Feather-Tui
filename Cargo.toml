@@ -12,6 +12,7 @@ keywords = ["user_interface", "ui", "terminal", "cli", "simple"]
 [features]
 default = []
 reduce_abstraction = []
+shorten_mod_name = []
 
 [dependencies]
 bitflags = "2.9.0"
