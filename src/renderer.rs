@@ -1,5 +1,5 @@
 use crate::{
-    container as con, components as cpn, error::{FtuiError, FtuiResult}, util::ansi
+    container::Container, components as cpn, error::{FtuiError, FtuiResult}, util::ansi
 };
 use std::io::{self, Write};
 use crossterm as ct;
@@ -352,7 +352,7 @@ impl Renderer {
     /// // (assuming `container` is created elsewhere)
     /// renderer.render(&mut container)?;
     /// ```
-    pub fn render(&mut self, container: &mut con::Container) -> FtuiResult<()> {
+    pub fn render(&mut self, container: &mut Container) -> FtuiResult<()> {
         if container.component_count() > self.height {
             return Err(FtuiError::RendererContainerTooBig);
         }
@@ -472,7 +472,7 @@ impl Renderer {
     ///     renderer.simple_draw(&mut container)?;
     /// }
     /// ```
-    pub fn simple_draw(&mut self, container: &mut con::Container) -> FtuiResult<()> {
+    pub fn simple_draw(&mut self, container: &mut Container) -> FtuiResult<()> {
         self.clear();
         self.render(container)?;
         self.draw()?;
