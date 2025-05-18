@@ -16,10 +16,8 @@ use crossterm as ct;
 ///
 /// # Example
 /// ```rust
-/// use feather_tui as tui;
-///
 /// // Get the user input and print it out if error occure print the error
-/// match tui::inp::line("Input Something") {
+/// match line("Input Something") {
 ///     Ok(e) => println!("User Input {}", e),
 ///     Err(e) => eprintln!("Error: {}", e),
 /// };
@@ -50,11 +48,9 @@ pub fn line(promt: &str) -> FtuiResult<String> {
 ///
 /// # Example
 /// ```rust
-/// use feather_tui as tui;
-///
-/// fn main() -> tui::err::FtuiResult<()> {
+/// fn main() -> FtuiResult<()> {
 ///     // Get the user key input as `KeyCode` and print it out
-///     match tui::inp::key()? {
+///     match key()? {
 ///         Some(key) => println!("Key pressed: {:?}", key),
 ///         None => println!("No key press detected"),
 ///     };
@@ -91,16 +87,14 @@ pub fn key() -> FtuiResult<Option<ct::event::KeyCode>> {
 ///
 /// # Example
 /// ```rust
-/// use feather_tui as tui;
-///
-/// fn main() -> tui::err::FtuiResult<()> {
+/// fn main() -> FtuiResult<()> {
 ///     // Capture user keyboard input as a KeyCode.
 ///     // If reading fails, terminate with an error.
-///     let key_code = inp::key()?;
+///     let key_code = key()?;
 ///
 ///     // If a key was pressed, attempt to convert it to a character.
 ///     match key_code {
-///         Some(code) => match inp::keycode_to_char(code) {
+///         Some(code) => match keycode_to_char(code) {
 ///             // Print the character if it's a printable key.
 ///             Some(c) => println!("Key pressed: {}", c), 
 ///             None => println!("Unprintable KeyCode"), 
@@ -128,12 +122,10 @@ pub fn keycode_to_char(code: ct::event::KeyCode) -> Option<char> {
 ///
 /// # Example
 /// ```rust
-/// use feather_tui as tui;
-///
-/// fn main() -> tui::err::FtuiResult<()> {
+/// fn main() -> FtuiResult<()> {
 ///     // Capture user keyboard input as a character and print it out if
 ///     // possible. 
-///     match tui::inp::key_char()? {
+///     match key_char()? {
 ///         Some(c) => println!("Key pressed: {}", c),
 ///         None => println!("No key pressed or no printable key pressed"),
 ///     }
