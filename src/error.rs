@@ -91,8 +91,8 @@ pub enum FtuiError {
     #[error("The container's looper method requires a Selector.")]
     ContainerLooperNoSelector,
 
-    /// Occurs when calling `Container::selector_mut` on a container that does
-    /// not have a `Selector`.
+    /// Occurs when attempting to use `Container` functionality that
+    /// requires a `Selector`, but the `Container` does not have one.
     ///
     /// # Example
     /// ```rust
@@ -101,7 +101,7 @@ pub enum FtuiError {
     ///     let mut container = ContainerBuilder::new().build();
     ///     
     ///     // Attempting to call `selector_mut` on a container without a selector
-    ///     // results in an error.
+    ///     // results in the error.
     ///     container.selector_mut()?;
     ///
     ///     Ok(())
@@ -110,8 +110,43 @@ pub enum FtuiError {
     #[error("Container doesnot have a Selector.")]
     ContainerNoSelector,
 
-    #[error("Fail to find component by ID")]
+    /// Occurs when attempting to query a component by its ID, but no such
+    /// component exists in the container.
+    ///
+    /// # Example
+    /// ```rust
+    /// fn main() -> FtuiResult<()> {
+    ///     // Create an empty container.
+    ///     let mut container = ContainerBuilder::new().build();
+    ///
+    ///     // Attempt to query using a non-existent ID.
+    ///     // This results in the error.
+    ///     container.option(172)?;
+    ///
+    ///     Ok(())
+    /// }
+    /// ```
+    #[error("Failed to query for component by its ID")]
     ContainerNoComponentById,
+
+    /// Occurs when attempting to use `Selector` functionality that
+    /// requires triggers, but the `Selector` does not have one.
+    ///
+    /// # Example
+    /// ```rust
+    /// fn main() -> FtuiResult<()> {
+    ///     // Create a `Selector` component with no triggers.
+    ///     let mut selector = Selector::no_triggers();
+    ///
+    ///     // Attempting to use functionality that requires triggers.
+    ///     // This results in the error.
+    ///     selector.up_trig_mut()?;
+    ///
+    ///     Ok(())
+    /// }
+    /// ```
+    #[error("Selector does not have triggers.")]
+    SelectorNoTriggers,
 
     /// Occurs when attempting to call the `Renderer::render` method with a container
     /// that exceeds the dimensions of the renderer. There are two cases where a
@@ -122,21 +157,19 @@ pub enum FtuiError {
     /// 
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    ///
-    /// fn main() -> tui::err::FtuiResult<()> {
-    ///     let mut container = tui::con::Container::new()
-    ///         .with_header("Header!")?
-    ///         .with_text("Label", None)?;
+    /// fn main() -> FtuiResult<()> {
+    ///     let mut container = ContainerBuilder::new()
+    ///         .header("Header!")?
+    ///         .text("Label", None)?;
     ///
     ///     // This will cause an error because the label "Header!" is 7 characters
     ///     // long, which is wider than the renderer width of 5.
-    ///     let mut renderer = tui::ren::Renderer::new(5, 10);
+    ///     let mut renderer = Renderer::new(5, 10);
     ///     renderer.render(&mut container)?;
     ///
     ///     // This will cause an error because the container has 2 components,
     ///     // but the renderer can only display 1 line (height = 1).
-    ///     let mut renderer = tui::ren::Renderer::new(10, 1);
+    ///     let mut renderer = Renderer::new(10, 1);
     ///     renderer.render(&mut container)?;
     ///
     ///     Ok(())
@@ -146,22 +179,20 @@ pub enum FtuiError {
     RendererContainerTooBig,
 
     /// Occurs when functions in the `input` module fail. Affected functions 
-    /// include `line`, `key`, and `key_char`. This enum wraps an error message
+    /// include `line`, `key`, and `key_char`. This enum wraps an error
     /// from `std::io::Error`.
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    /// 
     /// fn main() -> tui::err::FtuiResult<()> {
     ///     // This function may return an error if an I/O operation fails.
-    ///     tui::inp::line("Prompt")?;
+    ///     line("Prompt")?;
     /// 
     ///     // This function may return an error if an I/O operation fails.
-    ///     tui::inp::key()?;
+    ///     key()?;
     /// 
     ///     // This function may return an error if an I/O operation fails.
-    ///     tui::inp::key_char()?;
+    ///     key_char()?;
     /// 
     ///     Ok(())
     /// }
@@ -177,15 +208,13 @@ pub enum FtuiError {
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    ///
     /// // When creating a trigger using the no_arg constructor, the argument
     /// // will be set to None.
-    /// tui::trg::Trigger::no_arg(trigger_func);
+    /// Trigger::no_arg(trigger_func);
     ///
-    /// tui::trg_new_trigger_func!(trigger_func, arg, {
+    /// trg_new_trigger_func!(trigger_func, arg, {
     ///     // An error occurs because arg is None.
-    ///     tui::trg::cast_arg::<T>(arg)?;
+    ///     trg::cast_arg::<T>(arg)?;
     /// });
     ///
     /// ```
@@ -200,22 +229,17 @@ pub enum FtuiError {
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    ///
     /// // Creating a trigger with an argument of 5, which is a u32.
-    /// tui::trg::Trigger::new(trigger_func, 5u32);
+    /// Trigger::new(trigger_func, 5u32);
     /// 
-    /// tui::trg_new_trigger_func!(trigger_func, arg, {
+    /// trg_new_trigger_func!(trigger_func, arg, {
     ///     // An error occurs because arg is a u32, but we're attempting to cast 
     ///     // it to a char.
-    ///     tui::trg::cast_arg::<char>(arg)?;
+    ///     trg::cast_arg::<char>(arg)?;
     /// });
     /// ```
     #[error("Trigger function argument type mismatch unable to cast to the expected type.")]
     TriggerCastArgWrongType,
-
-    #[error("")]
-    SelectorNoTriggers,
 
     /// Occurs when calling the `callback::cast_arg` function with an argument 
     /// that is a `None`.
@@ -225,15 +249,13 @@ pub enum FtuiError {
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    ///
     /// // When creating a callback using the no_arg constructor, the argument
     /// // will be set to None.
-    /// tui::cbk::Callback::no_arg(callback_func);
+    /// cbk::Callback::no_arg(callback_func);
     ///
-    /// tui::cbk_new_callback_func!(callback_func, arg, {
+    /// cbk_new_callback_func!(callback_func, arg, {
     ///     // An error occurs because arg is None.
-    ///     tui::cbk::cast_arg::<T>(arg)?;
+    ///     cbk::cast_arg::<T>(arg)?;
     /// });
     ///
     /// ```
@@ -296,13 +318,14 @@ impl PartialEq for FtuiError {
             (OptionLabelEmpty, OptionLabelEmpty) => true,
             (ContainerLooperNoSelector, ContainerLooperNoSelector) => true,
             (ContainerNoSelector, ContainerNoSelector) => true,
+            (ContainerNoComponentById, ContainerNoComponentById) => true,
+            (SelectorNoTriggers, SelectorNoTriggers) => true,
             (RendererContainerTooBig, RendererContainerTooBig) => true,
+            (StdInputOutputError(_), StdInputOutputError(_)) => true,
             (TriggerCastArgNoArgument, TriggerCastArgNoArgument) => true,
             (TriggerCastArgWrongType, TriggerCastArgWrongType) => true,
-            (SelectorNoTriggers, SelectorNoTriggers) => true,
             (CallbackCastArgNoArgument, CallbackCastArgNoArgument) => true,
             (CallbackCastArgWrongType, CallbackCastArgWrongType) => true,
-            (StdInputOutputError(_), StdInputOutputError(_)) => true,
 
             _ => false,
         }
