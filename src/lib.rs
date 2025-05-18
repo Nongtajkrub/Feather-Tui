@@ -59,7 +59,7 @@ pub use trigger::Trigger;
 pub use container::{Container, ContainerBuilder};
 
 #[cfg(feature = "reduce_abstraction")]
-pub use renderer::Renderer;
+pub use renderer::{ready, unready, Renderer};
 
 #[cfg(feature = "reduce_abstraction")]
 pub use input::{line, key, keycode_to_char, key_char};
