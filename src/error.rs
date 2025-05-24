@@ -43,6 +43,9 @@ pub enum FtuiError {
     #[error("TextFlags cannot contain multiple color.")]
     TextFlagMultipleColor,
 
+    #[error("TextFlags::ALIGN_BOTTOM cannot be use with a List element.")]
+    TextFlagAlignBottomWithListElement,
+
     /// Occurs when attempting to create a `Header` component with an empty label.
     ///
     /// # Example
