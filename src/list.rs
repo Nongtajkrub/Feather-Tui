@@ -1,13 +1,11 @@
 use crate::{
-    components::{Header, Text, TextFlags}, error::FtuiResult,
-    util::id::IdGenerator
+    components::{Header, Text, TextFlags}, error::{FtuiResult, FtuiError},
 };
 
 pub struct List {
     header: Header,
     elements: Vec<Text>,
     offset: usize,
-    id_generator: IdGenerator<u16>, 
 }
 
 impl List {
@@ -16,20 +14,20 @@ impl List {
             header: Header::new(header)?,
             elements: vec![],
             offset: 0,
-            id_generator: IdGenerator::new(),
         })
     }
 
     pub fn add(
         &mut self, label: &str, flags: impl Into<Option<TextFlags>>
-    ) -> FtuiResult<u16> {
-        let mut text = Text::new(label, flags)?;
-        let id = self.id_generator.get_id();
+    ) -> FtuiResult<()> {
+        let flags: Option<TextFlags> = flags.into();
 
-        text.set_id(id);
-        self.elements.push(text);
+        if flags.is_some_and(|flags| flags.contains(TextFlags::ALIGN_BOTTOM)) {
+            return Err(FtuiError::TextFlagAlignBottomWithListElement);
+        }
 
-        Ok(id)
+        self.elements.push(Text::new(label, flags)?);
+        Ok(())
     }
 
     pub fn scroll_down(&mut self) -> bool {
