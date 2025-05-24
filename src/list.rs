@@ -33,7 +33,7 @@ impl List {
     }
 
     pub fn scroll_down(&mut self) -> bool {
-        if self.offset < self.elements.len() {
+        if self.offset < self.elements.len() - 1 {
             self.offset += 1;
             true
         } else {
