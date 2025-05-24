@@ -1,5 +1,6 @@
 use crate::{
-    container::Container, components as cpn, error::{FtuiError, FtuiResult}, util::ansi
+    container::Container, list::List, components as cpn, util::ansi, 
+    error::{FtuiError, FtuiResult}, 
 };
 use std::io::{self, Write};
 use crossterm as ct;
@@ -363,6 +364,35 @@ impl Renderer {
         self.render_options(container.options())?;
         self.render_text(container.texts_mut())?;
         self.render_separator(container.separators());
+
+        Ok(())
+    }
+
+    pub fn render_list(&mut self, list: &mut List) -> FtuiResult<()> {
+        self.render_header(list.header())?;
+
+        if list.len() == 0 {
+            return Ok(());
+        }
+
+        let offset = list.offset();
+
+        for (i, element) in list
+            .elements_mut()
+            .iter_mut()
+            .skip(offset)
+            .take((self.height - 1) as usize)
+            .enumerate() 
+        {
+            self.ensure_label_inbound(element.len())?;
+            self.resolve_text_pos(element);
+
+            // + 1 to avoid over lapping the header.
+            let line = &mut self.lines[i + 1];
+
+            line.edit(element.label(), element.pos());
+            line.add_ansi_many(element.styles());
+        }
 
         Ok(())
     }

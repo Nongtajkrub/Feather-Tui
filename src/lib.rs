@@ -29,6 +29,7 @@ pub mod callback;
 pub mod trigger;
 /// Acts as a layout manager for the UI elements.
 pub mod container;
+pub mod list;
 /// Responsible for rendering the UI to the terminal.
 pub mod renderer;
 /// Handles user input, non-blocking key events, and key code conversions with crossterm.
@@ -74,6 +75,9 @@ pub use trigger::Trigger;
 
 #[cfg(feature = "reduce_abstraction")]
 pub use container::{Container, ContainerBuilder};
+
+#[cfg(feature = "reduce_abstraction")]
+pub use list::List;
 
 #[cfg(feature = "reduce_abstraction")]
 pub use renderer::{ready, unready, Renderer};
