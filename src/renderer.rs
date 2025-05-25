@@ -396,7 +396,13 @@ impl Renderer {
     /// renderer.render_list(&mut list)?;
     /// ```
     pub fn render_list(&mut self, list: &mut List) -> FtuiResult<()> {
-        self.render_header(list.header())?;
+        // This avoid checking multiple time whether a header excist.
+        let avoid_header_offset = if let Some(header) = list.header() {
+            self.render_header(header)?;
+            1
+        } else {
+            0
+        };
 
         if list.len() == 0 {
             return Ok(());
@@ -414,9 +420,7 @@ impl Renderer {
             self.ensure_label_inbound(element.len())?;
             self.resolve_text_pos(element);
 
-            // + 1 to avoid over lapping the header.
-            let line = &mut self.lines[i + 1];
-
+            let line = &mut self.lines[i + avoid_header_offset];
             line.edit(element.label(), element.pos());
             line.add_ansi_many(element.styles());
         }

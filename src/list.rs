@@ -3,15 +3,15 @@ use crate::{
 };
 
 pub struct List {
-    header: Header,
+    header: Option<Header>,
     elements: Vec<Text>,
     offset: usize,
 }
 
 impl List {
-    pub fn new(header: &str) -> FtuiResult<Self> {
+    pub fn new() -> FtuiResult<Self> {
         Ok(List {
-            header: Header::new(header)?,
+            header: None,
             elements: vec![],
             offset: 0,
         })
@@ -48,7 +48,7 @@ impl List {
         }
     }
 
-    pub(crate) fn header(&self) -> &Header {
+    pub(crate) fn header(&self) -> &Option<Header> {
         &self.header
     }
 
