@@ -1,33 +1,42 @@
 use crate::{
-    components::{Header, Text, TextFlags}, error::{FtuiResult, FtuiError},
+    components::{Header, Text, TextFlags}, error::{FtuiError, FtuiResult},
+    util::id::IdGenerator,
 };
 
 pub struct List {
     header: Option<Header>,
+    default_flags: Option<TextFlags>,
     elements: Vec<Text>,
     offset: usize,
+    id_generator: IdGenerator<u16>,
 }
 
 impl List {
-    pub fn new() -> FtuiResult<Self> {
-        Ok(List {
+    pub(crate) fn new() -> Self {
+        List {
             header: None,
+            default_flags: None,
             elements: vec![],
             offset: 0,
-        })
+            id_generator: IdGenerator::new(),
+        }
     }
 
     pub fn add(
         &mut self, label: &str, flags: impl Into<Option<TextFlags>>
-    ) -> FtuiResult<()> {
+    ) -> FtuiResult<u16> {
         let flags: Option<TextFlags> = flags.into();
 
-        if flags.is_some_and(|flags| flags.contains(TextFlags::ALIGN_BOTTOM)) {
-            return Err(FtuiError::TextFlagAlignBottomWithListElement);
+        let id = self.id_generator.get_id(); 
+
+        match flags {
+            Some(flags) if flags.contains(TextFlags::ALIGN_BOTTOM) =>
+                return Err(FtuiError::TextFlagAlignBottomWithListElement),
+            Some(flags) => self.elements.push(Text::with_id(label, flags, id)?),
+            None => self.elements.push(Text::with_id(label, self.default_flags, id)?),
         }
 
-        self.elements.push(Text::new(label, flags)?);
-        Ok(())
+        Ok(id)
     }
 
     pub fn scroll_down(&mut self) -> bool {
@@ -62,5 +71,35 @@ impl List {
 
     pub(crate) fn len(&self) -> usize {
         self.elements.len()
+    }
+}
+
+pub struct ListBuilder {
+    list: List,
+}
+
+impl ListBuilder {
+    pub fn new() -> Self {
+        ListBuilder { list: List::new(), }
+    }
+
+    pub fn header_expl(mut self, header: Header) -> Self {
+        self.list.header = Some(header);
+        self
+    }
+
+    #[inline]
+    pub fn header(self, label: &str) -> FtuiResult<Self> {
+        Ok(self.header_expl(Header::new(label)?))
+    }
+
+    pub fn default_flags(mut self, flags: TextFlags) -> FtuiResult<Self> {
+        Text::ensure_compatible_flags(&flags)?;
+        self.list.default_flags = Some(flags);
+        Ok(self)
+    }
+
+    pub fn build(self) -> List {
+        self.list
     }
 }
