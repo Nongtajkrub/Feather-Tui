@@ -193,6 +193,17 @@ impl Renderer {
         }
     }
 
+    /// Constructs a new fullscreen `Renderer` (Does not resize).
+    ///
+    /// # Returns
+    /// `Ok(Renderer)`: A `Renderer` instance.
+    /// `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a fullscreen Renderer.
+    /// let renderer = Renderer::fullscreen()?;
+    /// ```
     pub fn fullscreen() -> FtuiResult<Renderer> {
         let (width, height) = ct::terminal::size()?;
 
