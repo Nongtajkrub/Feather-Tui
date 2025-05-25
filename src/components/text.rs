@@ -183,7 +183,7 @@ impl Text {
         })
     }
 
-    fn ensure_compatible_flags(flags: &TextFlags) -> FtuiResult<()> {
+    pub(crate) fn ensure_compatible_flags(flags: &TextFlags) -> FtuiResult<()> {
         // NONE Flags alone is always compatible.
         if *flags == TextFlags::NONE {
             return Ok(());
