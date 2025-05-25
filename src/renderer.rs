@@ -69,15 +69,13 @@ impl Line {
 ///
 /// # Example
 /// ```rust
-/// use feather_tui as tui;
-///
-/// tui::ren::ready();
+/// ready();
 ///
 /// loop {
 ///     // Main loop
 /// }
 ///
-/// tui::ren::unready();
+/// unready();
 /// ```
 pub fn ready() -> FtuiResult<()> {
     print!(
@@ -100,15 +98,13 @@ pub fn ready() -> FtuiResult<()> {
 /// 
 /// # Example
 /// ```rust
-/// use feather_tui as tui;
-///
-/// tui::ren::ready();
+/// ready();
 ///
 /// loop {
 ///     // Main loop
 /// }
 ///
-/// tui::ren::unready();
+/// unready();
 /// ```
 pub fn unready() -> FtuiResult<()> {
     print!(
@@ -130,10 +126,8 @@ pub fn unready() -> FtuiResult<()> {
 ///
 /// # Example
 /// ```rust
-/// use feather_tui as tui;
-///
 /// // This clear the terminal.
-/// tui::ren::clear();
+/// clear();
 /// ```
 pub fn clear() -> FtuiResult<()> {
     print!("{}", ansi::ESC_CLEAR_TERM);
@@ -157,10 +151,8 @@ pub fn clear() -> FtuiResult<()> {
 ///
 /// # Example
 /// ```rust
-/// use feather_tui as tui;
-///
 /// // Create a Renderer with a width of 40 and a height of 20
-/// let mut renderer = tui::ren::Renderer::new(40, 20);
+/// let mut renderer = Renderer::new(40, 20);
 ///
 /// // Clear the buffer before rendering
 /// renderer.clear();
@@ -190,10 +182,8 @@ impl Renderer {
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    ///
     /// // Create a Renderer with a width of 40 and a height of 20 characters.
-    /// let renderer = tui::ren::Renderer::new(40, 20);
+    /// let renderer = Renderer::new(40, 20);
     /// ```
     pub fn new(width: u16, height: u16) -> Renderer {
         Renderer {
@@ -213,24 +203,29 @@ impl Renderer {
         (0..height).map(|_| Line::new(width)).collect()
     }
 
+    // A static method because it often cause borrow checker problem.
     /// Caculate the position of a middle-aligned component.
     #[inline] 
     fn calc_middle_align_pos(width: u16, len: usize) -> u16 {
         ((width as f32 - len as f32) / 2.0).round() as u16 
     }
 
+    // A static method because it often cause borrow checker problem.
     /// Caculate the position of a left-aligned component.
     #[inline]
     fn calc_right_align_pos(width: u16, len: usize) -> u16 {
         (width as usize - len) as u16
     }
 
+    // A static method because it often cause borrow checker problem.
     /// Caculate the position of a left-aligned component.
     #[inline]
     fn calc_left_align_pos() -> u16 {
         0
     }
 
+    // A static method because it often cause borrow checker problem.
+    /// Caculate the position of a bottom-aligned component.
     #[inline]
     fn calc_bottom_align_pos(height: u16) -> u16 {
         height - 1
@@ -344,10 +339,8 @@ impl Renderer {
     /// 
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    ///
     /// // Create a `Renderer` with a width of 40 and a height of 20 characters.
-    /// let mut renderer = tui::ren::Renderer::new(40, 20);
+    /// let mut renderer = Renderer::new(40, 20);
     ///
     /// // Render the container into the renderer buffer
     /// // (assuming `container` is created elsewhere)
@@ -428,10 +421,8 @@ impl Renderer {
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    ///
     /// // Create a `Renderer` with a width of 40 and a height of 20 characters.
-    /// let mut renderer = tui::ren::Renderer::new(40, 20);
+    /// let mut renderer = Renderer::new(40, 20);
     ///
     /// // Render the container into the renderer buffer
     /// // (assuming `container` is created elsewhere)
@@ -471,10 +462,8 @@ impl Renderer {
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    ///
     /// // Create a `Renderer` with a width of 40 and a height of 20 characters.
-    /// let mut renderer = tui::ren::Renderer::new(40, 20);
+    /// let mut renderer = Renderer::new(40, 20);
     ///
     /// // Rendering loop
     /// loop {
@@ -506,10 +495,8 @@ impl Renderer {
     ///
     /// # Example
     /// ```rust
-    /// use feather_tui as tui;
-    ///
     /// // Create a `Renderer` with a width of 40 and a height of 20 characters.
-    /// let mut renderer = tui::ren::Renderer::new(40, 20);
+    /// let mut renderer = Renderer::new(40, 20);
     ///
     /// // Standard rendering loop
     /// loop {
