@@ -183,6 +183,14 @@ impl Text {
         })
     }
 
+    pub(crate) fn with_id(
+        label: &str, flags: impl Into<Option<TextFlags>>, id: u16
+    ) -> FtuiResult<Self> {
+        let mut text = Text::new(label, flags)?;
+        text.set_id(id);
+        Ok(text)
+    }
+
     pub(crate) fn ensure_compatible_flags(flags: &TextFlags) -> FtuiResult<()> {
         // NONE Flags alone is always compatible.
         if *flags == TextFlags::NONE {
