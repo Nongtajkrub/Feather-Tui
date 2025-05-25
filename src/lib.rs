@@ -77,7 +77,7 @@ pub use trigger::Trigger;
 pub use container::{Container, ContainerBuilder};
 
 #[cfg(feature = "reduce_abstraction")]
-pub use list::List;
+pub use list::{List, ListBuilder};
 
 #[cfg(feature = "reduce_abstraction")]
 pub use renderer::{ready, unready, Renderer};
