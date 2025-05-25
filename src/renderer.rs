@@ -431,7 +431,9 @@ impl Renderer {
             let line = &mut self.lines[i + avoid_header_offset];
 
             if is_number {
-                line.edit(&format!("{}. {}", i + 1, element.label()), element.pos());
+                line.edit(
+                    &format!("{}. {}", i + 1 + offset, element.label()),
+                    element.pos());
             } else {
                 line.edit(element.label(), element.pos());
             }
