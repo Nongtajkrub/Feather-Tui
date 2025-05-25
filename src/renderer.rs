@@ -1,6 +1,5 @@
 use crate::{
-    container::Container, list::List, components as cpn, util::ansi, 
-    error::{FtuiError, FtuiResult}, 
+    components::{self as cpn, header}, container::Container, error::{FtuiError, FtuiResult}, list::List, util::ansi 
 };
 use std::io::{self, Write};
 use crossterm as ct;
@@ -303,12 +302,12 @@ impl Renderer {
         }
     }
 
-    fn resolve_text_pos(&self, text: &mut cpn::Text) {
+    fn resolve_text_pos_with_len(&self, text: &mut cpn::Text, len: usize) {
         // x pos
         if text.flags().contains(cpn::TextFlags::ALIGN_MIDDLE) {
-            text.set_pos(Self::calc_middle_align_pos(self.width, text.len()));
+            text.set_pos(Self::calc_middle_align_pos(self.width, len));
         } else if text.flags().contains(cpn::TextFlags::ALIGN_RIGHT) {
-            text.set_pos(Self::calc_right_align_pos(self.width, text.len()));
+            text.set_pos(Self::calc_right_align_pos(self.width, len));
         } else {
             // default to left alignment
             text.set_pos(Self::calc_left_align_pos());
@@ -318,6 +317,11 @@ impl Renderer {
         if text.flags().contains(cpn::TextFlags::ALIGN_BOTTOM) {
             text.set_line(Self::calc_bottom_align_pos(self.height));
         }
+    }
+
+    #[inline]
+    fn resolve_text_pos(&self, text: &mut cpn::Text) {
+        self.resolve_text_pos_with_len(text, text.len());
     }
 
     fn render_text(&mut self, texts: &mut [cpn::Text]) -> FtuiResult<()> {
@@ -397,18 +401,21 @@ impl Renderer {
     /// ```
     pub fn render_list(&mut self, list: &mut List) -> FtuiResult<()> {
         // This avoid checking multiple time whether a header excist.
-        let avoid_header_offset = if let Some(header) = list.header() {
-            self.render_header(header)?;
-            1
-        } else {
-            0
-        };
+        let avoid_header_offset = match list.header() {
+            Some(header) => {
+                self.render_header(header)?;
+                1
+            },
+            None => 0,
+        }; 
 
         if list.len() == 0 {
             return Ok(());
         }
 
         let offset = list.offset();
+        let is_number = list.is_number();
+        let element_len_offset = if list.is_number() { 3 } else { 0 };
 
         for (i, element) in list
             .elements_mut()
@@ -418,10 +425,17 @@ impl Renderer {
             .enumerate() 
         {
             self.ensure_label_inbound(element.len())?;
-            self.resolve_text_pos(element);
+            self.resolve_text_pos_with_len(
+                element, element.len() + element_len_offset);
 
             let line = &mut self.lines[i + avoid_header_offset];
-            line.edit(element.label(), element.pos());
+
+            if is_number {
+                line.edit(&format!("{}. {}", i + 1, element.label()), element.pos());
+            } else {
+                line.edit(element.label(), element.pos());
+            }
+
             line.add_ansi_many(element.styles());
         }
 

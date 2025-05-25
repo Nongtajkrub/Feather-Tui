@@ -5,9 +5,10 @@ use crate::{
 
 pub struct List {
     header: Option<Header>,
-    default_flags: Option<TextFlags>,
     elements: Vec<Text>,
     offset: usize,
+    default_flags: Option<TextFlags>,
+    number: bool,
     id_generator: IdGenerator<u16>,
 }
 
@@ -15,9 +16,10 @@ impl List {
     pub(crate) fn new() -> Self {
         List {
             header: None,
-            default_flags: None,
             elements: vec![],
             offset: 0,
+            default_flags: None,
+            number: false,
             id_generator: IdGenerator::new(),
         }
     }
@@ -72,6 +74,10 @@ impl List {
     pub(crate) fn len(&self) -> usize {
         self.elements.len()
     }
+    
+    pub(crate) fn is_number(&self) -> bool {
+        self.number
+    }
 }
 
 pub struct ListBuilder {
@@ -97,6 +103,11 @@ impl ListBuilder {
         Text::ensure_compatible_flags(&flags)?;
         self.list.default_flags = Some(flags);
         Ok(self)
+    }
+
+    pub fn number(mut self) -> Self {
+        self.list.number = true;
+        self
     }
 
     pub fn build(self) -> List {
