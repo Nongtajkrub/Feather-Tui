@@ -368,6 +368,29 @@ impl Renderer {
         Ok(())
     }
 
+    /// Renders a `List` into the `Renderer` buffer without drawing to the terminal.
+    ///
+    /// # Parameters
+    /// - `list`: A mutable reference to the `List` to be rendered.
+    ///
+    /// # Note
+    ///  - This method only updates the internal buffer. 
+    ///  - To display the rendered content, call the `draw` method.
+    ///  - You should use the `clear` method to clear the buffer first.
+    ///
+    /// # Returns
+    /// - `Ok(())`: Returns nothing.
+    /// - `Err(FtuiError)`: Returns an error.
+    /// 
+    /// # Example
+    /// ```rust
+    /// // Create a `Renderer` with a width of 40 and a height of 20 characters.
+    /// let mut renderer = Renderer::new(40, 20);
+    ///
+    /// // Render a list into the renderer buffer
+    /// // (assuming `list` is created elsewhere)
+    /// renderer.render_list(&mut list)?;
+    /// ```
     pub fn render_list(&mut self, list: &mut List) -> FtuiResult<()> {
         self.render_header(list.header())?;
 
