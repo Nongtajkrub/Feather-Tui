@@ -3,6 +3,17 @@ use crate::{
     util::id::IdGenerator,
 };
 
+/// Another variant of a `Container` designed to display data in a vertical 
+/// list format. A `List` is scrollable, allowing it to handle a dynamic number
+/// of elements. It can be created using the `ListBuilder`, and new elements can
+/// be added using the `add` method.
+/// 
+/// # Usage
+/// Use `List` to present information in a vertically ordered list.
+/// 
+/// `1. Item one`    
+/// `2. Item two`   
+/// `3. Item three`  
 pub struct List {
     header: Option<Header>,
     elements: Vec<Text>,
@@ -57,6 +68,23 @@ impl List {
         } else {
             false
         }
+    }
+
+    pub fn remove_index(&mut self, i: usize) -> FtuiResult<()> {
+        if i < self.elements.len() {
+            self.elements.remove(i);
+            Ok(())
+        } else {
+            Err(FtuiError::ListRemoveIndexOutOfBound)
+        }
+    }
+
+    pub fn remove_id(&mut self, id: u16) -> FtuiResult<()> {
+        self.elements
+            .iter()
+            .position(|element| element.id() == id)
+            .map(|index| { self.elements.remove(index); })
+            .ok_or(FtuiError::ListRemoveNoElementById)
     }
 
     pub(crate) fn header(&self) -> &Option<Header> {
