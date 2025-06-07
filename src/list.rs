@@ -24,6 +24,15 @@ pub struct List {
 }
 
 impl List {
+    /// Constructs a new `List`. 
+    ///
+    /// # Returns
+    /// `List`: A new instance of `List`.
+    ///
+    /// # Example
+    /// ```rust
+    /// let _ = List::new();
+    /// ```
     pub(crate) fn new() -> Self {
         List {
             header: None,
@@ -108,36 +117,131 @@ impl List {
     }
 }
 
+/// `ListBuilder` is used to create `List` instances using the builder pattern.
+/// This allows for a flexible and readable way to construct `List` with different
+/// options by chaining method calls.
+///
+/// # Example
+/// ```rust
+/// ListBuilder::new()
+///     .header(...)?
+///     .default_flags(...)?
+///     .number()
+///     .build();
+/// ```
 pub struct ListBuilder {
     list: List,
 }
 
 impl ListBuilder {
+    /// Constructs a new `ListBuilder`. 
+    ///
+    /// # Return
+    /// `ListBuilder`: A new instance of `ListBuilder`.
+    ///
+    /// # Example
+    /// ```rust
+    /// let _ = ListBuilder::new();
+    /// ```
     pub fn new() -> Self {
         ListBuilder { list: List::new(), }
     }
 
+    /// Explicitly sets a `Header` component for the `List`. Unlike the `header`
+    /// method, which takes a label and internally constructs a `Header`, this 
+    /// method allows you to directly provide a preconstructed `Header` component.
+    ///
+    /// # Parameters
+    /// - `header`: A `Header` component.
+    ///
+    /// # Returns
+    /// - `ListBuilder`: Returns `self`.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a `Header` component.
+    /// let header = Header::new(...)?;
+    ///
+    /// // Set a preconstructed `Header` component.
+    /// ListBuilder::new()
+    ///     .header_expl(header);
+    /// ```
     pub fn header_expl(mut self, header: Header) -> Self {
         self.list.header = Some(header);
         self
     }
 
+    /// Sets a `Header` component for the `List`.
+    ///
+    /// # Parameters
+    /// - `label`: A `&str` representing the text to display in the header.
+    ///
+    /// # Returns
+    /// - `Ok(ListBuilder)`: Returns `self`.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Sets a `Header` component with the label "Welcome".
+    /// List::new()
+    ///     .header("Welcome")?;
+    /// ```
     #[inline]
     pub fn header(self, label: &str) -> FtuiResult<Self> {
         Ok(self.header_expl(Header::new(label)?))
     }
 
+    /// Sets the default `TextFlags` to be used when adding elements to the `List`.
+    ///
+    /// # Parameters
+    /// - `flags`: The `TextFlags` to apply to elements unless explicitly overridden.
+    ///
+    /// # Returns
+    /// - `Ok(ListBuilder)`: Returns `self`.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Set a default red color for all elements added to the list, unless overridden.
+    /// ListBuilder::new()
+    ///     .default_flags(tui::TextFlags::COLOR_RED)?;
+    /// ```
     pub fn default_flags(mut self, flags: TextFlags) -> FtuiResult<Self> {
         Text::ensure_compatible_flags(&flags)?;
         self.list.default_flags = Some(flags);
         Ok(self)
     }
 
+    /// Enables numbering for the `List`, adding a number prefix to each element.
+    ///
+    /// # Returns
+    /// - `Self`: Returns `self`.
+    ///
+    /// # Example
+    /// ```rust
+    /// ListBuilder::new()
+    ///     .number();
+    /// ```
     pub fn number(mut self) -> Self {
         self.list.number = true;
         self
     }
 
+    /// Finalizes the construction of a `List`. This method should be called
+    /// after all desired options have been set using the builder pattern.
+    /// It consumes `self` and returns the completed `List`.
+    ///
+    /// # Returns
+    /// - `List`: Returns the created `List`.
+    ///
+    /// # Example
+    /// ```rust
+    /// ListBuilder::new()
+    ///     .header(...)?
+    ///     .default_flags(...)?
+    ///     .number()
+    ///     .build(); // Finalize and retrieve the constructed list.
+    /// ```
     pub fn build(self) -> List {
         self.list
     }
