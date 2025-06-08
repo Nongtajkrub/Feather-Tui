@@ -44,6 +44,28 @@ impl List {
         }
     }
 
+    /// Adds a new element to the `List`.
+    ///
+    /// # Parameters
+    /// - `label`: A `&str` representing the element label.
+    /// - `flags`: A set of `TextFlags` combined using the bitwise OR operator.
+    ///
+    /// # Notes
+    /// - The bitwise OR operator combines flags like this: `flag1 | flag2 | flag3`
+    /// - A `List` element is just a `Text` component.
+    ///
+    /// # Returns
+    /// - `Ok(u16)`: Return the ID of the added element. 
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a new `List`.
+    /// let mut list = ListBuilder::new().build();
+    /// 
+    /// // Add an element labeled "Element" with red text and bold styling.
+    /// list.add("Element", TextFlags::COLOR_RED | TextFlags::STYLE_BOLD)?;
+    /// ```
     pub fn add(
         &mut self, label: &str, flags: impl Into<Option<TextFlags>>
     ) -> FtuiResult<u16> {
@@ -61,6 +83,24 @@ impl List {
         Ok(id)
     }
 
+    /// Attempts to scroll the `List` down by one position.
+    ///
+    /// # Returns
+    /// - `true` if the list was successfully scrolled down.
+    /// - `false`: The `List` fail to scroll down (already at the bottom). 
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a new `List`.
+    /// let mut list = ListBuilder::new().build();
+    ///
+    /// // Add two elements to the list.
+    /// list.add(...)?;
+    /// list.add(...)?;
+    ///
+    /// // The list can scroll down since it's not at the bottom yet.
+    /// assert_eq!(list.scroll_down(), true);
+    /// ```
     pub fn scroll_down(&mut self) -> bool {
         if self.offset < self.elements.len() - 1 {
             self.offset += 1;
@@ -70,6 +110,27 @@ impl List {
         }
     }
 
+    /// Attempts to scroll the `List` up by one position.
+    ///
+    /// # Returns
+    /// - `true` if the list was successfully scrolled up.
+    /// - `false`: The `List` fail to scroll up (already at the top). 
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a new `List`.
+    /// let mut list = ListBuilder::new().build();
+    ///
+    /// // Add two elements to the list.
+    /// list.add(...)?;
+    /// list.add(...)?;
+    ///
+    /// // Initially, the list is at the bottom after scrolling down.
+    /// list.scroll_down();
+    ///
+    /// // Now it can scroll back up.
+    /// assert_eq!(list.scroll_up(), true);
+    /// ```
     pub fn scroll_up(&mut self) -> bool {
         if self.offset != 0 {
             self.offset -= 1;
