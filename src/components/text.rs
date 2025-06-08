@@ -275,6 +275,10 @@ impl Text {
         return style;
     }
 
+    pub fn label(&self) -> &String {
+        return &self.label;
+    }
+
     /// Updates the label of the `Text` component.
     ///
     /// # Parameters
@@ -301,10 +305,6 @@ impl Text {
 
     pub(crate) fn line(&self) -> u16 {
         return self.line;
-    }
-
-    pub(crate) fn label(&self) -> &String {
-        return &self.label;
     }
 
     pub(crate) fn len(&self) -> usize {
