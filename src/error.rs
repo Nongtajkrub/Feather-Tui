@@ -146,11 +146,11 @@ pub enum FtuiError {
     #[error("Failed to query for component by its ID")]
     ContainerNoComponentById,
 
-    #[error("Fail to remove an element from a List. Index is out of bound.")]
-    ListRemoveIndexOutOfBound,
+    #[error("List index is out of bound.")]
+    ListIndexOutOfBound,
 
     #[error("Failed to query for element by its ID to remove it.")]
-    ListRemoveNoElementById,
+    ListNoElementById,
 
     /// Occurs when attempting to use `Selector` functionality that
     /// requires triggers, but the `Selector` does not have one.
