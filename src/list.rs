@@ -148,6 +148,13 @@ impl List {
         }
     }
 
+    pub fn find_index(&self, id: u16) -> FtuiResult<usize> {
+        self.elements
+            .iter()
+            .position(|element| element.id() == id)
+            .ok_or(FtuiError::ListNoElementById)
+    }
+
     pub fn remove_index(&mut self, i: usize) -> FtuiResult<()> {
         if i < self.elements.len() {
             self.elements.remove(i);
@@ -155,14 +162,6 @@ impl List {
         } else {
             Err(FtuiError::ListIndexOutOfBound)
         }
-    }
-
-    pub fn remove_id(&mut self, id: u16) -> FtuiResult<()> {
-        self.elements
-            .iter()
-            .position(|element| element.id() == id)
-            .map(|index| { self.elements.remove(index); })
-            .ok_or(FtuiError::ListNoElementById)
     }
 
     pub(crate) fn header(&self) -> &Option<Header> {
