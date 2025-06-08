@@ -83,33 +83,6 @@ impl List {
         Ok(id)
     }
 
-    /// Attempts to scroll the `List` down by one position.
-    ///
-    /// # Returns
-    /// - `true` if the list was successfully scrolled down.
-    /// - `false`: The `List` fail to scroll down (already at the bottom). 
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a new `List`.
-    /// let mut list = ListBuilder::new().build();
-    ///
-    /// // Add two elements to the list.
-    /// list.add(...)?;
-    /// list.add(...)?;
-    ///
-    /// // The list can scroll down since it's not at the bottom yet.
-    /// assert_eq!(list.scroll_down(), true);
-    /// ```
-    pub fn scroll_down(&mut self) -> bool {
-        if self.offset < self.elements.len() - 1 {
-            self.offset += 1;
-            true
-        } else {
-            false
-        }
-    }
-
     /// Attempts to scroll the `List` up by one position.
     ///
     /// # Returns
@@ -140,7 +113,82 @@ impl List {
         }
     }
 
-    pub fn at_index(&self, i: usize) -> FtuiResult<&Text> {
+    /// Attempts to scroll the `List` down by one position.
+    ///
+    /// # Returns
+    /// - `true` if the list was successfully scrolled down.
+    /// - `false`: The `List` fail to scroll down (already at the bottom). 
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a new `List`.
+    /// let mut list = ListBuilder::new().build();
+    ///
+    /// // Add two elements to the list.
+    /// list.add(...)?;
+    /// list.add(...)?;
+    ///
+    /// // The list can scroll down since it's not at the bottom yet.
+    /// assert_eq!(list.scroll_down(), true);
+    /// ```
+    pub fn scroll_down(&mut self) -> bool {
+        if self.offset < self.elements.len() - 1 {
+            self.offset += 1;
+            true
+        } else {
+            false
+        }
+    }
+
+    /// Finds the index of an element by its ID.
+    ///
+    /// # Parameters
+    /// - `id`: The ID of the `Text` component to search for.
+    ///
+    /// # Returns
+    /// - `Ok(usize)`: The index of the element with the specified ID.
+    /// - `Err(FtuiError)`: Return an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a new `List`.
+    /// let mut list = ListBuilder::new().build();
+    ///
+    /// // Add an element to the list and retrieve its ID.
+    /// let id = list.add(...)?;
+    ///
+    /// // Find the index of the element by its ID.
+    /// let index = list.find(id)?;
+    /// ```
+    pub fn find(&self, id: u16) -> FtuiResult<usize> {
+        self.elements
+            .iter()
+            .position(|element| element.id() == id)
+            .ok_or(FtuiError::ListNoElementById)
+    }
+
+    /// Returns a reference to the element at the given index, if it exists.
+    ///
+    /// # Parameters
+    /// - `i`: The index of the element to retrieve.
+    ///
+    /// # Returns
+    /// - `Ok(&Text)`: A reference to the element at the specified index.
+    /// - `Err(FtuiError)`: Returns an error. 
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a new `List`.
+    /// let mut list = ListBuilder::new().build();
+    ///
+    /// // Add elements to the list.
+    /// list.add(...)?;
+    /// list.add(...)?;
+    ///
+    /// // Access the first element.
+    /// list.at(0)?;
+    /// ```
+    pub fn at(&self, i: usize) -> FtuiResult<&Text> {
         if i < self.elements.len() {
             Ok(&self.elements[i])
         } else {
@@ -148,14 +196,28 @@ impl List {
         }
     }
 
-    pub fn find_index(&self, id: u16) -> FtuiResult<usize> {
-        self.elements
-            .iter()
-            .position(|element| element.id() == id)
-            .ok_or(FtuiError::ListNoElementById)
-    }
-
-    pub fn remove_index(&mut self, i: usize) -> FtuiResult<()> {
+    /// Removes the element at the specified index, if it exists.
+    ///
+    /// # Parameters
+    /// - `i`: The index of the element to remove.
+    ///
+    /// # Returns
+    /// - `Ok(())`: If the element was successfully removed.
+    /// - `Err(FtuiError)`: If the index is out of bounds.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a new `List`.
+    /// let mut list = ListBuilder::new().build();
+    ///
+    /// // Add elements to the list.
+    /// list.add(...)?;
+    /// list.add(...)?;
+    ///
+    /// // Remove the first element from the list.
+    /// list.remove(0)?;
+    /// ```
+    pub fn remove(&mut self, i: usize) -> FtuiResult<()> {
         if i < self.elements.len() {
             self.elements.remove(i);
             Ok(())
