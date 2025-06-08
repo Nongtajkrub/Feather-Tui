@@ -327,9 +327,10 @@ impl Container {
     ///
     /// # Example
     /// ```rust
-    /// // Create a container with one `Option` component and a `Selector`.
+    /// // Create a container with two `Option`s component and a `Selector`.
     /// let mut container = ContainerBuilder::new()
     ///     .option(...)? // This is where the `Selector` will be when initialize.
+    ///     .option(...)?
     ///     .selector_no_triggers()
     ///     .build();
     ///
