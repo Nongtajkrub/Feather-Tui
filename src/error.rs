@@ -146,6 +146,22 @@ pub enum FtuiError {
     #[error("Failed to query for component by its ID")]
     ContainerNoComponentById,
 
+    /// Cccurs when performing an operation on a `List` container using an element
+    /// index that does not exist.
+    ///
+    /// # Example
+    /// # Example
+    /// ```rust
+    /// // Create a simple `List` container.
+    /// let mut list = ListBuilder::new().build();
+    ///
+    /// // Add elements to the list.
+    /// list.add(...)?;
+    /// list.add(...)?;
+    ///
+    /// // Attempt to access an out-of-bounds index, which will trigger this error.
+    /// list.at(100)?; 
+    /// ```
     #[error("List index is out of bound.")]
     ListIndexOutOfBound,
 
