@@ -150,7 +150,6 @@ pub enum FtuiError {
     /// index that does not exist.
     ///
     /// # Example
-    /// # Example
     /// ```rust
     /// // Create a simple `List` container.
     /// let mut list = ListBuilder::new().build();
@@ -165,7 +164,21 @@ pub enum FtuiError {
     #[error("List index is out of bound.")]
     ListIndexOutOfBound,
 
-    #[error("Failed to query for element by its ID to remove it.")]
+    /// Occurs when attempting to find the index of an element in a `List`
+    /// by its ID, but no element with the specified ID exists.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a simple `List` container.
+    /// let mut list = ListBuilder::new().build();
+    ///
+    /// // Add an element to the list and store its ID.
+    /// let id = list.add(...)?;
+    ///
+    /// // Attempt to find an element by a non-existent ID.
+    /// list.find(id + 1)?; 
+    /// ```
+    #[error("No element found with the specified ID.")]
     ListNoElementById,
 
     /// Occurs when attempting to use `Selector` functionality that
