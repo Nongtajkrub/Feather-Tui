@@ -371,6 +371,8 @@ impl PartialEq for FtuiError {
             (ContainerLooperNoSelector, ContainerLooperNoSelector) => true,
             (ContainerNoSelector, ContainerNoSelector) => true,
             (ContainerNoComponentById, ContainerNoComponentById) => true,
+            (ListIndexOutOfBound, ListIndexOutOfBound) => true,
+            (ListNoElementById, ListNoElementById) => true,
             (SelectorNoTriggers, SelectorNoTriggers) => true,
             (RendererContainerTooBig, RendererContainerTooBig) => true,
             (StdInputOutputError(_), StdInputOutputError(_)) => true,
