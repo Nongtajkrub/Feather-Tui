@@ -362,7 +362,7 @@ impl Renderer {
     /// // (assuming `container` is created elsewhere)
     /// renderer.render(&mut container)?;
     /// ```
-    pub fn render(&mut self, container: &mut Container) -> FtuiResult<()> {
+    pub(crate) fn render_container(&mut self, container: &mut Container) -> FtuiResult<()> {
         if container.component_count() > self.height {
             return Err(FtuiError::RendererContainerTooBig);
         }
@@ -400,7 +400,7 @@ impl Renderer {
     /// // (assuming `list` is created elsewhere)
     /// renderer.render_list(&mut list)?;
     /// ```
-    pub fn render_list(&mut self, list: &mut List) -> FtuiResult<()> {
+    pub(crate) fn render_list(&mut self, list: &mut List) -> FtuiResult<()> {
         // This avoid checking multiple time whether a header excist.
         let avoid_header_offset = match list.header() {
             Some(header) => {
@@ -511,7 +511,7 @@ impl Renderer {
     /// }
     /// ```
     #[inline]
-    pub fn clear(&mut self) {
+    pub(crate) fn clear(&mut self) {
         self.lines.iter_mut().for_each(|line| line.clear());
     }
 
@@ -544,9 +544,19 @@ impl Renderer {
     ///     renderer.simple_draw(&mut container)?;
     /// }
     /// ```
-    pub fn simple_draw(&mut self, container: &mut Container) -> FtuiResult<()> {
+    pub(crate) fn simple_draw_container(
+        &mut self, container: &mut Container
+    ) -> FtuiResult<()> {
         self.clear();
-        self.render(container)?;
+        self.render_container(container)?;
+        self.draw()?;
+
+        Ok(())
+    }
+
+    pub(crate) fn simple_draw_list(&mut self, list: &mut List) -> FtuiResult<()> {
+        self.clear();
+        self.render_list(list)?;
         self.draw()?;
 
         Ok(())
