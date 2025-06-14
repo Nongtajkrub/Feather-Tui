@@ -1,5 +1,6 @@
 use crate::{
-    components::{self as cpn, header}, container::Container, error::{FtuiError, FtuiResult}, list::List, util::ansi 
+    components as cpn, container::Container, error::{FtuiError, FtuiResult},
+    list::List, util::ansi 
 };
 use std::io::{self, Write};
 use crossterm as ct;
