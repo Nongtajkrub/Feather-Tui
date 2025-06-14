@@ -1,8 +1,9 @@
 use crate::{
     components::{Header, Text, TextFlags}, error::{FtuiError, FtuiResult},
-    util::id::IdGenerator,
+    util::id::IdGenerator
 };
 
+#[doc = "⚠️ **Experimental** ⚠️"]
 /// Another variant of a `Container` designed to display data in a vertical 
 /// list format. A `List` is scrollable, allowing it to handle a dynamic number
 /// of elements. It can be created using the `ListBuilder`, and new elements can
