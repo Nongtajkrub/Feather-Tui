@@ -150,9 +150,9 @@ impl Container {
     ///     Ok(())
     /// }
     /// ```
+    #[inline]
     pub fn draw(&mut self, width: u16, height: u16) -> FtuiResult<()> {
-        Renderer::new(width, height).simple_draw(self)?;
-        Ok(())
+        Renderer::new(width, height).simple_draw(self)
     }
 
     /// Renders the `Container` using a temporary `Renderer`. This method is ideal
@@ -178,9 +178,9 @@ impl Container {
     ///     Ok(())
     /// }
     /// ```
+    #[inline]
     pub fn draw_fullscreen(&mut self) -> FtuiResult<()> {
-        Renderer::fullscreen()?.simple_draw(self)?;
-        Ok(())
+        Renderer::fullscreen()?.simple_draw(self)
     }
 
     /// Query an `Option` component by its ID (`O(n)` lookup).
