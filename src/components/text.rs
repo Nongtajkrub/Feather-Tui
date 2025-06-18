@@ -85,6 +85,38 @@ impl Default for TextFlags {
     }
 }
 
+impl TextFlags {
+    pub fn tailwind(styles: &str) -> FtuiResult<TextFlags> {
+        let result = styles
+            .split_whitespace()
+            .fold(TextFlags::empty(), |acc, style| {
+                acc.union(match style {
+                    "a-r" => TextFlags::ALIGN_RIGHT,
+                    "a-m" => TextFlags::ALIGN_MIDDLE,
+                    "a-b" => TextFlags::ALIGN_BOTTOM,
+                    "c-bg" => TextFlags::COLOR_BACK,
+                    "c-b" => TextFlags::COLOR_BLACK,
+                    "c-r" => TextFlags::COLOR_RED,
+                    "c-g" => TextFlags::COLOR_GREEN,
+                    "c-y" => TextFlags::COLOR_YELLOW,
+                    "c-bl" => TextFlags::COLOR_BLUE,
+                    "c-m" => TextFlags::COLOR_MAGENTA,
+                    "c-c" => TextFlags::COLOR_CYAN,
+                    "c-w" => TextFlags::COLOR_WHITE,
+                    "s-b" => TextFlags::STYLE_BOLD,
+                    "s-d" => TextFlags::STYLE_DIM,
+                    "s-i" => TextFlags::STYLE_ITALIC,
+                    "s-u" => TextFlags::STYLE_UNDER,
+                    "s-s" => TextFlags::STYLE_STRIKE,
+                    _ => todo!(),
+                })
+            });
+
+        Text::ensure_compatible_flags(&result)?;
+        Ok(result)
+    }
+}
+
 /// A UI component representing a text element in a `Container`. `Text` components
 /// are displayed in the order they are added to the `Container`. They can be
 /// customized using `TextFlags` to adjust alignment, color, and other styling options.
