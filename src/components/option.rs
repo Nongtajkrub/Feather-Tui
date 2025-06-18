@@ -1,4 +1,4 @@
-use crate::{callback as cbk, error::{FtuiError, FtuiResult}};
+use crate::{error::{FtuiError, FtuiResult}};
 use unicode_segmentation::UnicodeSegmentation;
 
 /// A UI component representing an interactive option in a `Container`. 
@@ -20,8 +20,6 @@ pub struct Option {
     id: u16,
     selc_on: bool,
     is_selc: bool,
-    // Use `std::option::Option` to prevent conflict with `Option`.
-    callback: std::option::Option<cbk::Callback>,
 }
 
 impl Option {
@@ -54,9 +52,7 @@ impl Option {
     /// // You can detect its selection using the `is_selc()` method.
     /// let _ = Option::new("Nothing", None)?;
     /// ```
-    pub fn new(
-        label: &str, callback: impl Into<std::option::Option<cbk::Callback>>
-    ) -> FtuiResult<Self> {
+    pub fn new(label: &str) -> FtuiResult<Self> {
         if label.is_empty() {
             return Err(FtuiError::OptionLabelEmpty);
         }
@@ -68,7 +64,6 @@ impl Option {
             line: 0,
             selc_on: false,
             is_selc: false,
-            callback: callback.into(),
         })
     }
 
@@ -90,10 +85,6 @@ impl Option {
 
     pub(crate) fn selc_on(&self) -> bool {
         return self.selc_on;
-    }
-
-    pub(crate) fn callback(&self) -> &std::option::Option<cbk::Callback> {
-        return &self.callback;
     }
 
     pub(crate) fn set_selc_on(&mut self, value: bool) {

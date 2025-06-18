@@ -7,13 +7,12 @@
 //! # Features
 //!
 //! - `shorten_mod_name` shortened aliases for common modules to reduce verbosity.
-//!     - `components` → `cpn`
-//!     - `callback` → `cbk`
-//!     - `trigger` → `trg`
-//!     - `container` → `con`
-//!     - `renderer` → `ren`
-//!     - `input` → `inp`
-//!     - `error` → `err`
+//!     - `components` -> `cpn`
+//!     - `container` -> `con`
+//!     - `list` -> `lis`
+//!     - `renderer` -> `ren`
+//!     - `input` -> `inp`
+//!     - `error` -> `err`
 //! 
 //! - `reduce_abstraction` flattens module paths to make the API more direct.
 //!     - `feather_tui::components::Header` → `feather_tui::Header`
@@ -23,10 +22,6 @@
 
 /// Core building blocks for constructing user interfaces.
 pub mod components;
-/// A generic callback handler for executing functions with stored arguments.
-pub mod callback;
-/// A generic trigger handler for evaluating conditions based on stored arguments.
-pub mod trigger;
 /// Acts as a layout manager for the UI elements.
 pub mod container;
 pub mod list;
@@ -45,12 +40,6 @@ mod     util;
 pub use components as cpn;
 
 #[cfg(feature = "shorten_mod_name")]
-pub use callback as cbk;
-
-#[cfg(feature = "shorten_mod_name")]
-pub use trigger as trg;
-
-#[cfg(feature = "shorten_mod_name")]
 pub use container as con;
 
 #[cfg(feature = "shorten_mod_name")]
@@ -65,13 +54,7 @@ pub use error as err;
 // Reducing abstraction.
 
 #[cfg(feature = "reduce_abstraction")]
-pub use components::{Header, Option, Text, TextFlags, Separator, SeparatorStyle, Selector};
-
-#[cfg(feature = "reduce_abstraction")]
-pub use callback::Callback;
-
-#[cfg(feature = "reduce_abstraction")]
-pub use trigger::Trigger;
+pub use components::{Header, Option, Text, TextFlags, Separator, SeparatorStyle};
 
 #[cfg(feature = "reduce_abstraction")]
 pub use container::{Container, ContainerBuilder};

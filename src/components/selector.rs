@@ -1,4 +1,4 @@
-use crate::{components as cpn, error::{FtuiResult, FtuiError}, trigger::Trigger};
+use crate::{components as cpn, error::FtuiResult};
 
 /// A UI component use for navigating and selecting `Option` components.
 /// It allows movement up and down between options and selection of an option.
@@ -10,9 +10,6 @@ use crate::{components as cpn, error::{FtuiResult, FtuiError}, trigger::Trigger}
 /// - Without a `Selector`, `Option` components in a `Container` cannot be 
 /// selected or navigated.
 pub struct Selector {
-    up_trig: Option<Trigger>,
-    down_trig: Option<Trigger>,
-    selc_trig: Option<Trigger>,
     on: usize,
 }
 
@@ -40,46 +37,8 @@ impl Selector {
     ///     Trigger::no_arg(always_false_trigger), // select
     /// );
     /// ```
-    pub fn new(up_trig: Trigger, down_trig: Trigger, selc_trig: Trigger) -> Self {
+    pub fn new() -> Self {
         Selector {
-            up_trig: Some(up_trig),
-            down_trig: Some(down_trig),
-            selc_trig: Some(selc_trig),
-            on: 0,
-        }
-    }
-
-    /// Creates a new `Selector` component without any trigger functions.
-    /// When using this variant, you must manually control its behavior by calling
-    /// the `selector_up`, `selector_down`, and `selector_select` methods on the
-    /// `Container` that contains it.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a new `Selector` with no triggers.
-    /// let _ = Selector::no_triggers();
-    ///
-    /// // Controlling the `Selector` manually.
-    ///
-    /// // Build a container that contains a manual `Selector`.
-    /// let mut container = ContainerBuilder::new()
-    ///     .selector_no_triggers()
-    ///     .build();
-    ///
-    /// // Move the selector up.
-    /// container.selector_up()?;
-    ///
-    /// // Move the selector down.
-    /// container.selector_down()?;
-    ///
-    /// // Select the currently highlighted option.
-    /// container.selector_select()?;
-    /// ```
-    pub fn no_triggers() -> Self {
-        Selector {
-            up_trig: None,
-            down_trig: None,
-            selc_trig: None,
             on: 0,
         }
     }
@@ -112,71 +71,7 @@ impl Selector {
 
     /// Select action always trigger an update.
     pub(crate) fn select(&mut self, options: &mut Vec<cpn::Option>) -> FtuiResult<bool> {
-        if let Some(callback) = options[self.on].callback() {
-            callback.call()?;
-        }
         options[self.on].set_is_selc(true);
         Ok(true)
-    }
-
-    #[inline]
-    fn have_trigs(&self) -> bool {
-        matches!(
-            (&self.up_trig, &self.down_trig, &self.selc_trig),
-            (Some(_), Some(_), Some(_)))
-    }
-
-    /// Return whether an update occured.
-    pub(crate) fn looper(&mut self, options: &mut Vec<cpn::Option>) -> FtuiResult<bool> {
-        // Hard to avoid using `unwrap`.
-        if !self.have_trigs() {
-            return Err(FtuiError::SelectorNoTriggers);
-        }
-
-        if self.up_trig.as_ref().unwrap().check()? && self.up(options) {
-            Ok(true)
-        } else if self.down_trig.as_ref().unwrap().check()? && self.down(options) {
-            Ok(true)
-        } else if self.selc_trig.as_ref().unwrap().check()? {
-            self.select(options)?;
-            Ok(true)
-        } else {
-            Ok(false)
-        }
-    }
-
-    #[inline]
-    pub fn up_trig_mut(&mut self) -> FtuiResult<&mut Trigger> {
-        self.up_trig.as_mut().ok_or(FtuiError::SelectorNoTriggers)
-    }
-
-    #[inline]
-    pub fn down_trig_mut(&mut self) -> FtuiResult<&mut Trigger> {
-        self.down_trig.as_mut().ok_or(FtuiError::SelectorNoTriggers)
-    }
-
-    #[inline]
-    pub fn select_trig_mut(&mut self) -> FtuiResult<&mut Trigger> {
-        self.selc_trig.as_mut().ok_or(FtuiError::SelectorNoTriggers)
-    }
-
-    /// Update all of the `Selector` triggers argument. 
-    pub fn update_trig_arg<T, U, V>(
-        &mut self, up_arg: T, down_arg: U, selc_arg: V
-    ) -> FtuiResult<()>
-    where
-        T: 'static,
-        U: 'static,
-        V: 'static,
-    {
-        match (&mut self.up_trig, &mut self.down_trig, &mut self.selc_trig) {
-            (Some(u), Some(d), Some(s)) => {
-                u.update_arg(up_arg);
-                d.update_arg(down_arg);
-                s.update_arg(selc_arg);
-                Ok(())
-            }
-            _ => Err(FtuiError::SelectorNoTriggers),
-        }
     }
 }

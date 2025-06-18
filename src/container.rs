@@ -1,6 +1,6 @@
 use crate::{
-    callback::Callback, components as cpn, error::{FtuiError, FtuiResult},
-    renderer::Renderer, trigger::Trigger, util::id::IdGenerator
+    components::{self as cpn, Selector}, error::{FtuiError, FtuiResult}, renderer::Renderer,
+    util::id::IdGenerator
 };
 
 pub trait ContainerTrait {
@@ -53,45 +53,9 @@ impl Container {
         }
     }
 
-    /// Updates the container and returns whether a change occurred.
-    ///
-    /// # Returns
-    /// - `Ok(bool)`: Returns whether an update occurred.
-    /// - `Err(FtuiError)`: Returns an error.
-    ///
-    /// # Example
-    /// ```rust
-    /// fn render() {
-    ///     todo!();
-    /// }
-    ///
-    /// // Re-render the UI if an update occurred.
-    /// if container.looper()? {
-    ///     render();
-    /// }
-    /// ```
-    pub fn looper(&mut self) -> FtuiResult<bool> {
-        if self.options.is_empty() {
-            return Ok(false);
-        }
-
-        self.selector
-            .as_mut()
-            .ok_or(FtuiError::ContainerLooperNoSelector)?
-            .looper(&mut self.options)
-            .or_else(|e| match e {
-                FtuiError::SelectorNoTriggers => Ok(false),
-                _ => Err(e),
-            })
-    }
-
     pub(crate) fn set_header(&mut self, header: cpn::Header) {
         self.header = Some(header);
         self.component_count += 1;
-    }
-
-    pub(crate) fn set_selector(&mut self, selector: cpn::Selector) {
-        self.selector = Some(selector);
     }
 
     // Return added Option ID.
@@ -106,6 +70,10 @@ impl Container {
 
         self.options.push(option);
         self.component_count += 1;
+
+        if self.selector.is_none() {
+            self.selector = Some(Selector::new());
+        }
 
         id
     }
@@ -486,10 +454,8 @@ impl ContainerBuilder {
     ///     .option("Option", None)?;
     /// ```
     #[inline]
-    pub fn option(
-        self, label: &str, callback: impl Into<Option<Callback>>
-    ) -> FtuiResult<Self> {
-        Ok(self.option_expl(cpn::Option::new(label, callback)?))
+    pub fn option(self, label: &str) -> FtuiResult<Self> {
+        Ok(self.option_expl(cpn::Option::new(label)?))
     }
 
     /// Explicitly add an `Option` component to the `Container` and stores its ID. 
@@ -544,11 +510,8 @@ impl ContainerBuilder {
     ///     .option_id("Option", None, &mut id)?;
     /// ```
     #[inline]
-    pub fn option_id(
-        self,
-        label: &str, callback: impl Into<Option<Callback>>, store_id: &mut u16
-    ) -> FtuiResult<Self> {
-        Ok(self.option_id_expl(cpn::Option::new(label, callback)?, store_id))
+    pub fn option_id(self, label: &str, store_id: &mut u16) -> FtuiResult<Self> {
+        Ok(self.option_id_expl(cpn::Option::new(label)?, store_id))
     }
 
     /// Explicitly add a `Text` component to the `Container`. Unlike the `text`
@@ -749,88 +712,6 @@ impl ContainerBuilder {
     #[inline]
     pub fn separator_dotted(self, style: cpn::SeparatorStyle) -> Self {
         self.separator_dotted_expl(cpn::Separator::dotted(style))
-    }
-
-    /// Explicitly sets a `Selector` component for the `Container`. Unlike the `selector`
-    /// method, which takes triggers and internally constructs a `selector`, this 
-    /// method allows you to directly provide a preconstructed `Selector` component.
-    ///
-    /// # Parameters
-    /// - `selector`: A `Selector` component.
-    ///
-    /// # Returns
-    /// - `ContainerBuilder`: Returns `self`.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a `Header` component.
-    /// let selector = Selector::new(...)?;
-    ///
-    /// // Set a preconstructed `Selector` component.
-    /// ContainerBuilder::new()
-    ///     .selector_expl(selector);
-    /// ```
-    pub fn selector_expl(mut self, selector: cpn::Selector) -> Self {
-        self.container.set_selector(selector);
-        self
-    }
-
-    /// Set a `Selector` for the `Container` to handle user navigation.
-    ///
-    /// # Parameters 
-    /// - `up_trig`: A `Trigger` that moves the selector up when activated.
-    /// - `down_trig`: A `Trigger` that moves the selector down when activated.
-    /// - `selc_trig`: A `Trigger` that confirms the selection when activated.
-    ///
-    /// # Returns
-    /// - `ContainerBuilder`: Returns `self`.
-    /// 
-    /// # Example
-    /// ```rust
-    /// // A `Trigger` that always activate.
-    /// tui::trg_new_trigger_func!(always_true_trigger, _arg, {
-    ///     Ok(true)
-    /// });
-    /// 
-    /// // A `Trigger` that never activate .
-    /// tui::trg_new_trigger_func!(always_false_trigger, _arg, {
-    ///     Ok(false)
-    /// });
-    ///
-    /// // Set a `Selector` that always moves down.
-    /// ContainerBuilder::new()
-    ///     .selector(
-    ///         Trigger::no_arg(always_false_trigger),
-    ///         Trigger::no_arg(always_true_trigger),
-    ///         Trigger::no_arg(always_false_trigger),
-    ///     );
-    /// ```
-    #[inline]
-    pub fn selector(
-        self, up_trig: Trigger, down_trig: Trigger, selc_trig: Trigger
-    ) -> Self {
-        self.selector_expl(cpn::Selector::new(up_trig, down_trig, selc_trig))
-    }
-
-    /// Sets a `Selector` with no `Trigger`s for the `Container`.
-    ///
-    /// In this case, navigation must be handled manually using the following methods:
-    /// - `Container::selector_up`
-    /// - `Container::selector_down`
-    /// - `Container::selector_select`
-    ///
-    /// # Returns
-    /// - `ContainerBuilder`: Returns `self`.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Set a `Selector` with no `Trigger`s.
-    /// ContainerBuilder::new()
-    ///     .selector_no_triggers();
-    /// ```
-    pub fn selector_no_triggers(mut self) -> Self {
-        self.container.set_selector(cpn::Selector::no_triggers());
-        self
     }
 
     /// Finalizes the construction of a `Container`. This method should be called
