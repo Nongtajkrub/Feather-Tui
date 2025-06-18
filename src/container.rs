@@ -1,5 +1,5 @@
 use crate::{
-    components::{self as cpn, Selector}, error::{FtuiError, FtuiResult}, renderer::Renderer,
+    components::{self as cpn}, error::{FtuiError, FtuiResult}, renderer::Renderer,
     util::id::IdGenerator
 };
 
@@ -72,7 +72,7 @@ impl Container {
         self.component_count += 1;
 
         if self.selector.is_none() {
-            self.selector = Some(Selector::new());
+            self.selector = Some(cpn::Selector::new());
         }
 
         id
