@@ -181,25 +181,6 @@ pub enum FtuiError {
     #[error("No element found with the specified ID.")]
     ListNoElementById,
 
-    /// Occurs when attempting to use `Selector` functionality that
-    /// requires triggers, but the `Selector` does not have one.
-    ///
-    /// # Example
-    /// ```rust
-    /// fn main() -> FtuiResult<()> {
-    ///     // Create a `Selector` component with no triggers.
-    ///     let mut selector = Selector::no_triggers();
-    ///
-    ///     // Attempting to use functionality that requires triggers.
-    ///     // This results in the error.
-    ///     selector.up_trig_mut()?;
-    ///
-    ///     Ok(())
-    /// }
-    /// ```
-    #[error("Selector does not have triggers.")]
-    SelectorNoTriggers,
-
     /// Occurs when attempting to call the `Renderer::render` method with a container
     /// that exceeds the dimensions of the renderer. There are two cases where a
     /// container is considered "too big":
@@ -251,88 +232,6 @@ pub enum FtuiError {
     /// ```
     #[error("Std Input Output Error: {0}")]
     StdInputOutputError(#[from] io::Error),
-
-    /// Occurs when calling the `trigger::cast_arg` function with an argument 
-    /// that is a `None`.
-    ///
-    /// # Notes
-    /// - The trigger function argument has the type `&Option<Box<dyn Any>>`.
-    ///
-    /// # Example
-    /// ```rust
-    /// // When creating a trigger using the no_arg constructor, the argument
-    /// // will be set to None.
-    /// Trigger::no_arg(trigger_func);
-    ///
-    /// trg_new_trigger_func!(trigger_func, arg, {
-    ///     // An error occurs because arg is None.
-    ///     trg::cast_arg::<T>(arg)?;
-    /// });
-    ///
-    /// ```
-    #[error("Trigger function does not have an argument available for casting.")]
-    TriggerCastArgNoArgument,
-
-    /// Occurs when calling the `trigger::cast_arg` function with an argument of
-    /// the wrong type.
-    ///
-    /// # Notes
-    /// - The trigger function argument has the type `&Option<Box<dyn Any>>`.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Creating a trigger with an argument of 5, which is a u32.
-    /// Trigger::new(trigger_func, 5u32);
-    /// 
-    /// trg_new_trigger_func!(trigger_func, arg, {
-    ///     // An error occurs because arg is a u32, but we're attempting to cast 
-    ///     // it to a char.
-    ///     trg::cast_arg::<char>(arg)?;
-    /// });
-    /// ```
-    #[error("Trigger function argument type mismatch unable to cast to the expected type.")]
-    TriggerCastArgWrongType,
-
-    /// Occurs when calling the `callback::cast_arg` function with an argument 
-    /// that is a `None`.
-    ///
-    /// # Notes
-    /// - The callback function argument has the type `&Option<Box<dyn Any>>`.
-    ///
-    /// # Example
-    /// ```rust
-    /// // When creating a callback using the no_arg constructor, the argument
-    /// // will be set to None.
-    /// cbk::Callback::no_arg(callback_func);
-    ///
-    /// cbk_new_callback_func!(callback_func, arg, {
-    ///     // An error occurs because arg is None.
-    ///     cbk::cast_arg::<T>(arg)?;
-    /// });
-    ///
-    /// ```
-    #[error("Callback function does not have an argument available for casting.")]
-    CallbackCastArgNoArgument,
-
-    /// Occurs when calling the `callback::cast_arg` function with an argument of
-    /// the wrong type.
-    ///
-    /// # Notes
-    /// - The callback function argument has the type `&Option<Box<dyn Any>>`.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Creating a callback with an argument of 5, which is a u32.
-    /// Callback::new(callback_func, 5u32);
-    /// 
-    /// callback_new_callback_func!(callback_func, arg, {
-    ///     // An error occurs because arg is a u32, but we're attempting to cast 
-    ///     // it to a char.
-    ///     cbk::cast_arg::<char>(arg)?;
-    /// });
-    /// ```
-    #[error("Callback function argument type mismatch unable to cast to the expected type.")]
-    CallbackCastArgWrongType,
 }
 
 /// Implementation of the `PartialEq` trait for the `FtuiError` enum. This is necessary
@@ -373,13 +272,8 @@ impl PartialEq for FtuiError {
             (ContainerNoComponentById, ContainerNoComponentById) => true,
             (ListIndexOutOfBound, ListIndexOutOfBound) => true,
             (ListNoElementById, ListNoElementById) => true,
-            (SelectorNoTriggers, SelectorNoTriggers) => true,
             (RendererContainerTooBig, RendererContainerTooBig) => true,
             (StdInputOutputError(_), StdInputOutputError(_)) => true,
-            (TriggerCastArgNoArgument, TriggerCastArgNoArgument) => true,
-            (TriggerCastArgWrongType, TriggerCastArgWrongType) => true,
-            (CallbackCastArgNoArgument, CallbackCastArgNoArgument) => true,
-            (CallbackCastArgWrongType, CallbackCastArgWrongType) => true,
 
             _ => false,
         }
