@@ -13,6 +13,7 @@ use unicode_segmentation::UnicodeSegmentation;
 ///
 /// # Notes
 /// - A `Selector` component is required to navigate and select options.
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Option {
     label: String,
     len: usize,
