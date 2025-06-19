@@ -468,21 +468,24 @@ impl Renderer {
     /// renderer.draw();
     /// ```
     pub fn draw(&mut self) -> FtuiResult<()> {
-        for (i, line) in self.lines.iter().enumerate() {
-            let output = format!(
-                "{}{}{}{}",
-                line.ansi.concat(),
-                line.data, ansi::ESC_COLOR_RESET, ansi::ESC_STYLE_RESET);
+        let mut buf = String::with_capacity(((self.height * self.width) + 40) as usize);
+        let reset_suffix = format!("{}{}", ansi::ESC_COLOR_RESET, ansi::ESC_STYLE_RESET);
 
-            if i == (self.height - 1) as usize {
-                print!("{}", output);
-            } else {
-                println!("{}", output);
+        for (i, line) in self.lines.iter().enumerate() {
+            buf.push_str(&line.ansi.concat());
+            buf.push_str(&line.data);
+            buf.push_str(&reset_suffix);
+
+            if i != (self.height - 1) as usize {
+                buf.push('\n');
             }
         }
 
-        print!("{}", ansi::ESC_CURSOR_HOME);
-        io::stdout().flush()?;
+        buf.push_str(ansi::ESC_CURSOR_HOME);
+
+        let mut stdout = io::stdout().lock();
+        stdout.write_all(buf.as_bytes())?;
+        stdout.flush()?;
 
         Ok(())
     }
