@@ -63,7 +63,7 @@ pub fn key() -> FtuiResult<Option<ct::event::KeyCode>> {
     
     ct::terminal::enable_raw_mode()?;
 
-    if ct::event::poll(std::time::Duration::from_millis(0))? {
+    if ct::event::poll(std::time::Duration::from_millis(16))? {
         match ct::event::read()? {
             ct::event::Event::Key(event) => {
                 key_code = Some(event.code);
