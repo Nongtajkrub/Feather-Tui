@@ -15,7 +15,7 @@
 //!     - `error` -> `err`
 //! 
 //! - `reduce_abstraction` flattens module paths to make the API more direct.
-//!     - `feather_tui::components::Header` → `feather_tui::Header`
+//!     - `feather_tui::components::Option` → `feather_tui::Option`
 //!     - `feather_tui::renderer::Renderer` → `feather_tui::Renderer`
 //!     - `feather_tui::input::key_char` → `feather_tui::key_char
 //!     - ...
@@ -54,7 +54,7 @@ pub use error as err;
 // Reducing abstraction.
 
 #[cfg(feature = "reduce_abstraction")]
-pub use components::{Header, Option, Text, TextFlags, Separator, SeparatorStyle};
+pub use components::{Option, Text, TextFlags, Separator, SeparatorStyle};
 
 #[cfg(feature = "reduce_abstraction")]
 pub use container::{Container, ContainerBuilder};

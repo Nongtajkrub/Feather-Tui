@@ -1,5 +1,5 @@
 use crate::{
-    components::{Header, Text, TextFlags}, error::{FtuiError, FtuiResult},
+    components::{Text, TextFlags}, error::{FtuiError, FtuiResult},
     util::id::IdGenerator, renderer::Renderer,
 };
 
@@ -16,7 +16,7 @@ use crate::{
 /// `2. Item two`   
 /// `3. Item three`  
 pub struct List {
-    header: Option<Header>,
+    header: Option<Text>,
     elements: Vec<Text>,
     offset: usize,
     default_flags: Option<TextFlags>,
@@ -247,8 +247,8 @@ impl List {
         renderer.render_list(self)
     }
 
-    pub(crate) fn header(&self) -> &Option<Header> {
-        &self.header
+    pub(crate) fn header_mut(&mut self) -> &mut Option<Text> {
+        &mut self.header
     }
 
     pub(crate) fn elements_mut(&mut self) -> &mut [Text] {
@@ -317,7 +317,7 @@ impl ListBuilder {
     /// ListBuilder::new()
     ///     .header_expl(header);
     /// ```
-    pub fn header_expl(mut self, header: Header) -> Self {
+    pub fn header_expl(mut self, header: Text) -> Self {
         self.list.header = Some(header);
         self
     }
@@ -338,8 +338,10 @@ impl ListBuilder {
     ///     .header("Welcome")?;
     /// ```
     #[inline]
-    pub fn header(self, label: &str) -> FtuiResult<Self> {
-        Ok(self.header_expl(Header::new(label)?))
+    pub fn header(
+        self, label: &str, flags: impl Into<Option<TextFlags>>
+    ) -> FtuiResult<Self> {
+        Ok(self.header_expl(Text::new(label, flags)?))
     }
 
     /// Sets the default `TextFlags` to be used when adding elements to the `List`.

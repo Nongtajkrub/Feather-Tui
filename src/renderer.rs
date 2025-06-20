@@ -250,13 +250,14 @@ impl Renderer {
         }
     }
 
-    fn render_header(&mut self, header: &cpn::Header) -> FtuiResult<()> {
+    fn render_header(&mut self, header: &mut cpn::Text) -> FtuiResult<()> {
         self.ensure_label_inbound(header.len())?;
+        self.resolve_text_pos(header);
 
-        self.lines[0].edit(
-            header.label(),
-            Self::calc_middle_align_pos(self.width, header.len()));
-        self.lines[0].add_ansi(ansi::ESC_GREEN_B);
+        let line = &mut self.lines[header.line() as usize];
+
+        line.edit(header.label(), header.pos());
+        line.add_ansi_many(header.styles());
 
         Ok(())
     }
@@ -367,7 +368,7 @@ impl Renderer {
             return Err(FtuiError::RendererContainerTooBig);
         }
 
-        if let Some(header) = container.header().as_ref() {
+        if let Some(header) = container.header_mut().as_mut() {
             self.render_header(header)?;
         }
         self.render_options(container.options())?;
@@ -402,7 +403,7 @@ impl Renderer {
     /// ```
     pub(crate) fn render_list(&mut self, list: &mut List) -> FtuiResult<()> {
         // This avoid checking multiple time whether a header excist.
-        let avoid_header_offset = match list.header() {
+        let avoid_header_offset = match list.header_mut() {
             Some(header) => {
                 self.render_header(header)?;
                 1

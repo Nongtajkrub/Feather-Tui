@@ -1,5 +1,5 @@
 use crate::{
-    components::{self as cpn}, error::{FtuiError, FtuiResult}, renderer::Renderer,
+    components as cpn, error::{FtuiError, FtuiResult}, renderer::Renderer,
     util::id::IdGenerator
 };
 
@@ -16,7 +16,7 @@ use crate::{
 /// - Navigate using `selector_up`, `selector_down`, and `selector_select`.
 pub struct Container {
     id_generator: IdGenerator<u16>,
-    header: Option<cpn::Header>,
+    header: Option<cpn::Text>,
     options: Vec<cpn::Option>,
     texts: Vec<cpn::Text>,
     separators: Vec<cpn::Separator>,
@@ -46,7 +46,7 @@ impl Container {
         }
     }
 
-    pub(crate) fn set_header(&mut self, header: cpn::Header) {
+    pub(crate) fn set_header(&mut self, header: cpn::Text) {
         self.header = Some(header);
         self.component_count += 1;
     }
@@ -379,8 +379,8 @@ impl Container {
         self.component_count
     }
 
-    pub(crate) fn header(&self) -> &Option<cpn::Header> {
-        &self.header
+    pub(crate) fn header_mut(&mut self) -> &mut Option<cpn::Text> {
+        &mut self.header
     }
 
     pub(crate) fn options(&self) -> &[cpn::Option] {
@@ -451,7 +451,7 @@ impl ContainerBuilder {
     /// ContainerBuilder::new()
     ///     .header_expl(header);
     /// ```
-    pub fn header_expl(mut self, header: cpn::Header) -> Self {
+    pub fn header_expl(mut self, header: cpn::Text) -> Self {
         self.container.set_header(header);
         self
     }
@@ -472,8 +472,10 @@ impl ContainerBuilder {
     ///     .header("Welcome")?;
     /// ```
     #[inline]
-    pub fn header(self, label: &str) -> FtuiResult<Self> {
-        Ok(self.header_expl(cpn::Header::new(label)?))
+    pub fn header(
+        self, label: &str, flags: impl Into<Option<cpn::TextFlags>>
+    ) -> FtuiResult<Self> {
+        Ok(self.header_expl(cpn::Text::new(label, flags)?))
     }
 
     /// Explicitly add an `Option` component to the `Container`. Unlike the `option`
