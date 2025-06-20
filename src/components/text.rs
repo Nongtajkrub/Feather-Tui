@@ -115,6 +115,11 @@ impl TextFlags {
         Text::ensure_compatible_flags(&result)?;
         Ok(result)
     }
+
+    #[inline]
+    pub fn default_header() -> TextFlags {
+        TextFlags::ALIGN_MIDDLE | TextFlags::COLOR_GREEN_BACK | TextFlags::STYLE_BOLD
+    }
 }
 
 /// A UI component representing a text element in a `Container`. `Text` components
