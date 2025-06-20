@@ -3,13 +3,6 @@ use crate::{
     util::id::IdGenerator
 };
 
-pub trait ContainerTrait {
-    fn draw(&mut self, width: u16, height: u16) -> FtuiResult<()>;
-    fn draw_fullscreen(&mut self) -> FtuiResult<()>;
-    fn draw_expl(&mut self, renderer: &mut Renderer) -> FtuiResult<()>;
-    fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()>;
-}
-
 /// `Container` is a data structure used to store and organize UI components,
 /// including `Header`, `Option`, `Text`, `Separator`, and `Selector`.
 /// It is created using a `ContainerBuilder`.
@@ -309,6 +302,77 @@ impl Container {
             .as_mut()
             .ok_or(FtuiError::ContainerNoSelector)?
             .select(&mut self.options)?)
+    }
+
+    /// Renders the `Container` using a temporary `Renderer`. This method is ideal
+    /// for quick, one-off renderings where performance isn't critical. Internally,
+    /// it creates a new `Renderer` with the given dimensions and uses it to draw
+    /// the `Container`. If you need to render multiple times, consider using a
+    /// persistent `Renderer` for better performance.
+    ///
+    ///
+    /// # Parameters
+    /// - `width`: The width of the rendering area.
+    /// - `height`: The height of the rendering area.
+    ///
+    /// # Returns
+    /// - `Ok(())`: Returns nothing.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Good for quick one-off rendering like this.
+    /// fn render_ui() -> FtuiResult<()> {
+    ///     ContainerBuilder::new()
+    ///         .header(...)?
+    ///         .text(...)?
+    ///         .build()
+    ///         .draw(40, 20)?; // Render with dimensions 40x20.
+    ///
+    ///     Ok(())
+    /// }
+    /// ```
+    #[inline]
+    pub fn draw(&mut self, width: u16, height: u16) -> FtuiResult<()> {
+        Renderer::new(width, height).simple_draw_container(self)
+    }
+
+    /// Renders the `Container` using a temporary `Renderer`. This method is ideal
+    /// for quick, one-off renderings where performance isn't critical. Internally,
+    /// it creates a new fullscreen `Renderer` and uses it to draw the `Container`.
+    /// If you need to render multiple times, consider using a persistent `Renderer`
+    /// for better performance.
+    ///
+    /// # Returns
+    /// - `Ok(())`: Returns nothing.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Good for quick one-off rendering like this.
+    /// fn render_ui() -> FtuiResult<()> {
+    ///     ContainerBuilder::new()
+    ///         .header(...)?
+    ///         .text(...)?
+    ///         .build()
+    ///         .draw_fullscreen()?; // Render in fullscreen.
+    ///
+    ///     Ok(())
+    /// }
+    /// ```
+    #[inline]
+    pub fn draw_fullscreen(&mut self) -> FtuiResult<()> {
+        Renderer::fullscreen()?.simple_draw_container(self)
+    }
+
+    #[inline]
+    pub fn draw_expl(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
+        renderer.simple_draw_container(self)
+    }
+
+    pub fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
+        renderer.clear();
+        renderer.render_container(self)
     }
 
     pub(crate) fn component_count(&self) -> u16 {
@@ -734,78 +798,5 @@ impl ContainerBuilder {
     /// ```
     pub fn build(self) -> Container {
         self.container
-    }
-}
-
-impl ContainerTrait for Container {
-    /// Renders the `Container` using a temporary `Renderer`. This method is ideal
-    /// for quick, one-off renderings where performance isn't critical. Internally,
-    /// it creates a new `Renderer` with the given dimensions and uses it to draw
-    /// the `Container`. If you need to render multiple times, consider using a
-    /// persistent `Renderer` for better performance.
-    ///
-    ///
-    /// # Parameters
-    /// - `width`: The width of the rendering area.
-    /// - `height`: The height of the rendering area.
-    ///
-    /// # Returns
-    /// - `Ok(())`: Returns nothing.
-    /// - `Err(FtuiError)`: Returns an error.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Good for quick one-off rendering like this.
-    /// fn render_ui() -> FtuiResult<()> {
-    ///     ContainerBuilder::new()
-    ///         .header(...)?
-    ///         .text(...)?
-    ///         .build()
-    ///         .draw(40, 20)?; // Render with dimensions 40x20.
-    ///
-    ///     Ok(())
-    /// }
-    /// ```
-    #[inline]
-    fn draw(&mut self, width: u16, height: u16) -> FtuiResult<()> {
-        Renderer::new(width, height).simple_draw_container(self)
-    }
-
-    /// Renders the `Container` using a temporary `Renderer`. This method is ideal
-    /// for quick, one-off renderings where performance isn't critical. Internally,
-    /// it creates a new fullscreen `Renderer` and uses it to draw the `Container`.
-    /// If you need to render multiple times, consider using a persistent `Renderer`
-    /// for better performance.
-    ///
-    /// # Returns
-    /// - `Ok(())`: Returns nothing.
-    /// - `Err(FtuiError)`: Returns an error.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Good for quick one-off rendering like this.
-    /// fn render_ui() -> FtuiResult<()> {
-    ///     ContainerBuilder::new()
-    ///         .header(...)?
-    ///         .text(...)?
-    ///         .build()
-    ///         .draw_fullscreen()?; // Render in fullscreen.
-    ///
-    ///     Ok(())
-    /// }
-    /// ```
-    #[inline]
-    fn draw_fullscreen(&mut self) -> FtuiResult<()> {
-        Renderer::fullscreen()?.simple_draw_container(self)
-    }
-
-    #[inline]
-    fn draw_expl(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
-        renderer.simple_draw_container(self)
-    }
-
-    fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
-        renderer.clear();
-        renderer.render_container(self)
     }
 }

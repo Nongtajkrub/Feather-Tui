@@ -1,6 +1,6 @@
 use crate::{
     components::{Header, Text, TextFlags}, error::{FtuiError, FtuiResult},
-    util::id::IdGenerator, container::ContainerTrait, renderer::Renderer,
+    util::id::IdGenerator, renderer::Renderer,
 };
 
 #[doc = "⚠️ **Experimental** ⚠️"]
@@ -227,6 +227,26 @@ impl List {
         }
     }
 
+    #[inline]
+    pub fn draw(&mut self, width: u16, height: u16) -> FtuiResult<()> {
+        Renderer::new(width, height).simple_draw_list(self)
+    }
+
+    #[inline]
+    pub fn draw_fullscreen(&mut self) -> FtuiResult<()> {
+        Renderer::fullscreen()?.simple_draw_list(self)
+    }
+
+    #[inline]
+    pub fn draw_expl(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
+        renderer.simple_draw_list(self)
+    }
+
+    pub fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
+        renderer.clear();
+        renderer.render_list(self)
+    }
+
     pub(crate) fn header(&self) -> &Option<Header> {
         &self.header
     }
@@ -375,27 +395,5 @@ impl ListBuilder {
     /// ```
     pub fn build(self) -> List {
         self.list
-    }
-}
-
-impl ContainerTrait for List {
-    #[inline]
-    fn draw(&mut self, width: u16, height: u16) -> FtuiResult<()> {
-        Renderer::new(width, height).simple_draw_list(self)
-    }
-
-    #[inline]
-    fn draw_fullscreen(&mut self) -> FtuiResult<()> {
-        Renderer::fullscreen()?.simple_draw_list(self)
-    }
-
-    #[inline]
-    fn draw_expl(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
-        renderer.simple_draw_list(self)
-    }
-
-    fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
-        renderer.clear();
-        renderer.render_list(self)
     }
 }
