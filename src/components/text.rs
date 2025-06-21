@@ -164,14 +164,17 @@ impl Text {
     /// let _ = Text::new(
     ///     "Text", TextFlags::ALIGN_RIGHT | TextFlags::COLOR_RED_BACK)?;
     /// ```
-    pub fn new(label: &str, flags: impl Into<Option<TextFlags>>) -> FtuiResult<Self> {
+    pub fn new(
+        label: impl ToString, flags: impl Into<Option<TextFlags>>
+    ) -> FtuiResult<Self> {
         let flags = flags.into().unwrap_or(TextFlags::NONE);
+        let label = label.to_string();
 
         Self::ensure_compatible_flags(&flags)?; 
         
         Ok(Text {
-            label: label.to_string(),
             len: label.graphemes(true).count(),
+            label: label,
             id: 0,
             line: 0,
             flags,
@@ -181,7 +184,7 @@ impl Text {
     }
 
     pub(crate) fn with_id(
-        label: &str, flags: impl Into<Option<TextFlags>>, id: u16
+        label: impl ToString, flags: impl Into<Option<TextFlags>>, id: u16
     ) -> FtuiResult<Self> {
         let mut text = Text::new(label, flags)?;
         text.set_id(id);

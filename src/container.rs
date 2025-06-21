@@ -473,7 +473,7 @@ impl ContainerBuilder {
     /// ```
     #[inline]
     pub fn header(
-        self, label: &str, flags: impl Into<Option<cpn::TextFlags>>
+        self, label: impl ToString, flags: impl Into<Option<cpn::TextFlags>>
     ) -> FtuiResult<Self> {
         Ok(self.header_expl(cpn::Text::new(label, flags)?))
     }
@@ -520,7 +520,7 @@ impl ContainerBuilder {
     ///     .option("Option", None)?;
     /// ```
     #[inline]
-    pub fn option(self, label: &str) -> FtuiResult<Self> {
+    pub fn option(self, label: impl ToString) -> FtuiResult<Self> {
         Ok(self.option_expl(cpn::Option::new(label)?))
     }
 
@@ -576,7 +576,7 @@ impl ContainerBuilder {
     ///     .option_id("Option", None, &mut id)?;
     /// ```
     #[inline]
-    pub fn option_id(self, label: &str, store_id: &mut u16) -> FtuiResult<Self> {
+    pub fn option_id(self, label: impl ToString, store_id: &mut u16) -> FtuiResult<Self> {
         Ok(self.option_id_expl(cpn::Option::new(label)?, store_id))
     }
 
@@ -626,7 +626,7 @@ impl ContainerBuilder {
     /// ```
     #[inline]
     pub fn text(
-        self, label: &str, flags: impl Into<Option<cpn::TextFlags>>
+        self, label: impl ToString, flags: impl Into<Option<cpn::TextFlags>>
     ) -> FtuiResult<Self> {
         Ok(self.text_expl(cpn::Text::new(label, flags)?))
     }
@@ -687,7 +687,8 @@ impl ContainerBuilder {
     #[inline]
     pub fn text_id(
         self, 
-        label: &str, flags: impl Into<Option<cpn::TextFlags>>, store_id: &mut u16
+        label: impl ToString,
+        flags: impl Into<Option<cpn::TextFlags>>, store_id: &mut u16
     ) -> FtuiResult<Self> {
         Ok(self.text_id_expl(cpn::Text::new(label, flags)?, store_id))
     }

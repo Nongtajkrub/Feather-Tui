@@ -53,14 +53,16 @@ impl Option {
     /// // You can detect its selection using the `is_selc()` method.
     /// let _ = Option::new("Nothing", None)?;
     /// ```
-    pub fn new(label: &str) -> FtuiResult<Self> {
+    pub fn new(label: impl ToString) -> FtuiResult<Self> {
+        let label = label.to_string();
+
         if label.is_empty() {
             return Err(FtuiError::OptionLabelEmpty);
         }
 
         Ok(Option {
-            label: label.to_string(),
             len: label.graphemes(true).count(),
+            label: label,
             id: 0,
             line: 0,
             selc_on: false,

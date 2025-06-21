@@ -67,10 +67,11 @@ impl List {
     /// // Add an element labeled "Element" with red text and bold styling.
     /// list.add("Element", TextFlags::COLOR_RED | TextFlags::STYLE_BOLD)?;
     /// ```
-    pub fn add(
-        &mut self, label: &str, flags: impl Into<Option<TextFlags>>
+    pub fn add<'a>(
+        &mut self, label: impl ToString, flags: impl Into<Option<TextFlags>>
     ) -> FtuiResult<u16> {
-        let flags: Option<TextFlags> = flags.into();
+        let flags = flags.into();
+        let label = label.to_string();
 
         let id = self.id_generator.get_id(); 
 
@@ -339,7 +340,7 @@ impl ListBuilder {
     /// ```
     #[inline]
     pub fn header(
-        self, label: &str, flags: impl Into<Option<TextFlags>>
+        self, label: impl ToString, flags: impl Into<Option<TextFlags>>
     ) -> FtuiResult<Self> {
         Ok(self.header_expl(Text::new(label, flags)?))
     }
@@ -378,6 +379,13 @@ impl ListBuilder {
     pub fn number(mut self) -> Self {
         self.list.number = true;
         self
+    }
+
+    pub fn element(
+        mut self, label: impl ToString, flags: impl Into<Option<TextFlags>>
+    ) -> FtuiResult<Self> {
+        self.list.add(label, flags)?;
+        Ok(self)
     }
 
     /// Finalizes the construction of a `List`. This method should be called
