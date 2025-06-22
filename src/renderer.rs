@@ -250,6 +250,23 @@ impl Renderer {
         }
     }
 
+    fn resolve_text_pos_with_len(&self, text: &mut cpn::Text, len: usize) {
+        // x pos
+        if text.flags().contains(cpn::TextFlags::ALIGN_MIDDLE) {
+            text.set_pos(Self::calc_middle_align_pos(self.width, len));
+        } else if text.flags().contains(cpn::TextFlags::ALIGN_RIGHT) {
+            text.set_pos(Self::calc_right_align_pos(self.width, len));
+        } else {
+            // default to left alignment
+            text.set_pos(Self::calc_left_align_pos());
+        } 
+    }
+
+    #[inline]
+    fn resolve_text_pos(&self, text: &mut cpn::Text) {
+        self.resolve_text_pos_with_len(text, text.len());
+    }
+
     fn render_header(&mut self, header: &mut cpn::Text) -> FtuiResult<()> {
         self.ensure_label_inbound(header.len())?;
         self.resolve_text_pos(header);
@@ -258,6 +275,19 @@ impl Renderer {
 
         line.edit(header.label(), header.pos());
         line.add_ansi_many(header.styles());
+
+        Ok(())
+    }
+
+    fn render_footer(&mut self, footer: &mut cpn::Text) -> FtuiResult<()> {
+        self.ensure_label_inbound(footer.len())?;
+        self.resolve_text_pos(footer);
+        footer.set_line(Self::calc_bottom_align_pos(self.height));
+
+        let line = &mut self.lines[footer.line() as usize];
+
+        line.edit(footer.label(), footer.pos());
+        line.add_ansi_many(footer.styles());
 
         Ok(())
     }
@@ -302,28 +332,6 @@ impl Renderer {
                     self.apply_correct_separator(separator, c),
             }
         }
-    }
-
-    fn resolve_text_pos_with_len(&self, text: &mut cpn::Text, len: usize) {
-        // x pos
-        if text.flags().contains(cpn::TextFlags::ALIGN_MIDDLE) {
-            text.set_pos(Self::calc_middle_align_pos(self.width, len));
-        } else if text.flags().contains(cpn::TextFlags::ALIGN_RIGHT) {
-            text.set_pos(Self::calc_right_align_pos(self.width, len));
-        } else {
-            // default to left alignment
-            text.set_pos(Self::calc_left_align_pos());
-        } 
-
-        // y pos
-        if text.flags().contains(cpn::TextFlags::ALIGN_BOTTOM) {
-            text.set_line(Self::calc_bottom_align_pos(self.height));
-        }
-    }
-
-    #[inline]
-    fn resolve_text_pos(&self, text: &mut cpn::Text) {
-        self.resolve_text_pos_with_len(text, text.len());
     }
 
     fn render_text(&mut self, texts: &mut [cpn::Text]) -> FtuiResult<()> {
@@ -371,9 +379,14 @@ impl Renderer {
         if let Some(header) = container.header_mut().as_mut() {
             self.render_header(header)?;
         }
+
         self.render_options(container.options())?;
         self.render_text(container.texts_mut())?;
         self.render_separator(container.separators());
+
+        if let Some(footer) = container.footer_mut().as_mut() {
+            self.render_footer(footer)?;
+        }
 
         Ok(())
     }
@@ -402,45 +415,40 @@ impl Renderer {
     /// renderer.render_list(&mut list)?;
     /// ```
     pub(crate) fn render_list(&mut self, list: &mut List) -> FtuiResult<()> {
-        // This avoid checking multiple time whether a header excist.
-        let avoid_header_offset = match list.header_mut() {
-            Some(header) => {
-                self.render_header(header)?;
-                1
-            },
-            None => 0,
-        }; 
-
-        if list.len() == 0 {
-            return Ok(());
-        }
-
         let offset = list.offset();
         let is_number = list.is_number();
-        let element_len_offset = if list.is_number() { 3 } else { 0 };
+        let skip_top = if list.header().is_some() { 1 } else { 0 };  
+        let skip_bottom = if list.footer().is_some() { 1 } else { 0 };
+        let num_prefix_width = if is_number { 3 } else { 0 };
+        let max_elements = (self.height - 1) as usize - skip_bottom;
 
-        for (i, element) in list
+        if let Some(header) = list.header_mut() {
+            self.render_header(header)?;
+        }
+        
+        for (i, elt) in list
             .elements_mut()
             .iter_mut()
             .skip(offset)
-            .take((self.height - 1) as usize)
+            .take(max_elements)
             .enumerate() 
         {
-            self.ensure_label_inbound(element.len())?;
-            self.resolve_text_pos_with_len(
-                element, element.len() + element_len_offset);
+            self.ensure_label_inbound(elt.len())?;
+            self.resolve_text_pos_with_len(elt, elt.len() + num_prefix_width);
 
-            let line = &mut self.lines[i + avoid_header_offset];
+            let line = &mut self.lines[i + skip_top];
 
             if is_number {
-                line.edit(
-                    &format!("{}. {}", i + 1 + offset, element.label()),
-                    element.pos());
+                line.edit(&format!("{}. {}", i + 1 + offset, elt.label()), elt.pos());
             } else {
-                line.edit(element.label(), element.pos());
+                line.edit(elt.label(), elt.pos());
             }
 
-            line.add_ansi_many(element.styles());
+            line.add_ansi_many(elt.styles());
+        }
+
+        if let Some(footer) = list.footer_mut() {
+            self.render_footer(footer)?;
         }
 
         Ok(())

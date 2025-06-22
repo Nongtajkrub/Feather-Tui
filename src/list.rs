@@ -17,6 +17,7 @@ use crate::{
 /// `3. Item three`  
 pub struct List {
     header: Option<Text>,
+    footer: Option<Text>,
     elements: Vec<Text>,
     offset: usize,
     default_flags: Option<TextFlags>,
@@ -37,6 +38,7 @@ impl List {
     pub(crate) fn new() -> Self {
         List {
             header: None,
+            footer: None,
             elements: vec![],
             offset: 0,
             default_flags: None,
@@ -263,8 +265,20 @@ impl List {
         renderer.render_list(self)
     }
 
+    pub(crate) fn header(&self) -> &Option<Text> {
+        &self.header
+    }
+
     pub(crate) fn header_mut(&mut self) -> &mut Option<Text> {
         &mut self.header
+    }
+
+    pub(crate) fn footer(&self) -> &Option<Text> {
+        &self.footer
+    }
+
+    pub(crate) fn footer_mut(&mut self) -> &mut Option<Text> {
+        &mut self.footer
     }
 
     pub(crate) fn elements_mut(&mut self) -> &mut [Text] {
@@ -273,10 +287,6 @@ impl List {
 
     pub(crate) fn offset(&self) -> usize {
         self.offset
-    }
-
-    pub(crate) fn len(&self) -> usize {
-        self.elements.len()
     }
     
     pub(crate) fn is_number(&self) -> bool {
@@ -358,6 +368,18 @@ impl ListBuilder {
         self, label: impl ToString, flags: impl Into<Option<TextFlags>>
     ) -> FtuiResult<Self> {
         Ok(self.header_expl(Text::new(label, flags)?))
+    }
+
+    pub fn footer_expl(mut self, footer: Text) -> Self {
+        self.list.footer = Some(footer);
+        self
+    }
+
+    #[inline]
+    pub fn footer(
+        self, label: impl ToString, flags: impl Into<Option<TextFlags>>
+    ) -> FtuiResult<Self> {
+        Ok(self.footer_expl(Text::new(label, flags)?))
     }
 
     /// Sets the default `TextFlags` to be used when adding elements to the `List`.

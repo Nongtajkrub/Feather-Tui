@@ -17,6 +17,7 @@ use crate::{
 pub struct Container {
     id_generator: IdGenerator<u16>,
     header: Option<cpn::Text>,
+    footer: Option<cpn::Text>,
     options: Vec<cpn::Option>,
     texts: Vec<cpn::Text>,
     separators: Vec<cpn::Separator>,
@@ -38,6 +39,7 @@ impl Container {
         Container {
             id_generator: IdGenerator::new(),
             header: None,
+            footer: None,
             options: vec![],
             texts: vec![],
             separators: vec![],
@@ -49,6 +51,12 @@ impl Container {
     pub(crate) fn set_header(&mut self, header: cpn::Text) {
         self.header = Some(header);
         self.component_count += 1;
+    }
+    
+    #[inline]
+    pub(crate) fn set_footer(&mut self, mut footer: cpn::Text) {
+        footer.set_flags(footer.flags().union(cpn::TextFlags::ALIGN_BOTTOM));
+        self.footer = Some(footer);
     }
 
     // Return added Option ID.
@@ -383,6 +391,10 @@ impl Container {
         &mut self.header
     }
 
+    pub(crate) fn footer_mut(&mut self) -> &mut Option<cpn::Text> {
+        &mut self.footer
+    }
+
     pub(crate) fn options(&self) -> &[cpn::Option] {
         &self.options
     }
@@ -476,6 +488,18 @@ impl ContainerBuilder {
         self, label: impl ToString, flags: impl Into<Option<cpn::TextFlags>>
     ) -> FtuiResult<Self> {
         Ok(self.header_expl(cpn::Text::new(label, flags)?))
+    }
+
+    pub fn footer_expl(mut self, footer: cpn::Text) -> Self {
+        self.container.set_footer(footer);
+        self
+    }
+
+    #[inline]
+    pub fn footer(
+        self, label: impl ToString, flags: impl Into<Option<cpn::TextFlags>>
+    ) -> FtuiResult<Self> {
+        Ok(self.footer_expl(cpn::Text::new(label, flags)?))
     }
 
     /// Explicitly add an `Option` component to the `Container`. Unlike the `option`

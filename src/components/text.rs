@@ -323,6 +323,10 @@ impl Text {
         return &self.flags;
     }
 
+    pub(crate) fn set_flags(&mut self, value: TextFlags) {
+        self.flags = value;
+    }
+
     pub(crate) fn styles(&self) -> &[&'static str] {
         return &self.style;
     }
