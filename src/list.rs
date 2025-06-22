@@ -71,7 +71,6 @@ impl List {
         &mut self, label: impl ToString, flags: impl Into<Option<TextFlags>>
     ) -> FtuiResult<u16> {
         let flags = flags.into();
-        let label = label.to_string();
 
         let id = self.id_generator.get_id(); 
 
@@ -83,6 +82,22 @@ impl List {
         }
 
         Ok(id)
+    }
+
+    pub fn add_many<T>(
+        &mut self,
+        labels: impl IntoIterator<Item = T>, flags: impl Into<Option<TextFlags>>
+    ) -> FtuiResult<()> 
+    where
+        T: ToString,
+    {
+        let flags = flags.into();
+
+        for label in labels {
+            self.add(label, flags)?;
+        }
+        
+        Ok(())
     }
 
     /// Attempts to scroll the `List` up by one position.
