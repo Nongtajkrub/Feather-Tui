@@ -285,6 +285,10 @@ impl List {
         &mut self.elements
     }
 
+    pub(crate) fn len(&self) -> usize {
+        self.elements.len()
+    }
+
     pub(crate) fn offset(&self) -> usize {
         self.offset
     }

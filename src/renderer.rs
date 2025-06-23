@@ -1,6 +1,6 @@
 use crate::{
     components as cpn, container::Container, error::{FtuiError, FtuiResult},
-    list::List, util::ansi 
+    list::List, util::{ansi, number as num}, 
 };
 use std::io::{self, Write};
 use crossterm as ct;
@@ -420,8 +420,10 @@ impl Renderer {
         let is_number = list.is_number();
         let skip_top = if list.header().is_some() { 1 } else { 0 };  
         let skip_bottom = if list.footer().is_some() { 1 } else { 0 };
-        let num_prefix_width = if is_number { 3 } else { 0 };
         let max_elements = (self.height - 1) as usize - skip_bottom;
+        let num_prefix = if is_number {
+            (num::digits(list.len() as u64) + 2) as usize 
+        } else { 0 };
 
         if let Some(header) = list.header_mut() {
             self.render_header(header)?;
@@ -435,7 +437,7 @@ impl Renderer {
             .enumerate() 
         {
             self.ensure_label_inbound(elt.len())?;
-            self.resolve_text_pos_with_len(elt, elt.len() + num_prefix_width);
+            self.resolve_text_pos_with_len(elt, elt.len() + num_prefix);
 
             let line = &mut self.lines[i + skip_top];
 
