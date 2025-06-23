@@ -250,6 +250,7 @@ impl Renderer {
         }
     }
 
+    /// Resolve a `Text` component position with a custom specified lenght.
     fn resolve_text_pos_with_len(&self, text: &mut cpn::Text, len: usize) {
         // x pos
         if text.flags().contains(cpn::TextFlags::ALIGN_MIDDLE) {
