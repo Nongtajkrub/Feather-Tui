@@ -317,7 +317,7 @@ impl Renderer {
         }
     }
     
-    fn render_separator(&mut self, separators: &[cpn::Separator]) {
+    fn render_separators(&mut self, separators: &[cpn::Separator]) {
         for separator in separators {
             match separator.style() {
                 cpn::SeparatorStyle::Solid => 
@@ -334,7 +334,7 @@ impl Renderer {
         }
     }
 
-    fn render_text(&mut self, texts: &mut [cpn::Text]) -> FtuiResult<()> {
+    fn render_texts(&mut self, texts: &mut [cpn::Text]) -> FtuiResult<()> {
         for text in texts.iter_mut() {
             self.ensure_label_inbound(text.len())?;
             self.resolve_text_pos(text);
@@ -381,8 +381,8 @@ impl Renderer {
         }
 
         self.render_options(container.options())?;
-        self.render_text(container.texts_mut())?;
-        self.render_separator(container.separators());
+        self.render_texts(container.texts_mut())?;
+        self.render_separators(container.separators());
 
         if let Some(footer) = container.footer_mut().as_mut() {
             self.render_footer(footer)?;
