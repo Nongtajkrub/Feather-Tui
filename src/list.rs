@@ -73,16 +73,9 @@ impl List {
         &mut self, label: impl ToString, flags: impl Into<Option<TextFlags>>
     ) -> FtuiResult<u16> {
         let flags = flags.into();
-
         let id = self.id_generator.get_id(); 
 
-        match flags {
-            Some(flags) if flags.contains(TextFlags::ALIGN_BOTTOM) =>
-                return Err(FtuiError::TextFlagAlignBottomWithListElement),
-            Some(flags) => self.elements.push(Text::with_id(label, flags, id)?),
-            None => self.elements.push(Text::with_id(label, self.default_flags, id)?),
-        }
-
+        self.elements.push(Text::with_id(label, flags.or(self.default_flags), id)?);
         Ok(id)
     }
 

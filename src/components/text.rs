@@ -18,8 +18,6 @@ bitflags! {
         const ALIGN_RIGHT   = 1 << 1;
         /// Centers text horizontally in the renderer.
         const ALIGN_MIDDLE  = 1 << 2;
-        /// Aligns text to the bottom of the renderer.
-        const ALIGN_BOTTOM  = 1 << 3;
 
         // Applies colors to the background of the text instead of foreground.
         const COLOR_BACK    = 1 << 4;
@@ -93,7 +91,6 @@ impl TextFlags {
                 acc.union(match style {
                     "a-r" => TextFlags::ALIGN_RIGHT,
                     "a-m" => TextFlags::ALIGN_MIDDLE,
-                    "a-b" => TextFlags::ALIGN_BOTTOM,
                     "c-bg" => TextFlags::COLOR_BACK,
                     "c-b" => TextFlags::COLOR_BLACK,
                     "c-r" => TextFlags::COLOR_RED,
@@ -321,10 +318,6 @@ impl Text {
 
     pub(crate) fn flags(&self) -> &TextFlags {
         return &self.flags;
-    }
-
-    pub(crate) fn set_flags(&mut self, value: TextFlags) {
-        self.flags = value;
     }
 
     pub(crate) fn styles(&self) -> &[&'static str] {

@@ -54,8 +54,7 @@ impl Container {
     }
     
     #[inline]
-    pub(crate) fn set_footer(&mut self, mut footer: cpn::Text) {
-        footer.set_flags(footer.flags().union(cpn::TextFlags::ALIGN_BOTTOM));
+    pub(crate) fn set_footer(&mut self, footer: cpn::Text) {
         self.footer = Some(footer);
     }
 

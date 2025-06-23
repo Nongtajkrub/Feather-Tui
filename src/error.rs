@@ -43,23 +43,6 @@ pub enum FtuiError {
     #[error("TextFlags cannot contain multiple color.")]
     TextFlagMultipleColor,
 
-    /// Occurs when attempting to use the `TextFlags::ALIGN_BOTTOM` flag with
-    /// a `List` element, which does not support bottom alignment.
-    ///
-    /// # Example
-    /// ```rust
-    /// fn main() -> FtuiResult<()> {
-    ///     let mut list = List::new(...)?;
-    ///
-    ///     // Using `TextFlags::ALIGN_BOTTOM` will result in an error.
-    ///     list.add(..., TextFlags::ALIGN_BOTTOM)?;
-    ///
-    ///     Ok(())
-    /// }
-    /// ```
-    #[error("TextFlags::ALIGN_BOTTOM is not supported for list elements.")]
-    TextFlagAlignBottomWithListElement,
-
     /// Occurs when attempting to create a `Header` component with an empty label.
     ///
     /// # Example
