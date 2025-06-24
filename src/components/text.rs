@@ -332,3 +332,80 @@ impl Text {
         self.id = value;
     }
 }
+
+pub struct TextsManager {
+    components: Vec<Text>,
+}
+
+impl TextsManager {
+    pub(crate) fn new() -> Self {
+        Self {
+            components: Vec::new()
+        }
+    }
+
+    #[inline]
+    pub(crate) fn add(&mut self, component: Text) {
+        self.components.push(component);
+    }
+
+    /// Query an `Text` component by its ID (`O(n)` lookup).
+    ///
+    /// # Parameters
+    /// - `id`: The ID of the `Text` component to query.
+    ///
+    /// # Returns
+    /// - `Ok(&Option)`: A reference to the `Text` component.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // A mutable `u16` to store the ID of a `Text` component.
+    /// let mut text_id: u16 = 0;
+    ///
+    /// let container = ContainerBuilder::new()
+    ///     .text_id(..., &mut text_id)?
+    ///     .build();
+    ///
+    /// // Query the option by its ID.
+    /// container.text(text_id)?;
+    /// ```
+    #[inline]
+    pub fn query(&self, id: u16) -> FtuiResult<&Text> {
+        self.components.iter()
+            .find(|text| text.id() == id)
+            .ok_or(FtuiError::ContainerNoComponentById)
+    }
+
+    /// Query an `Text` component by its ID (`O(n)` lookup).
+    ///
+    /// # Parameters
+    /// - `id`: The ID of the `Text` component to query.
+    ///
+    /// # Returns
+    /// - `Ok(&Option)`: A mutable reference to the `Text` component.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // A mutable `u16` to store the ID of a `Text` component.
+    /// let mut text_id: u16 = 0;
+    ///
+    /// let container = ContainerBuilder::new()
+    ///     .text_id(..., &mut text_id)?
+    ///     .build();
+    ///
+    /// // Query the option by its ID.
+    /// container.text_mut(text_id)?;
+    /// ```
+    #[inline]
+    pub fn query_mut(&mut self, id: u16) -> FtuiResult<&mut Text> {
+        self.components.iter_mut()
+            .find(|text| text.id() == id)
+            .ok_or(FtuiError::ContainerNoComponentById)
+    }
+
+    pub(crate) fn comps_mut(&mut self) -> &mut [Text] {
+        &mut self.components
+    }
+}

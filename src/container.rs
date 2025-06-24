@@ -1,5 +1,5 @@
 use crate::{
-    components as cpn, error::{FtuiError, FtuiResult}, renderer::Renderer,
+    components::{self as cpn}, error::FtuiResult, renderer::Renderer,
     util::id::IdGenerator
 };
 
@@ -18,10 +18,9 @@ pub struct Container {
     id_generator: IdGenerator<u16>,
     header: Option<cpn::Text>,
     footer: Option<cpn::Text>,
-    options: Vec<cpn::Option>,
-    texts: Vec<cpn::Text>,
+    options: cpn::OptionsManager,
+    texts: cpn::TextsManager,
     separators: Vec<cpn::Separator>,
-    selector: Option<cpn::Selector>,
     component_count: u16,
 }
 
@@ -40,10 +39,9 @@ impl Container {
             id_generator: IdGenerator::new(),
             header: None,
             footer: None,
-            options: vec![],
-            texts: vec![],
+            options: cpn::OptionsManager::new(),
+            texts: cpn::TextsManager::new(),
             separators: vec![],
-            selector: None,
             component_count: 0,
         }
     }
@@ -64,16 +62,12 @@ impl Container {
         option.set_id(id);
         option.set_line(self.component_count);
 
-        if self.options.is_empty() {
+        if self.options.comps().is_empty() {
             option.set_selc_on(true);
         }
 
-        self.options.push(option);
+        self.options.add(option);
         self.component_count += 1;
-
-        if self.selector.is_none() {
-            self.selector = Some(cpn::Selector::new());
-        }
 
         id
     }
@@ -84,7 +78,7 @@ impl Container {
         text.set_id(id);
         text.set_line(self.component_count);
 
-        self.texts.push(text);
+        self.texts.add(text);
         self.component_count += 1;
 
         id
@@ -95,222 +89,31 @@ impl Container {
         self.separators.push(separator);
         self.component_count += 1;
     }
-    
-    /// Query an `Option` component by its ID (`O(n)` lookup).
-    ///
-    /// # Parameters
-    /// - `id`: The ID of the `Option` component to query.
-    ///
-    /// # Returns
-    /// - `Ok(&Option)`: A reference to the `Option` component.
-    /// - `Err(FtuiError)`: Returns an error.
-    ///
-    /// # Example
-    /// ```rust
-    /// // A mutable `u16` to store the ID of a `Option` component.
-    /// let mut option_id = 0;
-    ///
-    /// let container = ContainerBuilder::new()
-    ///     .option_id(..., &mut option_id)?
-    ///     .build();
-    ///
-    /// // Query the option by its ID.
-    /// container.option(option_id)?;
-    /// ```
-    #[inline]
-    pub fn option(&self, id: u16) -> FtuiResult<&cpn::Option> {
-        self.options.iter()
-            .find(|option| option.id() == id)
-            .ok_or(FtuiError::ContainerNoComponentById)
+
+    pub fn options(&self) -> &cpn::OptionsManager {
+        &self.options
     }
 
-    /// Query an `Option` component by its ID (`O(n)` lookup).
-    ///
-    /// # Parameters
-    /// - `id`: The ID of the `Option` component to query.
-    ///
-    /// # Returns
-    /// - `Ok(&Option)`: A mutable reference to the `Option` component.
-    /// - `Err(FtuiError)`: Returns an error.
-    ///
-    /// # Example
-    /// ```rust
-    /// // A mutable `u16` to store the ID of a `Option` component.
-    /// let mut option_id = 0;
-    ///
-    /// let container = ContainerBuilder::new()
-    ///     .option_id(..., &mut option_id)?
-    ///     .build();
-    ///
-    /// // Query the option by its ID.
-    /// container.option_mut(option_id)?;
-    /// ```
-    #[inline]
-    pub fn option_mut(&mut self, id: u16) -> FtuiResult<&mut cpn::Option> {
-        self.options.iter_mut()
-            .find(|option| option.id() == id)
-            .ok_or(FtuiError::ContainerNoComponentById)
+    pub fn options_mut(&mut self) -> &mut cpn::OptionsManager {
+        &mut self.options
     }
 
-    /// Query an `Text` component by its ID (`O(n)` lookup).
-    ///
-    /// # Parameters
-    /// - `id`: The ID of the `Text` component to query.
-    ///
-    /// # Returns
-    /// - `Ok(&Option)`: A reference to the `Text` component.
-    /// - `Err(FtuiError)`: Returns an error.
-    ///
-    /// # Example
-    /// ```rust
-    /// // A mutable `u16` to store the ID of a `Text` component.
-    /// let mut text_id: u16 = 0;
-    ///
-    /// let container = ContainerBuilder::new()
-    ///     .text_id(..., &mut text_id)?
-    ///     .build();
-    ///
-    /// // Query the option by its ID.
-    /// container.text(text_id)?;
-    /// ```
-    #[inline]
-    pub fn text(&self, id: u16) -> FtuiResult<&cpn::Text> {
-        self.texts.iter()
-            .find(|text| text.id() == id)
-            .ok_or(FtuiError::ContainerNoComponentById)
+    pub fn text(&self) -> &cpn::TextsManager {
+        &self.texts
     }
 
-    /// Query an `Text` component by its ID (`O(n)` lookup).
-    ///
-    /// # Parameters
-    /// - `id`: The ID of the `Text` component to query.
-    ///
-    /// # Returns
-    /// - `Ok(&Option)`: A mutable reference to the `Text` component.
-    /// - `Err(FtuiError)`: Returns an error.
-    ///
-    /// # Example
-    /// ```rust
-    /// // A mutable `u16` to store the ID of a `Text` component.
-    /// let mut text_id: u16 = 0;
-    ///
-    /// let container = ContainerBuilder::new()
-    ///     .text_id(..., &mut text_id)?
-    ///     .build();
-    ///
-    /// // Query the option by its ID.
-    /// container.text_mut(text_id)?;
-    /// ```
-    #[inline]
-    pub fn text_mut(&mut self, id: u16) -> FtuiResult<&mut cpn::Text> {
-        self.texts.iter_mut()
-            .find(|text| text.id() == id)
-            .ok_or(FtuiError::ContainerNoComponentById)
+    pub fn text_mut(&mut self) -> &mut cpn::TextsManager {
+        &mut self.texts
     }
 
-    /// Returns a mutable reference to the `Selector` component, 
-    /// if the `Container` has one.
-    /// 
-    /// # Returns
-    /// - `Ok(&mut Selector)`: A mutable reference to the `Selector` component.
-    /// - `Err(FtuiError)`: Return an error.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a container with a `Selector`.
-    /// let mut container = ContainerBuilder::new()
-    ///     .selector_no_triggers()
-    ///     .build();
-    ///
-    /// // Get a mutable reference to the `Selector`.
-    /// container.selector_mut()?;
-    /// ```
-    #[inline]
-    pub fn selector_mut(&mut self) -> FtuiResult<&mut cpn::Selector> {
-        self.selector.as_mut()
-            .ok_or(FtuiError::ContainerNoSelector)
+    pub(crate) fn option_comps(&self) -> &[cpn::Option] {
+        &self.options.comps()
+    }
+
+    pub(crate) fn text_comps_mut(&mut self) -> &mut [cpn::Text] {
+        self.texts.comps_mut()
     }
     
-    /// Attempts to move the `Selector` up by one position, if possible.
-    ///
-    /// # Returns
-    /// - `Ok(true)`: The selector moved up successfully.
-    /// - `Ok(false)`: The selector could not move (already at the top).
-    /// - `Err(FtuiError)`: Returns an error.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a container with two `Option`s component and a `Selector`.
-    /// let mut container = ContainerBuilder::new()
-    ///     .option(...)? // This is where the `Selector` will be when initialize.
-    ///     .option(...)?
-    ///     .selector_no_triggers()
-    ///     .build();
-    ///
-    /// // The `Selector` cannot move up since it is at the top.
-    /// assert_eq!(container.selector_up()?, false);
-    /// ```
-    #[inline]
-    pub fn selector_up(&mut self) -> FtuiResult<bool> {
-        Ok(self.selector
-            .as_mut()
-            .ok_or(FtuiError::ContainerNoSelector)?
-            .up(&mut self.options))
-    }
-
-    /// Attempts to move the `Selector` down by one position, if possible.
-    ///
-    /// # Returns
-    /// - `Ok(true)`: The selector moved down successfully.
-    /// - `Ok(false)`: The selector could not move (already at the bottom).
-    /// - `Err(FtuiError)`: Returns an error.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a container with two `Option`s component and a `Selector`.
-    /// let mut container = ContainerBuilder::new()
-    ///     .option(...)? // This is where the `Selector` will be when initialize.
-    ///     .option(...)?
-    ///     .selector_no_triggers()
-    ///     .build();
-    ///
-    /// // The `Selector` can move up since it is not at the bottom.
-    /// assert_eq!(container.selector_up()?, true);
-    /// ```
-    #[inline]
-    pub fn selector_down(&mut self) -> FtuiResult<bool> {
-        Ok(self.selector
-            .as_mut()
-            .ok_or(FtuiError::ContainerNoSelector)?
-            .down(&mut self.options))
-    }
-
-    /// Attempts to select the `Option` that the `Selector` is currently on. 
-    /// This operation should always succeed unless an error occurs internally.
-    ///
-    /// # Returns
-    /// - `Ok(true)`: The selection was successful.
-    /// - `Err(FtuiError)`: An error occurred during selection.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a container with on `Option` components and a `Selector`.
-    /// let mut container = ContainerBuilder::new()
-    ///     .option(...)? // The `Selector` starts at this `Option`.
-    ///     .selector_no_triggers()
-    ///     .build();
-    ///
-    /// // Selecting the current `Option` is always possible unless an error occurs.
-    /// assert_eq!(container.selector_select()?, true);
-    /// ```
-    #[inline]
-    pub fn selector_select(&mut self) -> FtuiResult<bool> {
-        Ok(self.selector
-            .as_mut()
-            .ok_or(FtuiError::ContainerNoSelector)?
-            .select(&mut self.options)?)
-    }
-
     /// Renders the `Container` using a temporary `Renderer`. This method is ideal
     /// for quick, one-off renderings where performance isn't critical. Internally,
     /// it creates a new `Renderer` with the given dimensions and uses it to draw
@@ -392,14 +195,6 @@ impl Container {
 
     pub(crate) fn footer_mut(&mut self) -> &mut Option<cpn::Text> {
         &mut self.footer
-    }
-
-    pub(crate) fn options(&self) -> &[cpn::Option] {
-        &self.options
-    }
-
-    pub(crate) fn texts_mut(&mut self) -> &mut [cpn::Text] {
-        &mut self.texts
     }
 
     pub(crate) fn separators(&self) -> &[cpn::Separator] {

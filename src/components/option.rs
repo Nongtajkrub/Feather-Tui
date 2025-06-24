@@ -1,4 +1,4 @@
-use crate::{error::{FtuiError, FtuiResult}};
+use crate::{error::{FtuiError, FtuiResult}, components::Selector};
 use unicode_segmentation::UnicodeSegmentation;
 
 /// A UI component representing an interactive option in a `Container`. 
@@ -139,5 +139,168 @@ impl Option {
 
     pub(crate) fn set_id(&mut self, value: u16) {
         self.id = value;
+    }
+}
+
+pub struct OptionsManager {
+    components: Vec<Option>,
+    selector: std::option::Option<Selector>, 
+}
+
+impl OptionsManager {
+    pub(crate) fn new() -> Self {
+        Self {
+            components: Vec::new(),
+            selector: None,
+        }
+    }
+
+    pub(crate) fn add(&mut self, component: Option) {
+        self.components.push(component);
+
+        if self.selector.is_none() {
+            self.selector = Some(Selector::new());
+        }
+    }
+
+    /// Query an `Option` component by its ID (`O(n)` lookup).
+    ///
+    /// # Parameters
+    /// - `id`: The ID of the `Option` component to query.
+    ///
+    /// # Returns
+    /// - `Ok(&Option)`: A reference to the `Option` component.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // A mutable `u16` to store the ID of a `Option` component.
+    /// let mut option_id = 0;
+    ///
+    /// let container = ContainerBuilder::new()
+    ///     .option_id(..., &mut option_id)?
+    ///     .build();
+    ///
+    /// // Query the option by its ID.
+    /// container.option(option_id)?;
+    /// ```
+    #[inline]
+    pub fn query(&self, id: u16) -> FtuiResult<&Option> {
+        self.components.iter()
+            .find(|option| option.id() == id)
+            .ok_or(FtuiError::ContainerNoComponentById)
+    }
+
+    /// Query an `Option` component by its ID (`O(n)` lookup).
+    ///
+    /// # Parameters
+    /// - `id`: The ID of the `Option` component to query.
+    ///
+    /// # Returns
+    /// - `Ok(&Option)`: A mutable reference to the `Option` component.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // A mutable `u16` to store the ID of a `Option` component.
+    /// let mut option_id = 0;
+    ///
+    /// let container = ContainerBuilder::new()
+    ///     .option_id(..., &mut option_id)?
+    ///     .build();
+    ///
+    /// // Query the option by its ID.
+    /// container.option_mut(option_id)?;
+    /// ```
+    #[inline]
+    pub fn query_mut(&mut self, id: u16) -> FtuiResult<&mut Option> {
+        self.components.iter_mut()
+            .find(|option| option.id() == id)
+            .ok_or(FtuiError::ContainerNoComponentById)
+    }
+
+    /// Attempts to move the `Selector` up by one position, if possible.
+    ///
+    /// # Returns
+    /// - `Ok(true)`: The selector moved up successfully.
+    /// - `Ok(false)`: The selector could not move (already at the top).
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a container with two `Option`s component and a `Selector`.
+    /// let mut container = ContainerBuilder::new()
+    ///     .option(...)? // This is where the `Selector` will be when initialize.
+    ///     .option(...)?
+    ///     .selector_no_triggers()
+    ///     .build();
+    ///
+    /// // The `Selector` cannot move up since it is at the top.
+    /// assert_eq!(container.selector_up()?, false);
+    /// ```
+    #[inline]
+    pub fn selector_up(&mut self) -> FtuiResult<bool> {
+        Ok(self.selector
+            .as_mut()
+            .ok_or(FtuiError::ContainerNoSelector)?
+            .up(&mut self.components))
+    }
+
+    /// Attempts to move the `Selector` down by one position, if possible.
+    ///
+    /// # Returns
+    /// - `Ok(true)`: The selector moved down successfully.
+    /// - `Ok(false)`: The selector could not move (already at the bottom).
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a container with two `Option`s component and a `Selector`.
+    /// let mut container = ContainerBuilder::new()
+    ///     .option(...)? // This is where the `Selector` will be when initialize.
+    ///     .option(...)?
+    ///     .selector_no_triggers()
+    ///     .build();
+    ///
+    /// // The `Selector` can move up since it is not at the bottom.
+    /// assert_eq!(container.selector_up()?, true);
+    /// ```
+    #[inline]
+    pub fn selector_down(&mut self) -> FtuiResult<bool> {
+        Ok(self.selector
+            .as_mut()
+            .ok_or(FtuiError::ContainerNoSelector)?
+            .down(&mut self.components))
+    }
+
+    /// Attempts to select the `Option` that the `Selector` is currently on. 
+    /// This operation should always succeed unless an error occurs internally.
+    ///
+    /// # Returns
+    /// - `Ok(true)`: The selection was successful.
+    /// - `Err(FtuiError)`: An error occurred during selection.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a container with on `Option` components and a `Selector`.
+    /// let mut container = ContainerBuilder::new()
+    ///     .option(...)? // The `Selector` starts at this `Option`.
+    ///     .selector_no_triggers()
+    ///     .build();
+    ///
+    /// // Selecting the current `Option` is always possible unless an error occurs.
+    /// assert_eq!(container.selector_select()?, true);
+    /// ```
+    #[inline]
+    pub fn selector_select(&mut self) -> FtuiResult<bool> {
+        Ok(self.selector
+            .as_mut()
+            .ok_or(FtuiError::ContainerNoSelector)?
+            .select(&mut self.components)?)
+    }
+
+
+    pub(crate) fn comps(&self) -> &[Option] {
+        &self.components
     }
 }

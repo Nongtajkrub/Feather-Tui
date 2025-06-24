@@ -383,8 +383,8 @@ impl Renderer {
             self.render_header(header)?;
         }
 
-        self.render_options(container.options())?;
-        self.render_texts(container.texts_mut())?;
+        self.render_options(container.option_comps())?;
+        self.render_texts(container.text_comps_mut())?;
         self.render_separators(container.separators());
 
         if let Some(footer) = container.footer_mut().as_mut() {
