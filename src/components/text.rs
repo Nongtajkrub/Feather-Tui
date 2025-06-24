@@ -289,8 +289,8 @@ impl Text {
     /// // Update the label to "New Label".
     /// text.set_label("New Label");
     /// ```
-    pub fn set_label(&mut self, label: impl Into<String>) {
-        let label = label.into();
+    pub fn set_label(&mut self, label: impl ToString) {
+        let label = label.to_string();
 
         self.len = label.graphemes(true).count();
         self.label = label;
