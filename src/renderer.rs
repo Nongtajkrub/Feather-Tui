@@ -14,10 +14,12 @@ struct Line {
 
 impl Line {
     pub fn new(width: u16) -> Line {
+        let width = width as usize;
+
         Line {
-            ansi: vec![],
-            width: width as usize,
-            data: " ".repeat(width as usize),
+            ansi: Vec::new(),
+            width: width,
+            data: std::iter::repeat(' ').take(width).collect(),
         }
     }
 
