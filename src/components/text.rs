@@ -109,7 +109,7 @@ impl TextFlags {
                 })
             });
 
-        Text::ensure_compatible_flags(&result)?;
+        Self::ensure_compatible_flags(&result)?;
         Ok(result)
     }
 
@@ -117,6 +117,38 @@ impl TextFlags {
     pub fn default_header() -> TextFlags {
         TextFlags::ALIGN_MIDDLE | TextFlags::COLOR_GREEN_BACK | TextFlags::STYLE_BOLD
     }
+
+    pub(crate) fn ensure_compatible_flags(flags: &TextFlags) -> FtuiResult<()> {
+        // NONE Flags alone is always compatible.
+        if *flags == TextFlags::NONE {
+            return Ok(());
+        }
+
+        // NONE Flags should not be combined with any other flags.
+        if flags.contains(TextFlags::NONE) && *flags != TextFlags::NONE {
+            return Err(FtuiError::TextFlagNoneWithOther);
+        }
+
+        // Only one color can be set.
+        if flags
+            .intersection(
+                TextFlags::COLOR_BLACK |
+                TextFlags::COLOR_RED |
+                TextFlags::COLOR_GREEN |
+                TextFlags::COLOR_YELLOW |
+                TextFlags::COLOR_BLUE |
+                TextFlags::COLOR_MAGENTA |
+                TextFlags::COLOR_CYAN |
+                TextFlags::COLOR_WHITE)
+            .bits()
+            .count_ones() > 1 
+        {
+            return Err(FtuiError::TextFlagMultipleColor);
+        }
+
+        Ok(())
+    }
+
 }
 
 /// A UI component representing a text element in a `Container`. `Text` components
@@ -167,7 +199,7 @@ impl Text {
         let flags = flags.into().unwrap_or(TextFlags::NONE);
         let label = label.to_string();
 
-        Self::ensure_compatible_flags(&flags)?; 
+        TextFlags::ensure_compatible_flags(&flags)?; 
         
         Ok(Text {
             len: label.graphemes(true).count(),
@@ -186,37 +218,6 @@ impl Text {
         let mut text = Text::new(label, flags)?;
         text.set_id(id);
         Ok(text)
-    }
-
-    pub(crate) fn ensure_compatible_flags(flags: &TextFlags) -> FtuiResult<()> {
-        // NONE Flags alone is always compatible.
-        if *flags == TextFlags::NONE {
-            return Ok(());
-        }
-
-        // NONE Flags should not be combined with any other flags.
-        if flags.contains(TextFlags::NONE) && *flags != TextFlags::NONE {
-            return Err(FtuiError::TextFlagNoneWithOther);
-        }
-
-        // Only one color can be set.
-        if flags
-            .intersection(
-                TextFlags::COLOR_BLACK |
-                TextFlags::COLOR_RED |
-                TextFlags::COLOR_GREEN |
-                TextFlags::COLOR_YELLOW |
-                TextFlags::COLOR_BLUE |
-                TextFlags::COLOR_MAGENTA |
-                TextFlags::COLOR_CYAN |
-                TextFlags::COLOR_WHITE)
-            .bits()
-            .count_ones() > 1 
-        {
-            return Err(FtuiError::TextFlagMultipleColor);
-        }
-
-        Ok(())
     }
 
     #[inline]
