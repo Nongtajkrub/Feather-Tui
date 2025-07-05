@@ -1,6 +1,6 @@
 use crate::{
-    components as cpn, container::Container, error::{FtuiError, FtuiResult},
-    list::List, util::{ansi, number as num}, 
+    components as cpn, container::Container, list::List,
+    error::{FtuiError, FtuiResult}, util::{ansi, number as num}, 
 };
 use std::io::{self, Write};
 use crossterm as ct;
@@ -430,6 +430,10 @@ impl Renderer {
         if let Some(header) = list.header_mut() {
             self.render_header(header)?;
         }
+
+        if let Some(footer) = list.footer_mut() {
+            self.render_footer(footer)?;
+        }
         
         for (i, elt) in list
             .elements_mut()
@@ -450,10 +454,6 @@ impl Renderer {
             }
 
             line.add_ansi_many(elt.styles());
-        }
-
-        if let Some(footer) = list.footer_mut() {
-            self.render_footer(footer)?;
         }
 
         Ok(())
