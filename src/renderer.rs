@@ -85,7 +85,7 @@ pub fn clear() -> FtuiResult<()> {
 }
 
 /// A helper class for `Renderer`.
-#[derive(Clone, Debug, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 struct Line {
     ansi: Vec<&'static str>,
     width: usize,
@@ -143,7 +143,6 @@ impl Line {
         self.ansi.clear();
     }
 }
-
 
 /// A `Renderer` is responsible for rendering the UI to the terminal. It takes 
 /// a `Container` and displays its components on the screen.

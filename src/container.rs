@@ -14,6 +14,7 @@ use crate::{
 /// - Access `Option` components by ID using `option` and `option_mut`.
 /// - Access `Text` components by ID using `text` and `text_mut`.
 /// - Navigate using `selector_up`, `selector_down`, and `selector_select`.
+#[derive(Debug, PartialEq, Eq)]
 pub struct Container {
     id_generator: IdGenerator<u16>,
     header: Option<cpn::Text>,

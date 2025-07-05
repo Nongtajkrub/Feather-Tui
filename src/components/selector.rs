@@ -9,6 +9,7 @@ use crate::{components as cpn, error::FtuiResult};
 /// # Notes
 /// - Without a `Selector`, `Option` components in a `Container` cannot be 
 /// selected or navigated.
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Selector {
     on: usize,
 }

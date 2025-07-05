@@ -141,7 +141,8 @@ impl Option {
         self.id = value;
     }
 }
-
+ 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct OptionsManager {
     components: Vec<Option>,
     selector: std::option::Option<Selector>, 

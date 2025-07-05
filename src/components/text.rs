@@ -334,6 +334,7 @@ impl Text {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TextsManager {
     components: Vec<Text>,
 }

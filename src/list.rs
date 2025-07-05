@@ -15,6 +15,7 @@ use crate::{
 /// `1. Item one`    
 /// `2. Item two`   
 /// `3. Item three`  
+#[derive(Debug, PartialEq, Eq)]
 pub struct List {
     header: Option<Text>,
     footer: Option<Text>,
