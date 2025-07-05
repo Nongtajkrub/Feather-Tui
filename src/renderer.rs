@@ -5,61 +5,6 @@ use crate::{
 use std::io::{self, Write};
 use crossterm as ct;
 
-#[derive(Clone, Debug, PartialEq, Eq)]
-struct Line {
-    ansi: Vec<&'static str>,
-    width: usize,
-    data: String,
-}
-
-impl Line {
-    pub fn new(width: u16) -> Line {
-        let width = width as usize;
-
-        Line {
-            ansi: Vec::new(),
-            width: width,
-            data: std::iter::repeat(' ').take(width).collect(),
-        }
-    }
-
-    #[inline]
-    pub fn add_ansi(&mut self, value: &'static str) {
-        self.ansi.push(value);
-    }
-
-    pub fn add_ansi_many(&mut self, value: &[&'static str]) {
-        self.ansi.reserve(value.len());
-        self.ansi.extend(value.iter().copied());
-    }
-
-    pub fn fill(&mut self, c: char) {
-        self.data.clear();
-        self.data.extend(std::iter::repeat(c).take(self.width));
-    }
-
-    pub fn fill_dotted(&mut self, c: char) {
-        let repeat_count = (self.width as f32 / 2.0).floor() as usize;
-
-        self.data.clear();
-
-        for _ in 0..repeat_count {
-            self.data.push(c);
-            self.data.push(' ');
-        }
-    }
-
-    #[inline]
-    pub fn edit(&mut self, data: &String, begin: u16) {
-        self.data.replace_range(begin as usize..data.len() + begin as usize, data);
-    }
-
-    pub fn clear(&mut self) {
-        self.fill(' ');
-        self.ansi.clear();
-    }
-}
-
 /// Prepares the terminal for rendering. This function is typically used in 
 /// conjunction with `unready()`, similar to how `malloc` pairs with `free`.
 /// It clears the terminal screen and moves the cursor to the home position,
@@ -138,6 +83,63 @@ pub fn clear() -> FtuiResult<()> {
 
     Ok(())
 }
+
+/// A helper class for `Renderer`.
+#[derive(Clone, Debug, PartialEq, Eq)]
+struct Line {
+    ansi: Vec<&'static str>,
+    width: usize,
+    data: String,
+}
+
+impl Line {
+    pub fn new(width: u16) -> Line {
+        let width = width as usize;
+
+        Line {
+            ansi: Vec::new(),
+            width: width,
+            data: std::iter::repeat(' ').take(width).collect(),
+        }
+    }
+
+    #[inline]
+    pub fn add_ansi(&mut self, value: &'static str) {
+        self.ansi.push(value);
+    }
+
+    pub fn add_ansi_many(&mut self, value: &[&'static str]) {
+        self.ansi.reserve(value.len());
+        self.ansi.extend(value.iter().copied());
+    }
+
+    pub fn fill(&mut self, c: char) {
+        self.data.clear();
+        self.data.extend(std::iter::repeat(c).take(self.width));
+    }
+
+    pub fn fill_dotted(&mut self, c: char) {
+        let repeat_count = (self.width as f32 / 2.0).floor() as usize;
+
+        self.data.clear();
+
+        for _ in 0..repeat_count {
+            self.data.push(c);
+            self.data.push(' ');
+        }
+    }
+
+    #[inline]
+    pub fn edit(&mut self, data: &String, begin: u16) {
+        self.data.replace_range(begin as usize..data.len() + begin as usize, data);
+    }
+
+    pub fn clear(&mut self) {
+        self.fill(' ');
+        self.ansi.clear();
+    }
+}
+
 
 /// A `Renderer` is responsible for rendering the UI to the terminal. It takes 
 /// a `Container` and displays its components on the screen.
