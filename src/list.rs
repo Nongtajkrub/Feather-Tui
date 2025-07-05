@@ -1,6 +1,5 @@
 use crate::{
-    components::{Text, TextFlags}, error::{FtuiError, FtuiResult},
-    util::id::IdGenerator, renderer::Renderer,
+    components::{Text, TextFlags}, error::{FtuiError, FtuiResult}, util::id::IdGenerator
 };
 
 #[doc = "⚠️ **Experimental** ⚠️"]
@@ -237,26 +236,6 @@ impl List {
         } else {
             Err(FtuiError::ListIndexOutOfBound)
         }
-    }
-
-    #[inline]
-    pub fn draw(&mut self, width: u16, height: u16) -> FtuiResult<()> {
-        Renderer::new(width, height).simple_draw_list(self)
-    }
-
-    #[inline]
-    pub fn draw_fullscreen(&mut self) -> FtuiResult<()> {
-        Renderer::fullscreen()?.simple_draw_list(self)
-    }
-
-    #[inline]
-    pub fn draw_expl(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
-        renderer.simple_draw_list(self)
-    }
-
-    pub fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
-        renderer.clear();
-        renderer.render_list(self)
     }
 
     pub(crate) fn header(&self) -> &Option<Text> {

@@ -144,6 +144,26 @@ impl Line {
     }
 }
 
+/// Renderable containers.
+#[repr(u8)]
+#[derive(Debug, PartialEq, Eq)]
+pub enum Renderable<'a> {
+    Container(&'a mut Container),
+    List(&'a mut List),
+}
+
+impl<'a> From<&'a mut Container> for Renderable<'a> {
+    fn from(value: &'a mut Container) -> Self {
+        Renderable::Container(value)
+    }
+} 
+
+impl<'a> From<&'a mut List> for Renderable<'a> {
+    fn from(value: &'a mut List) -> Self {
+        Renderable::List(value)
+    }
+} 
+
 /// A `Renderer` is responsible for rendering the UI to the terminal. It takes 
 /// a `Container` and displays its components on the screen.
 ///
@@ -463,48 +483,14 @@ impl Renderer {
 
         Ok(())
     }
-    
-    /// Draws the `Renderer` buffer to the terminal.
-    ///
-    /// # Note
-    /// The `render` method must be called at least once before `draw`, as `draw` only
-    /// displays the content stored in the `Renderer` buffer.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a `Renderer` with a width of 40 and a height of 20 characters.
-    /// let mut renderer = Renderer::new(40, 20);
-    ///
-    /// // Render the container into the renderer buffer
-    /// // (assuming `container` is created elsewhere)
-    /// renderer.render(&mut container)?;
-    ///
-    /// // Draw the rendered content to the terminal
-    /// renderer.draw();
-    ///
-    /// // The draw method can be called again without re-rendering,
-    /// // but changes won't be reflected unless `render` is called.
-    /// renderer.draw();
-    /// ```
-    pub fn draw(&mut self) -> FtuiResult<()> {
-        let mut buf = String::with_capacity(((self.height * self.width) + 40) as usize);
-        let reset_suffix = format!("{}{}", ansi::ESC_COLOR_RESET, ansi::ESC_STYLE_RESET);
 
-        for (i, line) in self.lines.iter().enumerate() {
-            buf.push_str(&line.ansi.concat());
-            buf.push_str(&line.data);
-            buf.push_str(&reset_suffix);
-
-            if i != (self.height - 1) as usize {
-                buf.push('\n');
-            }
+    pub(crate) fn render<'a>(
+        &mut self, renderable: impl Into<Renderable<'a>>
+    ) -> FtuiResult<()> {
+        match renderable.into() {
+            Renderable::Container(container) => self.render_container(container)?,
+            Renderable::List(list) => self.render_list(list)?,
         }
-
-        buf.push_str(ansi::ESC_CURSOR_HOME);
-
-        let mut stdout = io::stdout().lock();
-        stdout.write_all(buf.as_bytes())?;
-        stdout.flush()?;
 
         Ok(())
     }
@@ -537,49 +523,53 @@ impl Renderer {
         self.lines.iter_mut().for_each(|line| line.clear());
     }
 
-    /// Executes a full rendering cycle in a single method call. This method 
-    /// automatically calls `clear`, `render`, and `draw` in sequence.
+    fn to_string(&self) -> String {
+        let mut buf = String::with_capacity(((self.height * self.width) + 40) as usize);
+        let reset_suffix = format!("{}{}", ansi::ESC_COLOR_RESET, ansi::ESC_STYLE_RESET);
+
+        for (i, line) in self.lines.iter().enumerate() {
+            buf.push_str(&line.ansi.concat());
+            buf.push_str(&line.data);
+            buf.push_str(&reset_suffix);
+
+            if i != (self.height - 1) as usize {
+                buf.push('\n');
+            }
+        }
+
+        buf.push_str(ansi::ESC_CURSOR_HOME);
+        buf
+    }
+    
+    /// Draws the `Renderer` buffer to the terminal.
     ///
-    /// # Parameters
-    /// - `container`: A mutable reference to the `Container` to be drawn.
-    ///
-    /// # Returns
-    /// - `Ok(())`: Returns nothing.
-    /// - `Err(FtuiError)`: Returns an error.
+    /// # Note
+    /// The `render` method must be called at least once before `draw`, as `draw` only
+    /// displays the content stored in the `Renderer` buffer.
     ///
     /// # Example
     /// ```rust
     /// // Create a `Renderer` with a width of 40 and a height of 20 characters.
     /// let mut renderer = Renderer::new(40, 20);
     ///
-    /// // Standard rendering loop
-    /// loop {
-    ///     renderer.clear();
-    ///     // Render content (assuming `container` is created elsewhere)
-    ///     renderer.render(&mut container)?;
-    ///     renderer.draw();
-    /// }
+    /// // Render the container into the renderer buffer
+    /// // (assuming `container` is created elsewhere)
+    /// renderer.render(&mut container)?;
     ///
-    /// // Simplified rendering loop using `simple_draw`
-    /// loop {
-    ///     // Render and draw in a single step
-    ///     renderer.simple_draw(&mut container)?;
-    /// }
+    /// // Draw the rendered content to the terminal
+    /// renderer.draw();
+    ///
+    /// // The draw method can be called again without re-rendering,
+    /// // but changes won't be reflected unless `render` is called.
+    /// renderer.draw();
     /// ```
-    pub(crate) fn simple_draw_container(
-        &mut self, container: &mut Container
-    ) -> FtuiResult<()> {
+    pub fn draw<'a>(&mut self, renderable: impl Into<Renderable<'a>>) -> FtuiResult<()> {
         self.clear();
-        self.render_container(container)?;
-        self.draw()?;
+        self.render(renderable)?;
 
-        Ok(())
-    }
-
-    pub(crate) fn simple_draw_list(&mut self, list: &mut List) -> FtuiResult<()> {
-        self.clear();
-        self.render_list(list)?;
-        self.draw()?;
+        let mut stdout = io::stdout().lock();
+        stdout.write_all(self.to_string().as_bytes())?;
+        stdout.flush()?;
 
         Ok(())
     }
