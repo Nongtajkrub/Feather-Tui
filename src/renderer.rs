@@ -131,7 +131,8 @@ impl Line {
 
     #[inline]
     pub fn edit(&mut self, data: &String, begin: u16) {
-        self.data.replace_range(begin as usize..data.len() + begin as usize, data);
+        let begin = begin as usize;
+        self.data.replace_range(begin..data.len() + begin, data);
     }
 
     pub fn clear(&mut self) {
