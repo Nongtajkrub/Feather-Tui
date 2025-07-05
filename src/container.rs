@@ -223,6 +223,12 @@ pub struct ContainerBuilder {
     container: Container,
 }
 
+impl Into<Container> for ContainerBuilder {
+    fn into(self) -> Container {
+        self.container
+    }
+}
+
 impl ContainerBuilder {
     /// Constructs a new `ContainerBuilder`. 
     ///
