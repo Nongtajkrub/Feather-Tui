@@ -108,11 +108,13 @@ impl Line {
         self.ansi.push(value);
     }
 
+    #[inline]
     pub fn add_ansi_many(&mut self, value: &[&'static str]) {
         self.ansi.reserve(value.len());
         self.ansi.extend(value.iter().copied());
     }
 
+    #[inline]
     pub fn fill(&mut self, c: char) {
         self.data.clear();
         self.data.extend(std::iter::repeat(c).take(self.width));
@@ -135,6 +137,7 @@ impl Line {
         self.data.replace_range(begin..data.len() + begin, data);
     }
 
+    #[inline]
     pub fn clear(&mut self) {
         self.fill(' ');
         self.ansi.clear();
