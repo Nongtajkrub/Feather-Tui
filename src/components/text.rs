@@ -109,7 +109,7 @@ impl TextFlags {
                 })
             });
 
-        Self::ensure_compatible_flags(result)?;
+        result.ensure_compatibility()?;
         Ok(result)
     }
 
@@ -118,19 +118,19 @@ impl TextFlags {
         TextFlags::ALIGN_MIDDLE | TextFlags::COLOR_GREEN_BACK | TextFlags::STYLE_BOLD
     }
 
-    pub(crate) fn ensure_compatible_flags(flags: TextFlags) -> FtuiResult<()> {
+    pub(crate) fn ensure_compatibility(&self) -> FtuiResult<()> {
         // NONE Flags alone is always compatible.
-        if flags == TextFlags::NONE {
+        if *self == TextFlags::NONE {
             return Ok(());
         }
 
         // NONE Flags should not be combined with any other flags.
-        if flags.contains(TextFlags::NONE) && flags != TextFlags::NONE {
+        if self.contains(TextFlags::NONE) && *self != TextFlags::NONE {
             return Err(FtuiError::TextFlagNoneWithOther);
         }
 
         // Only one color can be set.
-        if flags
+        if self
             .intersection(
                 TextFlags::COLOR_BLACK |
                 TextFlags::COLOR_RED |
@@ -148,8 +148,8 @@ impl TextFlags {
 
         Ok(())
     }
-
 }
+
 
 /// A UI component representing a text element in a `Container`. `Text` components
 /// are displayed in the order they are added to the `Container`. They can be
@@ -199,7 +199,7 @@ impl Text {
         let flags = flags.into().unwrap_or(TextFlags::NONE);
         let label = label.to_string();
 
-        TextFlags::ensure_compatible_flags(flags)?; 
+        flags.ensure_compatibility()?;
         
         Ok(Text {
             len: label.graphemes(true).count(),
@@ -218,12 +218,6 @@ impl Text {
         let mut text = Text::new(label, flags)?;
         text.set_id(id);
         Ok(text)
-    }
-
-    #[inline]
-    fn color_f_or_b(flags: TextFlags, b: &'static str, f: &'static str) -> &'static str {
-        // if COLOR_BACK flag is not set text will default to foreground color
-        if flags.contains(TextFlags::COLOR_BACK) { b } else { f }
     }
 
     fn resolve_color(flags: TextFlags) -> Option<&'static str> {
@@ -246,6 +240,12 @@ impl Text {
         } else {
             None
         }
+    }
+
+    #[inline]
+    fn color_f_or_b(flags: TextFlags, b: &'static str, f: &'static str) -> &'static str {
+        // if COLOR_BACK flag is not set text will default to foreground color
+        if flags.contains(TextFlags::COLOR_BACK) { b } else { f }
     }
 
     fn resolve_style(flags: TextFlags) -> Vec<&'static str> {

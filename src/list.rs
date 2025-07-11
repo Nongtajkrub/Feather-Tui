@@ -375,7 +375,7 @@ impl ListBuilder {
     ///     .default_flags(tui::TextFlags::COLOR_RED)?;
     /// ```
     pub fn default_flags(mut self, flags: TextFlags) -> FtuiResult<Self> {
-        TextFlags::ensure_compatible_flags(flags)?;
+        flags.ensure_compatibility()?;
         self.list.default_flags = Some(flags);
         Ok(self)
     }
