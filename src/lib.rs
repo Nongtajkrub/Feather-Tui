@@ -24,6 +24,7 @@
 pub mod components;
 /// Acts as a layout manager for the UI elements.
 pub mod container;
+pub mod document;
 pub mod list;
 /// Responsible for rendering the UI to the terminal.
 pub mod renderer;
@@ -41,6 +42,12 @@ pub use components as cpn;
 
 #[cfg(feature = "shorten_mod_name")]
 pub use container as con;
+
+#[cfg(feature = "shorten_mod_name")]
+pub use list as lst;
+
+#[cfg(feature = "shorten_mod_name")]
+pub use document as doc;
 
 #[cfg(feature = "shorten_mod_name")]
 pub use renderer as ren;
@@ -61,6 +68,9 @@ pub use container::{Container, ContainerBuilder};
 
 #[cfg(feature = "reduce_abstraction")]
 pub use list::{List, ListBuilder};
+
+#[cfg(feature = "reduce_abstraction")]
+pub use document::{Document, DocumentBuilder};
 
 #[cfg(feature = "reduce_abstraction")]
 pub use renderer::{ready, unready, Renderer};

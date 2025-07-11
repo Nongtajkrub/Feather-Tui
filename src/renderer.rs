@@ -1,7 +1,6 @@
 use crate::{
-    components as cpn, container::Container, list::List,
-    error::{FtuiError, FtuiResult}, util::{ansi, number as num}, 
-};
+    components::{self as cpn}, container::Container, document::Document,
+    error::{FtuiError, FtuiResult}, list::List, util::{ansi, number as num}};
 use std::io::{self, Write};
 use crossterm as ct;
 
@@ -132,7 +131,7 @@ impl Line {
     }
 
     #[inline]
-    pub fn edit(&mut self, data: &String, begin: u16) {
+    pub fn edit(&mut self, data: &str, begin: u16) {
         let begin = begin as usize;
         self.data.replace_range(begin..data.len() + begin, data);
     }
@@ -150,6 +149,7 @@ impl Line {
 pub enum Renderable<'a> {
     Container(&'a mut Container),
     List(&'a mut List),
+    Document(&'a mut Document),
 }
 
 impl<'a> From<&'a mut Container> for Renderable<'a> {
@@ -161,6 +161,12 @@ impl<'a> From<&'a mut Container> for Renderable<'a> {
 impl<'a> From<&'a mut List> for Renderable<'a> {
     fn from(value: &'a mut List) -> Self {
         Renderable::List(value)
+    }
+} 
+
+impl<'a> From<&'a mut Document> for Renderable<'a> {
+    fn from(value: &'a mut Document) -> Self {
+        Renderable::Document(value)
     }
 } 
 
@@ -484,12 +490,42 @@ impl Renderer {
         Ok(())
     }
 
+    fn render_document(&mut self, document: &mut Document) -> FtuiResult<()> {
+        let width = self.width as usize;
+        let height = self.height as usize;
+        let len = document.data().len();
+        let wrap_n = (len as f64 / self.width as f64).ceil() as usize;
+        let skip_top = if document.header().is_some() { 1 } else { 0 };
+        let skip_bottom = if document.footer().is_some() { 1 } else { 0 };
+        let max_lines = (height - 1) - skip_bottom; 
+
+        if let Some(header) = document.header_mut().as_mut() {
+            self.render_header(header)?;
+        }
+
+        for i in (0..wrap_n).take(max_lines) {
+            let line = &mut self.lines[i + skip_top];
+            let begin = i * width;
+            let end = (begin + len.min(width)).min(len);
+
+            line.edit(&document.data()[begin..end], 0);
+            line.add_ansi_many(document.style());
+        }
+
+        if let Some(footer) = document.footer_mut().as_mut() {
+            self.render_footer(footer)?;
+        }
+
+        Ok(())
+    }
+
     pub(crate) fn render<'a>(
         &mut self, renderable: impl Into<Renderable<'a>>
     ) -> FtuiResult<()> {
         match renderable.into() {
             Renderable::Container(container) => self.render_container(container)?,
             Renderable::List(list) => self.render_list(list)?,
+            Renderable::Document(document) => self.render_document(document)?,
         }
 
         Ok(())
