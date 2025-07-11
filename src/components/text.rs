@@ -109,7 +109,7 @@ impl TextFlags {
                 })
             });
 
-        Self::ensure_compatible_flags(&result)?;
+        Self::ensure_compatible_flags(result)?;
         Ok(result)
     }
 
@@ -118,14 +118,14 @@ impl TextFlags {
         TextFlags::ALIGN_MIDDLE | TextFlags::COLOR_GREEN_BACK | TextFlags::STYLE_BOLD
     }
 
-    pub(crate) fn ensure_compatible_flags(flags: &TextFlags) -> FtuiResult<()> {
+    pub(crate) fn ensure_compatible_flags(flags: TextFlags) -> FtuiResult<()> {
         // NONE Flags alone is always compatible.
-        if *flags == TextFlags::NONE {
+        if flags == TextFlags::NONE {
             return Ok(());
         }
 
         // NONE Flags should not be combined with any other flags.
-        if flags.contains(TextFlags::NONE) && *flags != TextFlags::NONE {
+        if flags.contains(TextFlags::NONE) && flags != TextFlags::NONE {
             return Err(FtuiError::TextFlagNoneWithOther);
         }
 
@@ -199,7 +199,7 @@ impl Text {
         let flags = flags.into().unwrap_or(TextFlags::NONE);
         let label = label.to_string();
 
-        TextFlags::ensure_compatible_flags(&flags)?; 
+        TextFlags::ensure_compatible_flags(flags)?; 
         
         Ok(Text {
             len: label.graphemes(true).count(),
