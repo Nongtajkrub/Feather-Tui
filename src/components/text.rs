@@ -148,6 +148,59 @@ impl TextFlags {
 
         Ok(())
     }
+
+    #[inline]
+    fn color_f_or_b(flags: TextFlags, b: &'static str, f: &'static str) -> &'static str {
+        // if COLOR_BACK flag is not set text will default to foreground color
+        if flags.contains(TextFlags::COLOR_BACK) { b } else { f }
+    }
+
+    fn resolve_color(&self) -> Option<&'static str> {
+        if self.contains(TextFlags::COLOR_BLACK) {
+            Some(Self::color_f_or_b(*self, ansi::ESC_BLACK_B, ansi::ESC_BLACK_F))
+        } else if self.contains(TextFlags::COLOR_RED) {
+            Some(Self::color_f_or_b(*self, ansi::ESC_RED_B, ansi::ESC_RED_F))
+        } else if self.contains(TextFlags::COLOR_GREEN) {
+            Some(Self::color_f_or_b(*self, ansi::ESC_GREEN_B, ansi::ESC_GREEN_F))
+        } else if self.contains(TextFlags::COLOR_YELLOW) {
+            Some(Self::color_f_or_b(*self, ansi::ESC_YELLOW_B, ansi::ESC_YELLOW_F))
+        } else if self.contains(TextFlags::COLOR_BLUE) {
+            Some(Self::color_f_or_b(*self, ansi::ESC_BLUE_B, ansi::ESC_BLUE_F))
+        } else if self.contains(TextFlags::COLOR_MAGENTA) {
+            Some(Self::color_f_or_b(*self, ansi::ESC_MAGENTA_B, ansi::ESC_MAGENTA_F))
+        } else if self.contains(TextFlags::COLOR_CYAN) {
+            Some(Self::color_f_or_b(*self, ansi::ESC_CYAN_B, ansi::ESC_CYAN_F))
+        } else if self.contains(TextFlags::COLOR_WHITE) {
+            Some(Self::color_f_or_b(*self, ansi::ESC_WHITE_B, ansi::ESC_WHITE_F))
+        } else {
+            None
+        }
+    }
+
+    pub(crate) fn resolve_ansi(&self) -> Vec<&'static str> {
+        let mut style: Vec<&'static str> = vec![];
+
+        if let Some(color) =  self.resolve_color() {
+            style.push(color);
+        }
+        if self.contains(TextFlags::STYLE_BOLD) {
+            style.push(ansi::ESC_BOLD);
+        }
+        if self.contains(TextFlags::STYLE_DIM) {
+            style.push(ansi::ESC_DIM);
+        }
+        if self.contains(TextFlags::STYLE_ITALIC) {
+            style.push(ansi::ESC_ITALIC);
+        }
+        if self.contains(TextFlags::STYLE_UNDER) {
+            style.push(ansi::ESC_UNDERLINE);
+        }
+        if self.contains(TextFlags::STYLE_STRIKE) {
+            style.push(ansi::ESC_STRIKETHROUGH);
+        }
+
+        return style;
+    }
 }
 
 
@@ -208,7 +261,7 @@ impl Text {
             line: 0,
             flags,
             pos: 0,
-            style: Self::resolve_style(flags),
+            style: flags.resolve_ansi(),
         })
     }
 
@@ -218,59 +271,6 @@ impl Text {
         let mut text = Text::new(label, flags)?;
         text.set_id(id);
         Ok(text)
-    }
-
-    fn resolve_color(flags: TextFlags) -> Option<&'static str> {
-        if flags.contains(TextFlags::COLOR_BLACK) {
-            Some(Self::color_f_or_b(flags, ansi::ESC_BLACK_B, ansi::ESC_BLACK_F))
-        } else if flags.contains(TextFlags::COLOR_RED) {
-            Some(Self::color_f_or_b(flags, ansi::ESC_RED_B, ansi::ESC_RED_F))
-        } else if flags.contains(TextFlags::COLOR_GREEN) {
-            Some(Self::color_f_or_b(flags, ansi::ESC_GREEN_B, ansi::ESC_GREEN_F))
-        } else if flags.contains(TextFlags::COLOR_YELLOW) {
-            Some(Self::color_f_or_b(flags, ansi::ESC_YELLOW_B, ansi::ESC_YELLOW_F))
-        } else if flags.contains(TextFlags::COLOR_BLUE) {
-            Some(Self::color_f_or_b(flags, ansi::ESC_BLUE_B, ansi::ESC_BLUE_F))
-        } else if flags.contains(TextFlags::COLOR_MAGENTA) {
-            Some(Self::color_f_or_b(flags, ansi::ESC_MAGENTA_B, ansi::ESC_MAGENTA_F))
-        } else if flags.contains(TextFlags::COLOR_CYAN) {
-            Some(Self::color_f_or_b(flags, ansi::ESC_CYAN_B, ansi::ESC_CYAN_F))
-        } else if flags.contains(TextFlags::COLOR_WHITE) {
-            Some(Self::color_f_or_b(flags, ansi::ESC_WHITE_B, ansi::ESC_WHITE_F))
-        } else {
-            None
-        }
-    }
-
-    #[inline]
-    fn color_f_or_b(flags: TextFlags, b: &'static str, f: &'static str) -> &'static str {
-        // if COLOR_BACK flag is not set text will default to foreground color
-        if flags.contains(TextFlags::COLOR_BACK) { b } else { f }
-    }
-
-    fn resolve_style(flags: TextFlags) -> Vec<&'static str> {
-        let mut style: Vec<&'static str> = vec![];
-
-        if let Some(color) = Self::resolve_color(flags) {
-            style.push(color);
-        }
-        if flags.contains(TextFlags::STYLE_BOLD) {
-            style.push(ansi::ESC_BOLD);
-        }
-        if flags.contains(TextFlags::STYLE_DIM) {
-            style.push(ansi::ESC_DIM);
-        }
-        if flags.contains(TextFlags::STYLE_ITALIC) {
-            style.push(ansi::ESC_ITALIC);
-        }
-        if flags.contains(TextFlags::STYLE_UNDER) {
-            style.push(ansi::ESC_UNDERLINE);
-        }
-        if flags.contains(TextFlags::STYLE_STRIKE) {
-            style.push(ansi::ESC_STRIKETHROUGH);
-        }
-
-        return style;
     }
 
     pub fn label(&self) -> &String {
