@@ -95,6 +95,11 @@ impl List {
         Ok(())
     }
 
+    #[inline]
+    pub fn clear(&mut self) {
+        self.elements.clear();
+    }
+
     /// Attempts to scroll the `List` up by one position.
     ///
     /// # Returns
@@ -298,7 +303,9 @@ impl ListBuilder {
     /// let _ = ListBuilder::new();
     /// ```
     pub fn new() -> Self {
-        ListBuilder { list: List::new(), }
+        ListBuilder {
+            list: List::new(),
+        }
     }
 
     /// Explicitly sets a `Header` component for the `List`. Unlike the `header`
@@ -393,13 +400,6 @@ impl ListBuilder {
     pub fn number(mut self) -> Self {
         self.list.number = true;
         self
-    }
-
-    pub fn element(
-        mut self, label: impl ToString, flags: impl Into<Option<TextFlags>>
-    ) -> FtuiResult<Self> {
-        self.list.add(label, flags)?;
-        Ok(self)
     }
 
     /// Finalizes the construction of a `List`. This method should be called
