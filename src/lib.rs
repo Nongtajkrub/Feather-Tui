@@ -24,8 +24,6 @@
 pub mod components;
 /// Acts as a layout manager for the UI elements.
 pub mod container;
-pub mod document;
-pub mod list;
 /// Responsible for rendering the UI to the terminal.
 pub mod renderer;
 /// Handles user input, non-blocking key events, and key code conversions with crossterm.
@@ -64,13 +62,7 @@ pub use error as err;
 pub use components::{Option, Text, TextFlags, Separator, SeparatorStyle};
 
 #[cfg(feature = "reduce_abstraction")]
-pub use container::{Container, ContainerBuilder};
-
-#[cfg(feature = "reduce_abstraction")]
-pub use list::{List, ListBuilder};
-
-#[cfg(feature = "reduce_abstraction")]
-pub use document::{Document, DocumentBuilder};
+pub use container::{Container, ContainerBuilder, List, ListBuilder, Document, DocumentBuilder};
 
 #[cfg(feature = "reduce_abstraction")]
 pub use renderer::{ready, unready, Renderer};

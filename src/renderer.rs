@@ -1,6 +1,6 @@
 use crate::{
-    components::{self as cpn}, container::Container, document::Document,
-    error::{FtuiError, FtuiResult}, list::List, util::{ansi, number as num}};
+    components::{self as cpn}, container::{Container, List, Document},
+    error::{FtuiError, FtuiResult}, util::{ansi, number as num}};
 use std::io::{self, Write};
 use crossterm as ct;
 
@@ -201,6 +201,7 @@ pub struct Renderer {
     width: u16,
     height: u16,
     lines: Vec<Line>,
+    bounds: bool,
 }
 
 impl Renderer {
@@ -222,7 +223,8 @@ impl Renderer {
         Renderer {
             width,
             height,
-            lines: Self::make_lines(width, height), 
+            lines: Self::make_lines(width, height),
+            bounds: true,
         }
     }
 
@@ -239,8 +241,11 @@ impl Renderer {
     /// ```
     pub fn fullscreen() -> FtuiResult<Renderer> {
         let (width, height) = ct::terminal::size()?;
-
         Ok(Self::new(width, height))
+    }
+
+    pub fn disble_bounds(&mut self) {
+        self.bounds = false;
     }
 
     fn make_lines(width: u16, height: u16) -> Vec<Line> {
@@ -275,6 +280,7 @@ impl Renderer {
         height - 1
     }
 
+    #[inline]
     fn ensure_label_inbound(&self, len: usize) -> FtuiResult<()> {
         if len > self.width as usize {
             Err(FtuiError::RendererContainerTooBig)
