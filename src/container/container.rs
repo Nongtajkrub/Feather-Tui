@@ -1,4 +1,6 @@
-use crate::{components::{self as cpn}, error::FtuiResult, util::id::IdGenerator};
+use crate::{
+    components::{self as cpn},
+    error::FtuiResult, util::id::IdGenerator, renderer::Renderer};
 
 /// `Container` is a data structure used to store and organize UI components,
 /// including `Header`, `Option`, `Text`, `Separator`, and `Selector`.
@@ -530,6 +532,10 @@ impl ContainerBuilder {
     #[inline]
     pub fn separator_dotted(self, style: cpn::SeparatorStyle) -> Self {
         self.separator_dotted_expl(cpn::Separator::dotted(style))
+    }
+
+    pub fn instant_draw(mut self, renderer: &mut Renderer) -> FtuiResult<()> {
+        renderer.draw(&mut self.container)
     }
 
     /// Finalizes the construction of a `Container`. This method should be called
