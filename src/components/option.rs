@@ -310,7 +310,6 @@ impl OptionsManager {
         true
     }
 
-
     pub(crate) fn comps(&self) -> &[Option] {
         &self.components
     }
