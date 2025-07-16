@@ -1,7 +1,7 @@
 use crate::{
     components::{self as cpn},
     container::{Container, Document, List, Message},
-    error::{FtuiError, FtuiResult}, util::{ansi, number as num}};
+    error::{FtuiError, FtuiResult}, util::{ansi, number as num, mom::Mom}};
 use std::io::{self, Write};
 use crossterm as ct;
 
@@ -148,35 +148,32 @@ impl Line {
 #[repr(u8)]
 #[derive(Debug, PartialEq, Eq)]
 pub enum Renderable<'a> {
-    Container(&'a mut Container),
-    List(&'a mut List),
-    Document(&'a mut Document),
-    Message(&'a Message),
+    Container(Mom<'a, Container>),
+    List(Mom<'a, List>),
+    Document(Mom<'a, Document>),
+    Message(Mom<'a, Message>),
 }
 
-impl<'a> From<&'a mut Container> for Renderable<'a> {
-    fn from(value: &'a mut Container) -> Self {
-        Renderable::Container(value)
-    }
-} 
+macro_rules! impl_renderable_from {
+    ($variant:ident, $type:ty) => {
+        impl<'a> From<&'a mut $type> for Renderable<'a> {
+            fn from(value: &'a mut $type) -> Self {
+                Renderable::$variant(Mom::Ref(value))
+            }
+        }
 
-impl<'a> From<&'a mut List> for Renderable<'a> {
-    fn from(value: &'a mut List) -> Self {
-        Renderable::List(value)
-    }
-} 
-
-impl<'a> From<&'a mut Document> for Renderable<'a> {
-    fn from(value: &'a mut Document) -> Self {
-        Renderable::Document(value)
-    }
-} 
-
-impl<'a> From<&'a Message> for Renderable<'a> {
-    fn from(value: &'a Message) -> Self {
-        Renderable::Message(value)
-    }
+        impl<'a> From<$type> for Renderable<'a> {
+            fn from(value: $type) -> Self {
+                Renderable::$variant(Mom::Owned(value))
+            }
+        }
+    };
 }
+
+impl_renderable_from!(Container, Container);
+impl_renderable_from!(List, List);
+impl_renderable_from!(Document, Document);
+impl_renderable_from!(Message, Message);
 
 /// A `Renderer` is responsible for rendering the UI to the terminal. It takes 
 /// a `Container` and displays its components on the screen.
@@ -564,10 +561,14 @@ impl Renderer {
         &mut self, renderable: impl Into<Renderable<'a>>
     ) -> FtuiResult<()> {
         match renderable.into() {
-            Renderable::Container(container) => self.render_container(container)?,
-            Renderable::List(list) => self.render_list(list)?,
-            Renderable::Document(document) => self.render_document(document)?,
-            Renderable::Message(message) => self.render_message(message)?,
+            Renderable::Container(ref mut container) =>
+                self.render_container(container.as_mut())?,
+            Renderable::List(ref mut list) =>
+                self.render_list(list.as_mut())?,
+            Renderable::Document(ref mut document) =>
+                self.render_document(document.as_mut())?,
+            Renderable::Message(ref mut message) =>
+                self.render_message(message.as_mut())?,
         }
 
         Ok(())
