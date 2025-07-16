@@ -62,7 +62,7 @@ pub use error as err;
 pub use components::{Option, Text, TextFlags, Separator, SeparatorStyle};
 
 #[cfg(feature = "reduce_abstraction")]
-pub use container::{Container, ContainerBuilder, List, ListBuilder, Document, DocumentBuilder};
+pub use container::{Container, ContainerBuilder, List, ListBuilder, Document, DocumentBuilder, Message, MessageStyle};
 
 #[cfg(feature = "reduce_abstraction")]
 pub use renderer::{ready, unready, Renderer};

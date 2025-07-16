@@ -1,5 +1,6 @@
 use crate::{
-    components::{self as cpn}, container::{Container, List, Document},
+    components::{self as cpn},
+    container::{Container, Document, List, Message},
     error::{FtuiError, FtuiResult}, util::{ansi, number as num}};
 use std::io::{self, Write};
 use crossterm as ct;
@@ -150,6 +151,7 @@ pub enum Renderable<'a> {
     Container(&'a mut Container),
     List(&'a mut List),
     Document(&'a mut Document),
+    Message(&'a Message),
 }
 
 impl<'a> From<&'a mut Container> for Renderable<'a> {
@@ -169,6 +171,12 @@ impl<'a> From<&'a mut Document> for Renderable<'a> {
         Renderable::Document(value)
     }
 } 
+
+impl<'a> From<&'a Message> for Renderable<'a> {
+    fn from(value: &'a Message) -> Self {
+        Renderable::Message(value)
+    }
+}
 
 /// A `Renderer` is responsible for rendering the UI to the terminal. It takes 
 /// a `Container` and displays its components on the screen.
@@ -416,6 +424,8 @@ impl Renderer {
             return Err(FtuiError::RendererContainerTooBig);
         }
 
+        self.clear();
+
         if let Some(header) = container.header_mut().as_mut() {
             self.render_header(header)?;
         }
@@ -464,6 +474,8 @@ impl Renderer {
             (num::digits(list.len() as u64) + 2) as usize 
         } else { 0 };
 
+        self.clear();
+
         if let Some(header) = list.header_mut() {
             self.render_header(header)?;
         }
@@ -505,6 +517,8 @@ impl Renderer {
         let skip_bottom = if document.footer().is_some() { 1 } else { 0 };
         let max_lines = (height - 1) - skip_bottom; 
 
+        self.clear();
+
         if let Some(header) = document.header_mut().as_mut() {
             self.render_header(header)?;
         }
@@ -525,6 +539,27 @@ impl Renderer {
         Ok(())
     }
 
+    pub(crate) fn render_message(&mut self, message: &Message) -> FtuiResult<()> {
+        self.ensure_label_inbound(message.len())?;
+        let line = (self.height as f32 / 2.0).round() as usize;
+        let x_pos = Self::calc_middle_align_pos(self.width, message.len());
+        let ansi = message.style().to_ansi();
+
+        self.lines[line].edit(message.message(), x_pos);
+        self.lines[line].add_ansi_many(ansi);
+
+        self.lines.get_mut(line - 1).map(|line| {
+            line.clear();
+            line.add_ansi_many(ansi);
+        });
+        self.lines.get_mut(line + 1).map(|line| {
+            line.clear();
+            line.add_ansi_many(ansi);
+        });
+
+        Ok(())
+    }
+
     pub(crate) fn render<'a>(
         &mut self, renderable: impl Into<Renderable<'a>>
     ) -> FtuiResult<()> {
@@ -532,6 +567,7 @@ impl Renderer {
             Renderable::Container(container) => self.render_container(container)?,
             Renderable::List(list) => self.render_list(list)?,
             Renderable::Document(document) => self.render_document(document)?,
+            Renderable::Message(message) => self.render_message(message)?,
         }
 
         Ok(())
@@ -606,7 +642,6 @@ impl Renderer {
     /// renderer.draw();
     /// ```
     pub fn draw<'a>(&mut self, renderable: impl Into<Renderable<'a>>) -> FtuiResult<()> {
-        self.clear();
         self.render(renderable)?;
 
         let mut stdout = io::stdout().lock();
