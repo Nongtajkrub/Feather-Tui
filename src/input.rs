@@ -137,3 +137,13 @@ pub fn key_char() -> FtuiResult<Option<char>> {
         None => Ok(None),
     }
 } 
+
+pub fn wait_for_keypress() -> FtuiResult<()> {
+    loop {
+        if let Some(_) = key()? {
+            break;
+        }
+        std::thread::sleep(std::time::Duration::from_millis(1));
+    }
+    Ok(())
+}

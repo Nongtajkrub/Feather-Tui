@@ -68,7 +68,7 @@ pub use container::{Container, ContainerBuilder, List, ListBuilder, Document, Do
 pub use renderer::{ready, unready, Renderer};
 
 #[cfg(feature = "reduce_abstraction")]
-pub use input::{line, key, keycode_to_char, key_char};
+pub use input::{line, key, keycode_to_char, key_char, wait_for_keypress};
 
 #[cfg(feature = "reduce_abstraction")]
 pub use error::{FtuiError, FtuiResult};
