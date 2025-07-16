@@ -1,4 +1,4 @@
-use crate::{error::{FtuiError, FtuiResult}, components::Selector};
+use crate::error::{FtuiError, FtuiResult};
 use unicode_segmentation::UnicodeSegmentation;
 
 /// A UI component representing an interactive option in a `Container`. 
@@ -145,23 +145,19 @@ impl Option {
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct OptionsManager {
     components: Vec<Option>,
-    selector: std::option::Option<Selector>, 
+    selector_on: usize,
 }
 
 impl OptionsManager {
     pub(crate) fn new() -> Self {
         Self {
             components: Vec::new(),
-            selector: None,
+            selector_on: 0,
         }
     }
 
     pub(crate) fn add(&mut self, component: Option) {
         self.components.push(component);
-
-        if self.selector.is_none() {
-            self.selector = Some(Selector::new());
-        }
     }
 
     /// Query an `Option` component by its ID (`O(n)` lookup).
@@ -240,11 +236,17 @@ impl OptionsManager {
     /// assert_eq!(container.selector_up()?, false);
     /// ```
     #[inline]
-    pub fn selector_up(&mut self) -> FtuiResult<bool> {
-        Ok(self.selector
-            .as_mut()
-            .ok_or(FtuiError::ContainerNoSelector)?
-            .up(&mut self.components))
+    pub fn selector_up(&mut self) -> bool {
+        if self.selector_on == 0 {
+            return false;
+        }
+
+        // move the selector up
+        self.components[self.selector_on].set_selc_on(false);
+        self.selector_on -= 1;
+        self.components[self.selector_on].set_selc_on(true);
+
+        true
     }
 
     /// Attempts to move the `Selector` down by one position, if possible.
@@ -267,11 +269,17 @@ impl OptionsManager {
     /// assert_eq!(container.selector_up()?, true);
     /// ```
     #[inline]
-    pub fn selector_down(&mut self) -> FtuiResult<bool> {
-        Ok(self.selector
-            .as_mut()
-            .ok_or(FtuiError::ContainerNoSelector)?
-            .down(&mut self.components))
+    pub fn selector_down(&mut self) -> bool {
+        if self.selector_on == self.components.len() - 1 {
+            return false;
+        }
+
+        // move selector down
+        self.components[self.selector_on].set_selc_on(false);
+        self.selector_on += 1;
+        self.components[self.selector_on].set_selc_on(true);
+
+        true
     }
 
     /// Attempts to select the `Option` that the `Selector` is currently on. 
@@ -293,11 +301,13 @@ impl OptionsManager {
     /// assert_eq!(container.selector_select()?, true);
     /// ```
     #[inline]
-    pub fn selector_select(&mut self) -> FtuiResult<bool> {
-        Ok(self.selector
-            .as_mut()
-            .ok_or(FtuiError::ContainerNoSelector)?
-            .select(&mut self.components)?)
+    pub fn selector_select(&mut self) -> bool {
+        if self.components.is_empty() {
+            return false;
+        }
+
+        self.components[self.selector_on].set_is_selc(true);
+        true
     }
 
 
