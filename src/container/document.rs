@@ -1,4 +1,4 @@
-use crate::{components::{TextFlags, Text}, error::FtuiResult};
+use crate::{components::{TextFlags, Text}, error::FtuiResult, renderer::Renderer};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Document {
@@ -80,6 +80,10 @@ impl DocumentBuilder {
     pub fn data(mut self, data: impl ToString) -> Self {
         self.document.data = data.to_string(); 
         self
+    }
+
+    pub fn instant_draw(self, renderer: &mut Renderer) -> FtuiResult<()> {
+        renderer.draw(self.document)
     }
 
     pub fn build(self) -> Document {
