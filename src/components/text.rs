@@ -1,4 +1,4 @@
-use crate::{error::{FtuiError, FtuiResult}, util::ansi};
+use crate::{components::text, error::{FtuiError, FtuiResult}, util::ansi};
 use bitflags::bitflags;
 use unicode_segmentation::UnicodeSegmentation;
 
@@ -273,6 +273,21 @@ impl Text {
         Ok(text)
     }
 
+    pub(crate) fn resolve_pos_custom_len(&mut self, renderer_width: u16, len: usize) {
+        if self.flags.contains(TextFlags::ALIGN_MIDDLE) {
+            self.pos = ((renderer_width as f32 - len as f32) / 2.0).round() as u16 
+        } else if self.flags.contains(TextFlags::ALIGN_RIGHT) {
+            self.pos = (renderer_width as usize - len) as u16
+        } else {
+            self.pos = 0
+        }
+    }
+
+    #[inline]
+    pub(crate) fn resolve_pos(&mut self, renderer_width: u16) {
+        self.resolve_pos_custom_len(renderer_width, self.len);
+    }
+
     pub fn label(&self) -> &String {
         return &self.label;
     }
@@ -351,7 +366,7 @@ impl TextsManager {
         self.components.push(component);
     }
 
-    /// Query an `Text` component by its ID (`O(n)` lookup).
+    /// Queryan `Text` component by its ID (`O(n)` lookup).
     ///
     /// # Parameters
     /// - `id`: The ID of the `Text` component to query.

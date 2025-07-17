@@ -325,27 +325,9 @@ impl Renderer {
         }
     }
 
-    /// Resolve a `Text` component position with a custom specified lenght.
-    fn resolve_text_pos_with_len(&self, text: &mut cpn::Text, len: usize) {
-        // x pos
-        if text.flags().contains(cpn::TextFlags::ALIGN_MIDDLE) {
-            text.set_pos(Self::calc_middle_align_pos(self.width, len));
-        } else if text.flags().contains(cpn::TextFlags::ALIGN_RIGHT) {
-            text.set_pos(Self::calc_right_align_pos(self.width, len));
-        } else {
-            // default to left alignment
-            text.set_pos(Self::calc_left_align_pos());
-        } 
-    }
-
-    #[inline]
-    fn resolve_text_pos(&self, text: &mut cpn::Text) {
-        self.resolve_text_pos_with_len(text, text.len());
-    }
-
     fn render_header(&mut self, header: &mut cpn::Text) -> FtuiResult<()> {
         self.ensure_label_inbound(header.len())?;
-        self.resolve_text_pos(header);
+        header.resolve_pos(self.width);
 
         let line = &mut self.lines[header.line() as usize];
 
@@ -357,7 +339,7 @@ impl Renderer {
 
     fn render_footer(&mut self, footer: &mut cpn::Text) -> FtuiResult<()> {
         self.ensure_label_inbound(footer.len())?;
-        self.resolve_text_pos(footer);
+        footer.resolve_pos(self.width);
         footer.set_line(Self::calc_bottom_align_pos(self.height));
 
         let line = &mut self.lines[footer.line() as usize];
@@ -413,7 +395,7 @@ impl Renderer {
     fn render_texts(&mut self, texts: &mut [cpn::Text]) -> FtuiResult<()> {
         for text in texts.iter_mut() {
             self.ensure_label_inbound(text.len())?;
-            self.resolve_text_pos(text);
+            text.resolve_pos(self.width);
 
             let line = &mut self.lines[text.line() as usize];
 
@@ -520,7 +502,7 @@ impl Renderer {
             .enumerate() 
         {
             self.ensure_label_inbound(elt.len())?;
-            self.resolve_text_pos_with_len(elt, elt.len() + num_prefix);
+            elt.resolve_pos_custom_len(self.width, elt.len() + num_prefix);
 
             let line = &mut self.lines[i + skip_top];
 
