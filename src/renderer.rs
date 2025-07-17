@@ -1,7 +1,7 @@
 use crate::{
     components::{self as cpn},
     container::{Container, Document, List, Message},
-    error::{FtuiError, FtuiResult}, util::{ansi, number as num, mom::Mom}};
+    error::{FtuiError, FtuiResult}, util::{ansi, mom::Mom, number as num}};
 use std::io::{self, Write};
 use crossterm as ct;
 
@@ -210,6 +210,16 @@ pub struct Renderer {
 }
 
 impl Renderer {
+    /// Create a Renderer without checking the terminal size.
+    fn new_uncheck(width: u16, height: u16) -> Renderer {
+        Renderer {
+            width,
+            height,
+            lines: Self::make_lines(width, height),
+            bounds: true,
+        }
+    }
+
     /// Constructs a new `Renderer` with the specified width and height.
     ///
     /// # Parameters
@@ -224,12 +234,13 @@ impl Renderer {
     /// // Create a Renderer with a width of 40 and a height of 20 characters.
     /// let renderer = Renderer::new(40, 20);
     /// ```
-    pub fn new(width: u16, height: u16) -> Renderer {
-        Renderer {
-            width,
-            height,
-            lines: Self::make_lines(width, height),
-            bounds: true,
+    pub fn new(width: u16, height: u16) -> FtuiResult<Renderer> {
+        let (term_width, term_height) = ct::terminal::size()?;
+
+        if width > term_width || height > term_height {
+            Err(FtuiError::RendererTerminalToSmall)
+        } else {
+            Ok(Self::new_uncheck(width, height))
         }
     }
 
@@ -246,7 +257,27 @@ impl Renderer {
     /// ```
     pub fn fullscreen() -> FtuiResult<Renderer> {
         let (width, height) = ct::terminal::size()?;
-        Ok(Self::new(width, height))
+        Ok(Self::new_uncheck(width, height))
+    }
+
+    pub fn fullwidth(height: u16) -> FtuiResult<Renderer> {
+        let (width, term_height) = ct::terminal::size()?;
+        
+        if height > term_height {
+            Err(FtuiError::RendererTerminalToSmall)
+        } else {
+            Ok(Self::new_uncheck(width, height))
+        }
+    }
+
+    pub fn fullheight(width: u16) -> FtuiResult<Renderer> {
+        let (term_width, height) = ct::terminal::size()?;
+        
+        if width > term_width {
+            Err(FtuiError::RendererTerminalToSmall)
+        } else {
+            Ok(Self::new_uncheck(width, height))
+        }
     }
 
     pub fn disble_bounds(&mut self) {
