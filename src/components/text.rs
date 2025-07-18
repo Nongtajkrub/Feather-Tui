@@ -1,4 +1,4 @@
-use crate::{components::text, error::{FtuiError, FtuiResult}, util::ansi};
+use crate::{error::{FtuiError, FtuiResult}, util::ansi};
 use bitflags::bitflags;
 use unicode_segmentation::UnicodeSegmentation;
 
@@ -324,16 +324,8 @@ impl Text {
         return self.len;
     }
 
-    pub(crate) fn set_pos(&mut self, pos: u16) {
-        self.pos = pos;
-    }
-
     pub(crate) fn pos(&self) -> u16 {
         return self.pos;
-    }
-
-    pub(crate) fn flags(&self) -> &TextFlags {
-        return &self.flags;
     }
 
     pub(crate) fn styles(&self) -> &[&'static str] {

@@ -296,20 +296,6 @@ impl Renderer {
     }
 
     // A static method because it often cause borrow checker problem.
-    /// Caculate the position of a left-aligned component.
-    #[inline]
-    fn calc_right_align_pos(width: u16, len: usize) -> u16 {
-        (width as usize - len) as u16
-    }
-
-    // A static method because it often cause borrow checker problem.
-    /// Caculate the position of a left-aligned component.
-    #[inline]
-    fn calc_left_align_pos() -> u16 {
-        0
-    }
-
-    // A static method because it often cause borrow checker problem.
     /// Caculate the position of a bottom-aligned component.
     #[inline]
     fn calc_bottom_align_pos(height: u16) -> u16 {
