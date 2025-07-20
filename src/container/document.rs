@@ -1,4 +1,5 @@
 use crate::{components::{TextFlags, Text}, error::FtuiResult, renderer::Renderer};
+use std::{fs, path::Path};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Document {
@@ -78,8 +79,13 @@ impl DocumentBuilder {
     }
 
     pub fn data(mut self, data: impl ToString) -> Self {
-        self.document.data = data.to_string(); 
+        self.document.data = data.to_string().trim().to_owned(); 
         self
+    }
+
+    pub fn from_file(mut self, path: impl AsRef<Path>) -> FtuiResult<Self> {
+        self.document.data = fs::read_to_string(path.as_ref())?.trim().to_owned(); 
+        Ok(self)
     }
 
     pub fn instant_draw(self, renderer: &mut Renderer) -> FtuiResult<()> {
