@@ -30,7 +30,6 @@ pub fn ready() -> FtuiResult<()> {
         ansi::ESC_CLEAR_TERM, ansi::ESC_CURSOR_HOME, ansi::ESC_CURSOR_HIDE);
 
     io::stdout().flush()?;
-
     Ok(())
 }
 
@@ -59,7 +58,6 @@ pub fn unready() -> FtuiResult<()> {
         ansi::ESC_CLEAR_TERM, ansi::ESC_CURSOR_HOME, ansi::ESC_CURSOR_SHOW);
 
     io::stdout().flush()?;
-
     Ok(())
 }
 
@@ -174,6 +172,12 @@ impl_renderable_from!(Container, Container);
 impl_renderable_from!(List, List);
 impl_renderable_from!(Document, Document);
 impl_renderable_from!(Message, Message);
+
+impl AsMut<Renderer> for Renderer {
+    fn as_mut(&mut self) -> &mut Renderer {
+        self
+    }
+}
 
 /// A `Renderer` is responsible for rendering the UI to the terminal. It takes 
 /// a `Container` and displays its components on the screen.

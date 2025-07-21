@@ -534,8 +534,8 @@ impl ContainerBuilder {
         self.separator_dotted_expl(cpn::Separator::dotted(style))
     }
 
-    pub fn instant_draw(self, renderer: &mut Renderer) -> FtuiResult<()> {
-        renderer.draw(self.container)
+    pub fn instant_draw(self, mut renderer: impl AsMut<Renderer>) -> FtuiResult<()> {
+        renderer.as_mut().draw(self.container)
     }
 
     /// Finalizes the construction of a `Container`. This method should be called

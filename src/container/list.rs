@@ -1,5 +1,5 @@
 use crate::{
-    components::{Text, TextFlags}, error::{FtuiError, FtuiResult}, util::id::IdGenerator
+    components::{Text, TextFlags}, error::{FtuiError, FtuiResult}, renderer::Renderer, util::id::IdGenerator
 };
 
 #[doc = "⚠️ **Experimental** ⚠️"]
@@ -400,6 +400,10 @@ impl ListBuilder {
     pub fn number(mut self) -> Self {
         self.list.number = true;
         self
+    }
+
+    pub fn instant_draw(self, mut renderer: impl AsMut<Renderer>) -> FtuiResult<()> {
+        renderer.as_mut().draw(self.list)
     }
 
     /// Finalizes the construction of a `List`. This method should be called

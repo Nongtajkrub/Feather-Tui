@@ -88,8 +88,8 @@ impl DocumentBuilder {
         Ok(self)
     }
 
-    pub fn instant_draw(self, renderer: &mut Renderer) -> FtuiResult<()> {
-        renderer.draw(self.document)
+    pub fn instant_draw(self, mut renderer: impl AsMut<Renderer>) -> FtuiResult<()> {
+        renderer.as_mut().draw(self.document)
     }
 
     pub fn build(self) -> Document {
