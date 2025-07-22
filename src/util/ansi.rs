@@ -24,18 +24,18 @@ pub(crate) const ESC_BOLD: &str = "\x1b[1m";
 pub(crate) const ESC_DIM: &str = "\x1b[2m";
 pub(crate) const ESC_ITALIC: &str = "\x1b[3m";
 pub(crate) const ESC_UNDERLINE: &str = "\x1b[4m";
-pub(crate) const _ESC_BLINK: &str = "\x1b[5m";             // Not use
-pub(crate) const _ESC_REVERSED: &str = "\x1b[7m";          // Not use 
-pub(crate) const _ESC_HIDDEN: &str = "\x1b[8m";            // Not use
+pub(crate) const _ESC_BLINK: &str = "\x1b[5m";
+pub(crate) const _ESC_REVERSED: &str = "\x1b[7m";
+pub(crate) const _ESC_HIDDEN: &str = "\x1b[8m";
 pub(crate) const ESC_STRIKETHROUGH: &str = "\x1b[9m";
-pub(crate) const _ESC_DOUBLE_UNDERLINE: &str = "\x1b[21m"; // Not work
-pub(crate) const _ESC_OVERLINE: &str = "\x1b[53m";         // Not work
+pub(crate) const _ESC_DOUBLE_UNDERLINE: &str = "\x1b[21m";
+pub(crate) const _ESC_OVERLINE: &str = "\x1b[53m";
 pub(crate) const ESC_STYLE_RESET: &str = "\x1B[0m";
 
 // cursors
 pub(crate) const ESC_CURSOR_HOME: &str = "\x1b[H";
-pub(crate) const ESC_CURSOR_HIDE: &str = "\x1b[?25l";
-pub(crate) const ESC_CURSOR_SHOW: &str = "\x1b[?25h";
+pub(crate) const _ESC_CURSOR_HIDE: &str = "\x1b[?25l";
+pub(crate) const _ESC_CURSOR_SHOW: &str = "\x1b[?25h";
 
 // terminal
-pub(crate) const ESC_CLEAR_TERM: &str = "\x1b[2J";
+pub(crate) const _ESC_CLEAR_TERM: &str = "\x1b[2J";

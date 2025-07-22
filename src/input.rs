@@ -1,4 +1,4 @@
-use crate::{error::FtuiResult, renderer as ren};
+use crate::error::FtuiResult;
 use std::io::{self, Write};
 use crossterm as ct;
 
@@ -23,16 +23,21 @@ use crossterm as ct;
 /// };
 /// ```
 pub fn line(promt: &str) -> FtuiResult<String> {
-    ren::unready()?;
+    let mut stdout = io::stdout();
+    ct::execute!(
+        stdout,
+        ct::terminal::Clear(ct::terminal::ClearType::All), ct::cursor::Show)?;
 
     print!("{} -> ", promt);
-    
-    io::stdout().flush()?;
+    stdout.flush()?;
 
     let mut line = String::new();
     io::stdin().read_line(&mut line)?;
 
-    ren::ready()?;
+    ct::execute!(
+        stdout,
+        ct::terminal::Clear(ct::terminal::ClearType::All),
+        ct::cursor::Hide, ct::cursor::MoveTo(0, 0))?;
     Ok(line)
 }
 
@@ -60,7 +65,6 @@ pub fn line(promt: &str) -> FtuiResult<String> {
 /// ```
 pub fn key() -> FtuiResult<Option<ct::event::KeyCode>> {
     let mut key_code: Option<ct::event::KeyCode> = None;
-    
     ct::terminal::enable_raw_mode()?;
 
     if ct::event::poll(std::time::Duration::from_millis(16))? {

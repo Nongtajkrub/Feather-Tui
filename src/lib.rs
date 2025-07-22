@@ -30,6 +30,7 @@ pub mod renderer;
 pub mod input;
 /// Provides custom error types and a result type alias for error handling in `Feather-TUI`.
 pub mod error;
+pub mod terminal;
 
 mod     util;
 
@@ -65,10 +66,13 @@ pub use components::{Option, Text, TextFlags, Separator, SeparatorStyle};
 pub use container::{Container, ContainerBuilder, List, ListBuilder, Document, DocumentBuilder, Message, MessageStyle};
 
 #[cfg(feature = "reduce_abstraction")]
-pub use renderer::{ready, unready, Renderer};
+pub use renderer::Renderer;
 
 #[cfg(feature = "reduce_abstraction")]
 pub use input::{line, key, keycode_to_char, key_char, wait_for_keypress};
 
 #[cfg(feature = "reduce_abstraction")]
 pub use error::{FtuiError, FtuiResult};
+
+#[cfg(feature = "reduce_abstraction")]
+pub use terminal::{ready, unready, clear};
