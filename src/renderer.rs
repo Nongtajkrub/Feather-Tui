@@ -541,7 +541,7 @@ impl Renderer {
 
             // Exclude lines containing only whitesapce unless it have ANSIs.
             if !line.data.trim().is_empty() || have_ansi {
-                buf.push_str(&line.data.trim());
+                buf.push_str(if have_ansi { &line.data } else { line.data.trim() });
             }
 
             // Only include the ANSI reset suffix if the line have ANSIs.
