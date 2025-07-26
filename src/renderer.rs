@@ -535,7 +535,10 @@ impl Renderer {
         for (i, line) in self.lines.iter().enumerate() {
             buf.push_str(&line.ansi.concat());
             buf.push_str(&line.data);
-            buf.push_str(&reset_suffix);
+
+            if !line.ansi.is_empty() {
+                buf.push_str(&reset_suffix);
+            }
 
             if i != (self.height - 1) as usize {
                 buf.push('\n');
