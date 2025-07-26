@@ -6,6 +6,7 @@ pub struct Document {
     header: Option<Text>,
     footer: Option<Text>,
     data: String,
+    offset: usize,
     flags: TextFlags,
     style: Vec<&'static str>,
 }
@@ -16,9 +17,31 @@ impl Document {
             header: None,
             footer: None,
             data: String::new(),
+            offset: 1,
             flags: TextFlags::NONE,
             style: Vec::new(), 
         }
+    }
+
+    pub fn scroll_up(&mut self) -> bool {
+        if self.offset != 0 {
+            self.offset -= 1;
+            true
+        } else {
+            false
+        }
+    }
+
+    #[inline]
+    pub fn scroll_down(&mut self) -> bool {
+        // Bounds checking is done in the `Renderer`.
+        self.offset += 1;
+        true
+    }
+
+    #[inline]
+    pub(crate) fn offset_ensure_in_bound(&mut self, bound: usize) {
+        self.offset = self.offset.min(bound);
     }
 
     pub(crate) fn header(&self) -> &Option<Text> {
@@ -43,6 +66,10 @@ impl Document {
 
     pub(crate) fn style(&self) -> &[&'static str] {
         &self.style
+    }
+
+    pub(crate) fn offset(&self) -> usize {
+        self.offset
     }
 }
 

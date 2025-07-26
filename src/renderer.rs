@@ -1,6 +1,6 @@
 use crate::{
     components::{self as cpn},
-    container::{Container, Document, List, Message},
+    container::{Container, Document, DocumentBuilder, List, Message},
     error::{FtuiError, FtuiResult}, util::{ansi, mom::Mom, number as num}};
 use std::io::{self, Write};
 use crossterm as ct;
@@ -432,13 +432,15 @@ impl Renderer {
     }
 
     fn render_document(&mut self, document: &mut Document) -> FtuiResult<()> {
-        let width = self.width as usize;
-        let height = self.height as usize;
         let len = document.data().len();
         let wrap_n = (len as f64 / self.width as f64).ceil() as usize;
+        let width = self.width as usize;
+        let height = self.height as usize;
         let skip_top = if document.header().is_some() { 1 } else { 0 };
         let skip_bottom = if document.footer().is_some() { 1 } else { 0 };
-        let max_lines = (height - 1) - skip_bottom; 
+        let max_lines = (height - 1) - skip_bottom;
+        document.offset_ensure_in_bound(wrap_n - 1);
+        let offset = document.offset();
 
         self.clear();
 
@@ -446,9 +448,9 @@ impl Renderer {
             self.render_header(header)?;
         }
 
-        for i in (0..wrap_n).take(max_lines) {
+        for i in (0..wrap_n - offset).take(max_lines) {
             let line = &mut self.lines[i + skip_top];
-            let begin = i * width;
+            let begin = (i + offset) * width;
             let end = (begin + len.min(width)).min(len);
 
             line.edit(&document.data()[begin..end], 0);
