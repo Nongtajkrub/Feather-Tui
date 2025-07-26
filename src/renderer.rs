@@ -532,11 +532,20 @@ impl Renderer {
         let mut buf = String::with_capacity(((self.height * self.width) + 40) as usize);
         let reset_suffix = format!("{}{}", ansi::ESC_COLOR_RESET, ansi::ESC_STYLE_RESET);
 
-        for (i, line) in self.lines.iter().enumerate() {
-            buf.push_str(&line.ansi.concat());
-            buf.push_str(&line.data);
+        buf.push_str(ansi::_ESC_CLEAR_TERM);
 
-            if !line.ansi.is_empty() {
+        for (i, line) in self.lines.iter().enumerate() {
+            let have_ansi = !line.ansi.is_empty();
+
+            buf.push_str(&line.ansi.concat());
+
+            // Exclude lines containing only whitesapce unless it have ANSIs.
+            if !line.data.trim().is_empty() || have_ansi {
+                buf.push_str(&line.data);
+            }
+
+            // Only include the ANSI reset suffix if the line have ANSIs.
+            if have_ansi {
                 buf.push_str(&reset_suffix);
             }
 
@@ -579,5 +588,22 @@ impl Renderer {
         stdout.flush()?;
 
         Ok(())
+    }
+
+    pub fn draw_bech<'a>(&mut self, renderable: impl Into<Renderable<'a>>) -> FtuiResult<std::time::Duration> {
+        self.render(renderable)?;
+
+        let mut stdout = io::stdout().lock();
+
+        use std::time::Instant;
+        let start = Instant::now();
+
+        stdout.write_all(self.to_string().as_bytes())?;
+        stdout.flush()?;
+
+        let duration = start.elapsed();
+
+        crate::terminal::clear()?;
+        Ok(duration)
     }
 }
