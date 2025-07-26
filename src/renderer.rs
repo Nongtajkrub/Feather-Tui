@@ -1,6 +1,6 @@
 use crate::{
     components::{self as cpn},
-    container::{Container, Document, DocumentBuilder, List, Message},
+    container::{Container, Document, List, Message},
     error::{FtuiError, FtuiResult}, util::{ansi, mom::Mom, number as num}};
 use std::io::{self, Write};
 use crossterm as ct;
