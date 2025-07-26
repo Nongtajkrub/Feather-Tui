@@ -79,7 +79,7 @@ impl DocumentBuilder {
     }
 
     pub fn data(mut self, data: impl ToString) -> Self {
-        self.document.data = data.to_string().trim().to_owned(); 
+        self.document.data = data.to_string(); 
         self
     }
 
