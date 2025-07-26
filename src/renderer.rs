@@ -591,21 +591,4 @@ impl Renderer {
 
         Ok(())
     }
-
-    pub fn draw_bech<'a>(&mut self, renderable: impl Into<Renderable<'a>>) -> FtuiResult<std::time::Duration> {
-        self.render(renderable)?;
-
-        let mut stdout = io::stdout().lock();
-
-        use std::time::Instant;
-        let start = Instant::now();
-
-        stdout.write_all(self.to_string().as_bytes())?;
-        stdout.flush()?;
-
-        let duration = start.elapsed();
-
-        crate::terminal::clear()?;
-        Ok(duration)
-    }
 }
