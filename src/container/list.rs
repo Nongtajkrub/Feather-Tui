@@ -177,11 +177,14 @@ impl List {
     /// // Find the index of the element by its ID.
     /// let index = list.find(id)?;
     /// ```
-    pub fn find(&self, id: u16) -> FtuiResult<usize> {
-        self.elements
-            .iter()
-            .position(|element| element.id() == id)
-            .ok_or(FtuiError::ListNoElementById)
+    #[inline]
+    pub fn find_id(&self, id: u16) -> Option<usize> {
+        self.elements.iter().position(|element| element.id() == id)
+    }
+
+    #[inline]
+    pub fn find_label(&self, label: &str) -> Option<usize> {
+        self.elements.iter().position(|element| element.label() == label)
     }
 
     /// Returns a reference to the element at the given index, if it exists.
@@ -208,6 +211,14 @@ impl List {
     pub fn at(&self, i: usize) -> FtuiResult<&Text> {
         if i < self.elements.len() {
             Ok(&self.elements[i])
+        } else {
+            Err(FtuiError::ListIndexOutOfBound)
+        }
+    }
+
+    pub fn at_mut(&mut self, i: usize) -> FtuiResult<&mut Text> {
+        if i < self.elements.len() {
+            Ok(&mut self.elements[i])
         } else {
             Err(FtuiError::ListIndexOutOfBound)
         }

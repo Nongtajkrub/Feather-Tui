@@ -95,7 +95,7 @@ pub enum FtuiError {
     /// list.find(id + 1)?; 
     /// ```
     #[error("No element found with the specified ID.")]
-    ListNoElementById,
+    ListFailToFindElement,
 
     #[error("")]
     RendererTerminalToSmall,
@@ -186,7 +186,6 @@ impl PartialEq for FtuiError {
             (TextFlagMultipleColor, TextFlagMultipleColor) => true,
             (ContainerNoComponentById, ContainerNoComponentById) => true,
             (ListIndexOutOfBound, ListIndexOutOfBound) => true,
-            (ListNoElementById, ListNoElementById) => true,
             (RendererContainerTooBig, RendererContainerTooBig) => true,
             (StdInputOutputError(_), StdInputOutputError(_)) => true,
             _ => false,

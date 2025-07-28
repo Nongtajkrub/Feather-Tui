@@ -288,7 +288,7 @@ impl Text {
         self.resolve_pos_custom_len(renderer_width, self.len);
     }
 
-    pub fn label(&self) -> &String {
+    pub(crate) fn label(&self) -> &String {
         return &self.label;
     }
 
