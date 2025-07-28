@@ -43,73 +43,6 @@ pub enum FtuiError {
     #[error("TextFlags cannot contain multiple color.")]
     TextFlagMultipleColor,
 
-    /// Occurs when attempting to create a `Header` component with an empty label.
-    ///
-    /// # Example
-    /// ```rust
-    /// fn main() -> FtuiResult<()> {
-    ///     // Creating a header with an empty label results in an error.
-    ///     Header::new("")?;
-    ///     
-    ///     Ok(())
-    /// }
-    /// ```
-    #[error("A Header label cannot be empty.")]
-    HeaderLabelEmpty,
-
-    /// Occurs when attempting to create an `Option` component with an empty label.
-    ///
-    /// # Example
-    /// ```rust
-    /// fn main() -> FtuiResult<()> {
-    ///     // Creating an option with an empty label results in an error.
-    ///     // Assuming the callback is created elsewhere.
-    ///     Option::new("", ...)?;
-    ///     
-    ///     Ok(())
-    /// }
-    /// ```
-    #[error("An Option label cannot be empty.")]
-    OptionLabelEmpty,
-
-    /// Occurs when calling `Container::loop` on a container that has `Option`
-    /// components but does not have a `Selector`.
-    ///
-    /// # Example
-    /// ```rust
-    /// fn main() -> FtuiResult<()> {
-    ///     // Create a container with an option component. 
-    ///     let mut container = ContainerBuilder::new() 
-    ///         .option(...)?;
-    ///     
-    ///     // Attempting to call the loop method without a selector
-    ///     container.looper()?;
-    ///
-    ///     Ok(())
-    /// }
-    /// ```
-    #[error("The container's looper method requires a Selector.")]
-    ContainerLooperNoSelector,
-
-    /// Occurs when attempting to use `Container` functionality that
-    /// requires a `Selector`, but the `Container` does not have one.
-    ///
-    /// # Example
-    /// ```rust
-    /// fn main() -> FtuiResult<()> {
-    ///     // Create a container without a selector. 
-    ///     let mut container = ContainerBuilder::new().build();
-    ///     
-    ///     // Attempting to call `selector_mut` on a container without a selector
-    ///     // results in the error.
-    ///     container.selector_mut()?;
-    ///
-    ///     Ok(())
-    /// }
-    /// ```
-    #[error("Container doesnot have a Selector.")]
-    ContainerNoSelector,
-
     /// Occurs when attempting to query a component by its ID, but no such
     /// component exists in the container.
     ///
@@ -251,16 +184,11 @@ impl PartialEq for FtuiError {
         match (self, other) {
             (TextFlagNoneWithOther, TextFlagNoneWithOther) => true,
             (TextFlagMultipleColor, TextFlagMultipleColor) => true,
-            (HeaderLabelEmpty, HeaderLabelEmpty) => true,
-            (OptionLabelEmpty, OptionLabelEmpty) => true,
-            (ContainerLooperNoSelector, ContainerLooperNoSelector) => true,
-            (ContainerNoSelector, ContainerNoSelector) => true,
             (ContainerNoComponentById, ContainerNoComponentById) => true,
             (ListIndexOutOfBound, ListIndexOutOfBound) => true,
             (ListNoElementById, ListNoElementById) => true,
             (RendererContainerTooBig, RendererContainerTooBig) => true,
             (StdInputOutputError(_), StdInputOutputError(_)) => true,
-
             _ => false,
         }
     }
