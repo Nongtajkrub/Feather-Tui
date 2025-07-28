@@ -274,7 +274,7 @@ impl ContainerBuilder {
     /// ```
     #[inline]
     pub fn option(self, label: impl ToString) -> FtuiResult<Self> {
-        Ok(self.option_expl(cpn::Option::new(label)?))
+        Ok(self.option_expl(cpn::Option::new(label)))
     }
 
     /// Explicitly add an `Option` component to the `Container` and stores its ID. 
@@ -330,7 +330,7 @@ impl ContainerBuilder {
     /// ```
     #[inline]
     pub fn option_id(self, label: impl ToString, store_id: &mut u16) -> FtuiResult<Self> {
-        Ok(self.option_id_expl(cpn::Option::new(label)?, store_id))
+        Ok(self.option_id_expl(cpn::Option::new(label), store_id))
     }
 
     /// Explicitly add a `Text` component to the `Container`. Unlike the `text`
