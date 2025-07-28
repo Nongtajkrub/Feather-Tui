@@ -17,7 +17,7 @@ impl Document {
             header: None,
             footer: None,
             data: String::new(),
-            offset: 1,
+            offset: 0,
             flags: TextFlags::NONE,
             style: Vec::new(), 
         }
