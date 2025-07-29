@@ -231,7 +231,6 @@ impl OptionsManager {
     /// // The `Selector` cannot move up since it is at the top.
     /// assert_eq!(container.selector_up()?, false);
     /// ```
-    #[inline]
     pub fn selector_up(&mut self) -> bool {
         if self.selector_on == 0 {
             return false;
@@ -264,7 +263,6 @@ impl OptionsManager {
     /// // The `Selector` can move up since it is not at the bottom.
     /// assert_eq!(container.selector_up()?, true);
     /// ```
-    #[inline]
     pub fn selector_down(&mut self) -> bool {
         if self.selector_on == self.components.len() - 1 {
             return false;
@@ -296,7 +294,6 @@ impl OptionsManager {
     /// // Selecting the current `Option` is always possible unless an error occurs.
     /// assert_eq!(container.selector_select()?, true);
     /// ```
-    #[inline]
     pub fn selector_select(&mut self) -> bool {
         if self.components.is_empty() {
             return false;
