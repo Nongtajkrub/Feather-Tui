@@ -163,25 +163,46 @@ impl List {
     /// - `id`: The ID of the `Text` component to search for.
     ///
     /// # Returns
-    /// - `Ok(usize)`: The index of the element with the specified ID.
-    /// - `Err(FtuiError)`: Return an error.
+    /// - `Some(usize)`: The index of the element if a match is found.
+    /// - `None`: If no element with the specified ID exists.
     ///
     /// # Example
     /// ```rust
     /// // Create a new `List`.
     /// let mut list = ListBuilder::new().build();
     ///
-    /// // Add an element to the list and retrieve its ID.
+    /// // Add an element and get its ID.
     /// let id = list.add(...)?;
     ///
-    /// // Find the index of the element by its ID.
-    /// let index = list.find(id)?;
+    /// // Retrieve the index of the element by its ID.
+    /// let index = list.find_id(id)?;
     /// ```
     #[inline]
     pub fn find_id(&self, id: u16) -> Option<usize> {
         self.elements.iter().position(|element| element.id() == id)
     }
 
+
+    /// Returns the index of the first element that matches the given label.
+    ///
+    /// # Parameters
+    /// - `label`: The label of the element to search for.
+    ///
+    /// # Returns
+    /// - `Some(usize)`: The index of the first element with the specified label.
+    /// - `None`: If no element with the given label exists.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a new `List`.
+    /// let mut list = ListBuilder::new().build();
+    ///
+    /// // Add an element with a label and retrieve its ID.
+    /// let id = list.add("label!", ...)?;
+    ///
+    /// // Find the index of the element by its label.
+    /// let index = list.find_label("label!");
+    /// ```
     #[inline]
     pub fn find_label(&self, label: &str) -> Option<usize> {
         self.elements.iter().position(|element| element.label() == label)
