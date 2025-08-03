@@ -79,6 +79,28 @@ impl List {
         Ok(id)
     }
 
+    /// Adds multiple text elements to the `List`.
+    ///
+    /// # Parameters
+    /// - `labels`: An iterable collection of items that can be converted to strings.
+    /// - `flags`: A set of `TextFlags` combined using the bitwise OR operator.
+    ///
+    /// # Notes
+    /// - The bitwise OR operator combines flags like this: `flag1 | flag2 | flag3`
+    /// - A `List` element is just a `Text` component.
+    ///
+    /// # Returns
+    /// - `Ok(())`: Returns nothing. 
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// let mut list = ListBuilder::new().build();
+    ///
+    /// list.add_many(
+    ///     vec!["Element1", "Element2"],
+    ///     TextFlags::COLOR_RED | TextFlags::STYLE_BOLD)?;
+    /// ```
     pub fn add_many<T>(
         &mut self,
         labels: impl IntoIterator<Item = T>, flags: impl Into<Option<TextFlags>>
