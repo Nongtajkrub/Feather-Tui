@@ -259,6 +259,27 @@ impl List {
         }
     }
 
+    /// Returns a mutable reference to the element at the given index, if it exists.
+    ///
+    /// # Parameters
+    /// - `i`: The index of the element to retrieve.
+    ///
+    /// # Returns
+    /// - `Ok(&mut Text)`: A mutable reference to the element at the specified index.
+    /// - `Err(FtuiError)`: Returns an error. 
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a new `List`.
+    /// let mut list = ListBuilder::new().build();
+    ///
+    /// // Add elements to the list.
+    /// list.add(...)?;
+    /// list.add(...)?;
+    ///
+    /// // Access the first element.
+    /// list.at(0)?;
+    /// ```
     pub fn at_mut(&mut self, i: usize) -> FtuiResult<&mut Text> {
         if i < self.elements.len() {
             Ok(&mut self.elements[i])
