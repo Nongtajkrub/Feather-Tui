@@ -355,6 +355,23 @@ impl ContainerBuilder {
         self
     }
 
+    /// Renders the current `Container` directly to the terminal without
+    /// creating and returning a new one.
+    ///
+    /// # Parameters
+    /// - `renderer`: A mutable type that implements `AsMut<Renderer>`.
+    ///
+    /// # Returns
+    /// - `Ok(())` if the container was successfully drawn.
+    /// - `Err(FtuiError)` if rendering failed.
+    ///
+    /// # Example
+    /// ```rust
+    /// ContainerBuilder::new()
+    ///     .header(...)?
+    ///     .option(...)
+    ///     .instant_draw(Renderer::new(...))?;
+    /// ```
     pub fn instant_draw(self, mut renderer: impl AsMut<Renderer>) -> FtuiResult<()> {
         renderer.as_mut().draw(self.container)
     }
