@@ -383,30 +383,6 @@ impl ListBuilder {
         }
     }
 
-    /// Explicitly sets a `Header` component for the `List`. Unlike the `header`
-    /// method, which takes a label and internally constructs a `Header`, this 
-    /// method allows you to directly provide a preconstructed `Header` component.
-    ///
-    /// # Parameters
-    /// - `header`: A `Header` component.
-    ///
-    /// # Returns
-    /// - `ListBuilder`: Returns `self`.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a `Header` component.
-    /// let header = Header::new(...)?;
-    ///
-    /// // Set a preconstructed `Header` component.
-    /// ListBuilder::new()
-    ///     .header_expl(header);
-    /// ```
-    pub fn header_expl(mut self, header: Text) -> Self {
-        self.list.header = Some(header);
-        self
-    }
-
     /// Sets a `Header` component for the `List`.
     ///
     /// # Parameters
@@ -424,21 +400,18 @@ impl ListBuilder {
     /// ```
     #[inline]
     pub fn header(
-        self, label: impl ToString, flags: impl Into<Option<TextFlags>>
+        mut self, label: impl ToString, flags: impl Into<Option<TextFlags>>
     ) -> FtuiResult<Self> {
-        Ok(self.header_expl(Text::new(label, flags)?))
-    }
-
-    pub fn footer_expl(mut self, footer: Text) -> Self {
-        self.list.footer = Some(footer);
-        self
+        self.list.header = Some(Text::new(label, flags)?);
+        Ok(self)
     }
 
     #[inline]
     pub fn footer(
-        self, label: impl ToString, flags: impl Into<Option<TextFlags>>
+        mut self, label: impl ToString, flags: impl Into<Option<TextFlags>>
     ) -> FtuiResult<Self> {
-        Ok(self.footer_expl(Text::new(label, flags)?))
+        self.list.footer = Some(Text::new(label, flags)?);
+        Ok(self)
     }
 
     /// Sets the default `TextFlags` to be used when adding elements to the `List`.
