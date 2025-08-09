@@ -141,8 +141,8 @@ impl Container {
 /// // and a selector.
 /// let container: Container = ContainerBuilder::new()
 ///     .header(...)?
-///     .option(...)?
-///     .option(...)?
+///     .option(...)
+///     .option(...)
 ///     .separator_normal(...)
 ///     .text(...)?
 ///     .selector(...)?
@@ -173,10 +173,15 @@ impl ContainerBuilder {
         ContainerBuilder { container: Container::new(), }
     }
 
-    /// Sets a `Header` component for the `Container`.
+    /// Sets the header for the `Container`.
+    ///
+    /// # Notes
+    /// The header behaves similarly to a `Text` component and can display
+    /// styled text using the provided flags.
     ///
     /// # Parameters
-    /// - `label`: A `&str` representing the text to display in the header.
+    /// - `label`: An `impl ToString` is the the text to display in the header.
+    /// - `flags`: An optional set of `TextFlags` combined using the bitwise OR operator.
     ///
     /// # Returns
     /// - `Ok(ContainerBuilder)`: Returns `self`.
@@ -184,9 +189,9 @@ impl ContainerBuilder {
     ///
     /// # Example
     /// ```rust
-    /// // Sets a `Header` component with the label "Welcome".
+    /// // Sets a header with the label "Welcome" in red.
     /// ContainerBuilder::new()
-    ///     .header("Welcome")?;
+    ///     .header("Welcome", TextFlags::COLOR_RED)?;
     /// ```
     #[inline]
     pub fn header(
@@ -196,6 +201,26 @@ impl ContainerBuilder {
         Ok(self)
     }
 
+    /// Sets the footer for the `Container`.
+    ///
+    /// # Notes
+    /// The footer behaves similarly to a `Text` component and can display
+    /// styled text using the provided flags.
+    ///
+    /// # Parameters
+    /// - `label`: An `impl ToString` is the the text to display in the footer.
+    /// - `flags`: An optional set of `TextFlags` combined using the bitwise OR operator.
+    ///
+    /// # Returns
+    /// - `Ok(ContainerBuilder)`: Returns `self`.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Sets a footer with the label "q -> exit" in red.
+    /// ContainerBuilder::new()
+    ///     .footer("q -> exit", TextFlags::COLOR_RED)?;
+    /// ```
     #[inline]
     pub fn footer(
         mut self, label: impl ToString, flags: impl Into<Option<cpn::TextFlags>>
@@ -218,7 +243,7 @@ impl ContainerBuilder {
     /// ```rust
     /// // Add an `Option` component with the label "Option" and no `Callback`.
     /// ContainerBuilder::new()
-    ///     .option("Option", None)?;
+    ///     .option("Option", None);
     /// ```
     #[inline]
     pub fn option(mut self, label: impl ToString) -> Self {
@@ -244,7 +269,7 @@ impl ContainerBuilder {
     /// // Add an `Option` labeled "Option" with no `Callback`,
     /// // storing the generated ID in `id`.
     /// ContainerBuilder::new()
-    ///     .option_id("Option", None, &mut id)?;
+    ///     .option_id("Option", None, &mut id);
     /// ```
     #[inline]
     pub fn option_id(mut self, label: impl ToString, store_id: &mut u16) -> Self {
@@ -387,8 +412,8 @@ impl ContainerBuilder {
     /// ```rust
     /// let container: Container = ContainerBuilder::new()
     ///     .header(...)?
-    ///     .option(...)?
-    ///     .option(...)?
+    ///     .option(...)
+    ///     .option(...)
     ///     .separator_normal(...)
     ///     .text(...)?
     ///     .selector(...)?
