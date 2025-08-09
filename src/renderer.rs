@@ -133,7 +133,6 @@ pub struct Renderer {
     width: u16,
     height: u16,
     lines: Vec<Line>,
-    bounds: bool,
 }
 
 impl Renderer {
@@ -143,7 +142,6 @@ impl Renderer {
             width,
             height,
             lines: Self::make_lines(width, height),
-            bounds: true,
         }
     }
 
@@ -205,10 +203,6 @@ impl Renderer {
         } else {
             Ok(Self::new_uncheck(width, height))
         }
-    }
-
-    pub fn disble_bounds(&mut self) {
-        self.bounds = false;
     }
 
     fn make_lines(width: u16, height: u16) -> Vec<Line> {
