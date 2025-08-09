@@ -221,9 +221,9 @@ impl ContainerBuilder {
     ///     .option("Option", None)?;
     /// ```
     #[inline]
-    pub fn option(mut self, label: impl ToString) -> FtuiResult<Self> {
+    pub fn option(mut self, label: impl ToString) -> Self {
         self.container.add_option(cpn::Option::new(label));
-        Ok(self)
+        self
     }
 
     /// Adds an `Option` component to the `Container` and stores its ID.
@@ -247,9 +247,9 @@ impl ContainerBuilder {
     ///     .option_id("Option", None, &mut id)?;
     /// ```
     #[inline]
-    pub fn option_id(mut self, label: impl ToString, store_id: &mut u16) -> FtuiResult<Self> {
+    pub fn option_id(mut self, label: impl ToString, store_id: &mut u16) -> Self {
         *store_id = self.container.add_option(cpn::Option::new(label)); 
-        Ok(self)
+        self
     }
 
     /// Adds a `Text` component to the `Container`.
