@@ -173,30 +173,6 @@ impl ContainerBuilder {
         ContainerBuilder { container: Container::new(), }
     }
 
-    /// Explicitly sets a `Header` component for the `Container`. Unlike the `header`
-    /// method, which takes a label and internally constructs a `Header`, this 
-    /// method allows you to directly provide a preconstructed `Header` component.
-    ///
-    /// # Parameters
-    /// - `header`: A `Header` component.
-    ///
-    /// # Returns
-    /// - `ContainerBuilder`: Returns `self`.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a `Header` component.
-    /// let header = Header::new(...)?;
-    ///
-    /// // Set a preconstructed `Header` component.
-    /// ContainerBuilder::new()
-    ///     .header_expl(header);
-    /// ```
-    pub fn header_expl(mut self, header: cpn::Text) -> Self {
-        self.container.set_header(header);
-        self
-    }
-
     /// Sets a `Header` component for the `Container`.
     ///
     /// # Parameters
@@ -214,46 +190,18 @@ impl ContainerBuilder {
     /// ```
     #[inline]
     pub fn header(
-        self, label: impl ToString, flags: impl Into<Option<cpn::TextFlags>>
+        mut self, label: impl ToString, flags: impl Into<Option<cpn::TextFlags>>
     ) -> FtuiResult<Self> {
-        Ok(self.header_expl(cpn::Text::new(label, flags)?))
-    }
-
-    pub fn footer_expl(mut self, footer: cpn::Text) -> Self {
-        self.container.set_footer(footer);
-        self
+        self.container.set_header(cpn::Text::new(label, flags)?);
+        Ok(self)
     }
 
     #[inline]
     pub fn footer(
-        self, label: impl ToString, flags: impl Into<Option<cpn::TextFlags>>
+        mut self, label: impl ToString, flags: impl Into<Option<cpn::TextFlags>>
     ) -> FtuiResult<Self> {
-        Ok(self.footer_expl(cpn::Text::new(label, flags)?))
-    }
-
-    /// Explicitly add an `Option` component to the `Container`. Unlike the `option`
-    /// method, which takes a label and an optional callback to internally constructs
-    /// an `Option`, this method allows you to directly provide a preconstructed 
-    /// `Option` component.
-    ///
-    /// # Parameters
-    /// - `option`: An `Option` component.
-    ///
-    /// # Returns
-    /// - `ContainerBuilder`: Returns `self`.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create an `Option` component.
-    /// let option = Option::new(...)?;
-    ///
-    /// // Set a preconstructed `Option` component.
-    /// ContainerBuilder::new()
-    ///     .option_expl(option);
-    /// ```
-    pub fn option_expl(mut self, option: cpn::Option) -> Self {
-        self.container.add_option(option);
-        self
+        self.container.set_footer(cpn::Text::new(label, flags)?);
+        Ok(self)
     }
 
     /// Adds an `Option` component to the `Container`.
@@ -273,39 +221,9 @@ impl ContainerBuilder {
     ///     .option("Option", None)?;
     /// ```
     #[inline]
-    pub fn option(self, label: impl ToString) -> FtuiResult<Self> {
-        Ok(self.option_expl(cpn::Option::new(label)))
-    }
-
-    /// Explicitly add an `Option` component to the `Container` and stores its ID. 
-    /// Unlike the `option_id` method, which takes a label and an optional callback
-    /// to internally constructs an `Option`, this method allows you to directly
-    /// provide a preconstructed `Option` component.
-    ///
-    /// # Parameters
-    /// - `option`: An `Option` component.
-    /// - `store_id`: A `&mut u16` to store the created `Option` component ID.
-    /// 
-    /// # Returns
-    /// - `Ok(ContainerBuilder)`: Returns `self`.
-    /// - `Err(FtuiError)`: Returns an error.
-    /// 
-    /// # Example
-    /// ```rust
-    /// let mut id = 0u16;
-    ///
-    /// // Create an `Option` component.
-    /// let option = Option::new(...)?;
-    ///
-    /// // Add the create `Option` component and storing the generated ID in `id`.
-    /// ContainerBuilder::new()
-    ///     .option_id(option, &mut id)?;
-    /// ```
-    pub fn option_id_expl(
-        mut self, option: cpn::Option, store_id: &mut u16
-    ) -> Self {
-        *store_id = self.container.add_option(option);
-        self
+    pub fn option(mut self, label: impl ToString) -> FtuiResult<Self> {
+        self.container.add_option(cpn::Option::new(label));
+        Ok(self)
     }
 
     /// Adds an `Option` component to the `Container` and stores its ID.
@@ -329,32 +247,9 @@ impl ContainerBuilder {
     ///     .option_id("Option", None, &mut id)?;
     /// ```
     #[inline]
-    pub fn option_id(self, label: impl ToString, store_id: &mut u16) -> FtuiResult<Self> {
-        Ok(self.option_id_expl(cpn::Option::new(label), store_id))
-    }
-
-    /// Explicitly add a `Text` component to the `Container`. Unlike the `text`
-    /// method, which takes a label and flags to internally constructs an `Text`,
-    /// this method allows you to directly provide a preconstructed `Text` component.
-    ///
-    /// # Parameters
-    /// - `text`: A `Text` component.
-    ///
-    /// # Returns
-    /// - `ContainerBuilder`: Returns `self`.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create an `Text` component.
-    /// let text = Text::new(...)?;
-    ///
-    /// // Set a preconstructed `Text` component.
-    /// ContainerBuilder::new()
-    ///     .text_expl(text);
-    /// ```
-    pub fn text_expl(mut self, text: cpn::Text) -> Self {
-        self.container.add_text(text);
-        self
+    pub fn option_id(mut self, label: impl ToString, store_id: &mut u16) -> FtuiResult<Self> {
+        *store_id = self.container.add_option(cpn::Option::new(label)); 
+        Ok(self)
     }
 
     /// Adds a `Text` component to the `Container`.
@@ -379,37 +274,10 @@ impl ContainerBuilder {
     /// ```
     #[inline]
     pub fn text(
-        self, label: impl ToString, flags: impl Into<Option<cpn::TextFlags>>
+        mut self, label: impl ToString, flags: impl Into<Option<cpn::TextFlags>>
     ) -> FtuiResult<Self> {
-        Ok(self.text_expl(cpn::Text::new(label, flags)?))
-    }
-
-    /// Explicitly add a `Text` component to the `Container` and stores its ID. 
-    /// Unlike the `text_id` method, which takes a label and flags to internally
-    /// constructs an `Text`, this method allows you to directly provide a
-    /// preconstructed `Text` component.
-    ///
-    /// # Parameters
-    /// - `text`: An `Text` component.
-    /// - `store_id`: A `&mut u16` to store the created `Option` component ID.
-    /// 
-    /// # Returns
-    /// - `ContainerBuilder`: Returns `self`.
-    /// 
-    /// # Example
-    /// ```rust
-    /// let mut id = 0u16;
-    ///
-    /// // Create an `Text` component.
-    /// let text = Text::new(...)?;
-    ///
-    /// // Add the create `Text` component and storing the generated ID in `id`.
-    /// ContainerBuilder::new()
-    ///     .text_id_expl(text, &mut id)?;
-    /// ```
-    pub fn text_id_expl(mut self, text: cpn::Text, store_id: &mut u16) -> Self {
-        *store_id = self.container.add_text(text);
-        self
+        self.container.add_text(cpn::Text::new(label, flags)?);
+        Ok(self)
     }
 
     /// Adds a `Text` component to the `Container` and stores its ID.
@@ -439,36 +307,12 @@ impl ContainerBuilder {
     /// ```
     #[inline]
     pub fn text_id(
-        self, 
+        mut self, 
         label: impl ToString,
         flags: impl Into<Option<cpn::TextFlags>>, store_id: &mut u16
     ) -> FtuiResult<Self> {
-        Ok(self.text_id_expl(cpn::Text::new(label, flags)?, store_id))
-    }
-
-    /// Explicitly add a normal `Separator` component to the `Container`. 
-    /// Unlike the `Separator` method, which takes a style and internally 
-    /// constructs a `Separator`, this method allows you to directly provide a
-    /// preconstructed `Separator` component.
-    ///
-    /// # Parameters
-    /// - `separator`: A `Separator` component.
-    ///
-    /// # Returns
-    /// - `ContainerBuilder`: Returns `self`.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a normal `Separator` component.
-    /// let separator = Separator::normal(...)?;
-    ///
-    /// // Set a preconstructed `Header` component.
-    /// ContainerBuilder::new()
-    ///     .separator_normal_expl(separator);
-    /// ```
-    pub fn separator_normal_expl(mut self, separator: cpn::Separator) -> Self {
-        self.container.add_separator(separator);
-        self
+        *store_id = self.container.add_text(cpn::Text::new(label, flags)?);
+        Ok(self)
     }
 
     /// Add a standard (non-dotted) `Separator` with the given style.
@@ -486,32 +330,8 @@ impl ContainerBuilder {
     ///     separator_normal(SeparatorStyle::Solid);
     /// ```
     #[inline]
-    pub fn separator_normal(self, style: cpn::SeparatorStyle) -> Self {
-        self.separator_normal_expl(cpn::Separator::normal(style))
-    }
-
-    /// Explicitly add a dotted `Separator` component to the `Container`. 
-    /// Unlike the `Separator` method, which takes a style and internally 
-    /// constructs a `Separator`, this method allows you to directly provide a
-    /// preconstructed `Separator` component.
-    ///
-    /// # Parameters
-    /// - `separator`: A `Separator` component.
-    ///
-    /// # Returns
-    /// - `ContainerBuilder`: Returns `self`.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a dotted `Separator` component.
-    /// let separator = Separator::dotted(...)?;
-    ///
-    /// // Set a preconstructed `Header` component.
-    /// ContainerBuilder::new()
-    ///     .separator_dotted_expl(separator);
-    /// ```
-    pub fn separator_dotted_expl(mut self, separator: cpn::Separator) -> Self {
-        self.container.add_separator(separator);
+    pub fn separator_normal(mut self, style: cpn::SeparatorStyle) -> Self {
+        self.container.add_separator(cpn::Separator::normal(style));
         self
     }
 
@@ -530,8 +350,9 @@ impl ContainerBuilder {
     ///     separator_dotted(SeparatorStyle::Solid);
     /// ```
     #[inline]
-    pub fn separator_dotted(self, style: cpn::SeparatorStyle) -> Self {
-        self.separator_dotted_expl(cpn::Separator::dotted(style))
+    pub fn separator_dotted(mut self, style: cpn::SeparatorStyle) -> Self {
+        self.container.add_separator(cpn::Separator::dotted(style));
+        self
     }
 
     pub fn instant_draw(self, mut renderer: impl AsMut<Renderer>) -> FtuiResult<()> {
