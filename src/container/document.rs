@@ -110,17 +110,59 @@ impl Document {
     }
 }
 
+/// `DocumentBuilder` is used to create `Document` instances using the builder pattern.
+/// This allows for a flexible and readable way to construct `Document` with different
+/// options by chaining method calls.
+///
+/// # Example
+/// ```rust
+/// DocumentBuilder::new()
+///     .header(...)?
+///     .content(...)
+///     .flags(...)?
+///     .footer(...)?
+///     .build();
+/// ```
 pub struct DocumentBuilder {
     document: Document,
 }
 
 impl DocumentBuilder {
+    /// Constructs a new `DocumentBuilder`. 
+    ///
+    /// # Return
+    /// `DocumentBuilder`: A new instance of `DocumentBuilder`.
+    ///
+    /// # Example
+    /// ```rust
+    /// let _ = DocumentBuilder::new();
+    /// ```
     pub fn new() -> Self {
         Self {
             document: Document::new(),
         } 
     }
 
+    /// Sets a header for the `Document`.
+    ///
+    /// # Notes
+    /// The header behaves similarly to a `Text` component and can display
+    /// styled text using the provided flags.
+    ///
+    /// # Parameters
+    /// - `label`: A type that impl `ToString` representing the text for the header.
+    /// - `flags`: A set of `TextFlags` combined using the bitwise OR operator.
+    ///
+    /// # Returns
+    /// - `Ok(DocumentBuilder)`: Returns `self`.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Sets a header with the label "Welcome" and no style.
+    /// DocumentBuilder::new()
+    ///     .header("Welcome", None)?;
+    /// ```
     pub fn header(
         mut self, label: impl ToString, flags: impl Into<Option<TextFlags>>
     ) -> FtuiResult<Self> {
@@ -128,6 +170,26 @@ impl DocumentBuilder {
         Ok(self)
     }
 
+    /// Sets a footer for the `Document`.
+    ///
+    /// # Notes
+    /// The footer behaves similarly to a `Text` component and can display
+    /// styled text using the provided flags.
+    ///
+    /// # Parameters
+    /// - `label`: A type that impl `ToString` representing the text for the footer.
+    /// - `flags`: A set of `TextFlags` combined using the bitwise OR operator.
+    ///
+    /// # Returns
+    /// - `Ok(DocumentBuilder)`: Returns `self`.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Sets a footer with the label "Welcome" and no style.
+    /// DocumentBuilder::new()
+    ///     .header("Welcome", None)?;
+    /// ```
     pub fn footer(
         mut self, label: impl ToString, flags: impl Into<Option<TextFlags>>
     ) -> FtuiResult<Self> {
