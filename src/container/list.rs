@@ -3,7 +3,7 @@ use crate::{
 };
 
 #[doc = "⚠️ **Experimental** ⚠️"]
-/// Another variant of a `Container` designed to display data in a vertical 
+/// A specialized variant of `Container` designed to display data in a vertical 
 /// list format. A `List` is scrollable, allowing it to handle a dynamic number
 /// of elements. It can be created using the `ListBuilder`, and new elements can
 /// be added using the `add` method.
@@ -125,7 +125,7 @@ impl List {
     /// Attempts to scroll the `List` up by one position.
     ///
     /// # Returns
-    /// - `true` if the list was successfully scrolled up.
+    /// - `true` Ff the `List` was successfully scrolled up.
     /// - `false`: The `List` fail to scroll up (already at the top). 
     ///
     /// # Example
