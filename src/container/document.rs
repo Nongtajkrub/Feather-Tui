@@ -1,6 +1,13 @@
 use crate::{components::{TextFlags, Text}, error::FtuiResult, renderer::Renderer};
 use std::{fs, path::Path};
 
+/// A specialized variant of `Container` for displaying long-form text.  
+/// The `Document` supports text wrapping and scrolling, making it suitable  
+/// for content such as stories, logs, or multi-line descriptions.
+///
+/// # Usage
+/// Use `Document` when you need to present lengthy text with proper  
+/// wrapping and navigation.
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Document {
     header: Option<Text>,
@@ -23,6 +30,20 @@ impl Document {
         }
     }
 
+    /// Attempts to scroll the `Document` up by one position.
+    ///
+    /// # Returns
+    /// - `true` if the `Document` was successfully scrolled up.
+    /// - `false`: The `Document` fail to scroll up (already at the top). 
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a new `Document`.
+    /// let mut doc = DocumentBuilder::new().build();
+    ///
+    /// // Initially at the top, so scrolling up does nothing.
+    /// assert_eq!(doc.scroll_up(), false);
+    /// ```
     pub fn scroll_up(&mut self) -> bool {
         if self.offset != 0 {
             self.offset -= 1;
@@ -32,6 +53,22 @@ impl Document {
         }
     }
 
+    /// Attempts to scroll the `Document` down by one position.
+    ///
+    /// # Returns
+    /// - `true` If the `Document` was successfully scrolled down.
+    /// - `false`: The `Document` fail to scroll down (already at the bottom). 
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a new `Document`.
+    /// let mut list = DocumentBuilder::new()
+    ///     .data(...)
+    ///     .build();
+    ///
+    /// // The list can scroll down since it's not at the bottom yet.
+    /// assert_eq!(list.scroll_down(), true);
+    /// ```
     #[inline]
     pub fn scroll_down(&mut self) -> bool {
         // Bounds checking is done in the `Renderer`.
