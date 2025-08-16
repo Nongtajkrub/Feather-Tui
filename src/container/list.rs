@@ -383,10 +383,15 @@ impl ListBuilder {
         }
     }
 
-    /// Sets a `Header` component for the `List`.
+    /// Sets a header for the `List`.
+    ///
+    /// # Notes
+    /// The header behaves similarly to a `Text` component and can display
+    /// styled text using the provided flags.
     ///
     /// # Parameters
-    /// - `label`: A `&str` representing the text to display in the header.
+    /// - `label`: A type that impl `ToString` representing the text for the header.
+    /// - `flags`: A set of `TextFlags` combined using the bitwise OR operator.
     ///
     /// # Returns
     /// - `Ok(ListBuilder)`: Returns `self`.
@@ -394,9 +399,9 @@ impl ListBuilder {
     ///
     /// # Example
     /// ```rust
-    /// // Sets a `Header` component with the label "Welcome".
-    /// List::new()
-    ///     .header("Welcome")?;
+    /// // Sets a header with the label "Welcome" and no style.
+    /// ListBuilder::new()
+    ///     .header("Welcome", None)?;
     /// ```
     #[inline]
     pub fn header(
@@ -406,6 +411,26 @@ impl ListBuilder {
         Ok(self)
     }
 
+    /// Sets a footer for the `List`.
+    ///
+    /// # Notes
+    /// The footer behaves similarly to a `Text` component and can display
+    /// styled text using the provided flags.
+    ///
+    /// # Parameters
+    /// - `label`: A type that impl `ToString` representing the text for the footer.
+    /// - `flags`: A set of `TextFlags` combined using the bitwise OR operator.
+    ///
+    /// # Returns
+    /// - `Ok(ListBuilder)`: Returns `self`.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Sets a footer with the label "Welcome" and no style.
+    /// ListBuilder::new()
+    ///     .header("Welcome", None)?;
+    /// ```
     #[inline]
     pub fn footer(
         mut self, label: impl ToString, flags: impl Into<Option<TextFlags>>
