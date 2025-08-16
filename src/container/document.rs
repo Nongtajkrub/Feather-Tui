@@ -63,7 +63,7 @@ impl Document {
     /// ```rust
     /// // Create a new `Document`.
     /// let mut list = DocumentBuilder::new()
-    ///     .data(...)
+    ///     .content(...)
     ///     .build();
     ///
     /// // The list can scroll down since it's not at the bottom yet.
@@ -142,7 +142,7 @@ impl DocumentBuilder {
         Ok(self)
     }
 
-    pub fn data(mut self, data: impl ToString) -> Self {
+    pub fn content(mut self, data: impl ToString) -> Self {
         self.document.data = data.to_string(); 
         self
     }
