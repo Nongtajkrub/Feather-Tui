@@ -1,6 +1,10 @@
-use crate::{error::{FtuiError, FtuiResult}, util::ansi};
 use bitflags::bitflags;
+
 use unicode_segmentation::UnicodeSegmentation;
+
+use crate::error::FtuiError;
+use crate::error::FtuiResult;
+use crate::util::ansi;
 
 bitflags! {
     /// Flags used to style a `Text` component. Multiple flags can be combined 
