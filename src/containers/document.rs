@@ -219,6 +219,22 @@ impl DocumentBuilder {
         Ok(self)
     }
 
+    /// Renders the current `Document` directly to the terminal without
+    /// creating and returning a new one.
+    ///
+    /// # Parameters
+    /// - `renderer`: A mutable type that implements `AsMut<Renderer>`.
+    ///
+    /// # Returns
+    /// - `Ok(())` if the document was successfully drawn.
+    /// - `Err(FtuiError)` if rendering failed.
+    ///
+    /// # Example
+    /// ```rust
+    /// DocumentBuilder::new()
+    ///     .header(...)?
+    ///     .instant_draw(Renderer::new(...))?;
+    /// ```
     pub fn instant_draw(self, mut renderer: impl AsMut<Renderer>) -> FtuiResult<()> {
         renderer.as_mut().draw(self.document)
     }
