@@ -1,6 +1,9 @@
-use crate::error::FtuiResult;
-use std::io::{self, Write};
+use std::io;
+use std::io::Write;
+
 use crossterm as ct;
+
+use crate::error::FtuiResult;
 
 /// Reads a line of input from the user after displaying a prompt.
 ///
