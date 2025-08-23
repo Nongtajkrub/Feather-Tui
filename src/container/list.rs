@@ -207,7 +207,6 @@ impl List {
         self.elements.iter().position(|element| element.id() == id)
     }
 
-
     /// Returns the index of the first element that matches the given label.
     ///
     /// # Parameters

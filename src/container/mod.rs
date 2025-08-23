@@ -3,7 +3,11 @@ mod list;
 mod document;
 mod message;
 
-pub use container::{Container, ContainerBuilder};
-pub use list::{List, ListBuilder};
-pub use document::{Document, DocumentBuilder};
-pub use message::{Message, MessageStyle};
+pub use container::Container;
+pub use container::ContainerBuilder;
+pub use list::List;
+pub use list::ListBuilder;
+pub use document::Document;
+pub use document::DocumentBuilder;
+pub use message::Message;
+pub use message::MessageStyle;
