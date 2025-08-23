@@ -4,11 +4,8 @@ pub(crate) const MSG_INFO_ANSI: [&'static str; 2] = [ansi::ESC_WHITE_B, ansi::ES
 pub(crate) const MSG_WARN_ANSI: [&'static str; 1] = [ansi::ESC_YELLOW_B];
 pub(crate) const MSG_ERRO_ANSI: [&'static str; 2] = [ansi::ESC_RED_B, ansi::ESC_BOLD];
 
-/// Another variant of a `Container`. Represents the visual style of a `Message`,
-/// typically used to convey different levels of importance or severity.
-///
-/// # Usage
-/// - Displaying an information, warnings, or an error to the user.
+/// Represents the visual style of a `Message`, typically used to convey different
+/// levels of importance or severity.
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum MessageStyle {
