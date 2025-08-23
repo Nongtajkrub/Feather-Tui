@@ -1,5 +1,10 @@
-use crate::{components::{TextFlags, Text}, error::FtuiResult, renderer::Renderer};
-use std::{fs, path::Path};
+use std::path::Path;
+use std::fs;
+
+use crate::components::Text;
+use crate::components::TextFlags;
+use crate::error::FtuiResult;
+use crate::renderer::Renderer;
 
 /// A specialized variant of `Container` for displaying long-form text.  
 /// The `Document` supports text wrapping and scrolling, making it suitable  
