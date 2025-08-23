@@ -1,6 +1,7 @@
-use crate::{
-    components::{self as cpn},
-    error::FtuiResult, util::id::IdGenerator, renderer::Renderer};
+use crate::components as cpn;
+use crate::error::FtuiResult;
+use crate::renderer::Renderer;
+use crate::util::id::IdGenerator;
 
 /// `Container` is a data structure used to store and organize UI components,
 /// including `Header`, `Option`, `Text`, `Separator`, and `Selector`.
