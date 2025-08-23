@@ -1,9 +1,18 @@
-use crate::{
-    components::{self as cpn},
-    container::{Container, Document, List, Message},
-    error::{FtuiError, FtuiResult}, util::{ansi, mom::Mom, number as num}};
-use std::io::{self, Write};
+use std::io;
+use std::io::Write;
+
 use crossterm as ct;
+
+use crate::components as cpn;
+use crate::container::Container;
+use crate::container::Document;
+use crate::container::List;
+use crate::container::Message;
+use crate::error::FtuiError;
+use crate::error::FtuiResult;
+use crate::util::ansi;
+use crate::util::mom::Mom;
+use crate::util::number as num;
 
 /// A helper class for `Renderer`.
 #[derive(Debug, Clone, PartialEq, Eq)]
