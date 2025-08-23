@@ -1,5 +1,7 @@
-use crate::error::{FtuiError, FtuiResult};
 use unicode_segmentation::UnicodeSegmentation;
+
+use crate::error::FtuiError;
+use crate::error::FtuiResult;
 
 /// A UI component representing an interactive option in a `Container`. 
 /// `Option` components are displayed in the order they are added to the
