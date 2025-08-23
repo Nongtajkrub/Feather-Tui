@@ -385,10 +385,8 @@ impl TextsManager {
     /// container.text(text_id)?;
     /// ```
     #[inline]
-    pub fn query(&self, id: GeneratedId) -> FtuiResult<&Text> {
-        self.components.iter()
-            .find(|text| text.id() == id)
-            .ok_or(FtuiError::ContainerNoComponentById)
+    pub fn query(&self, id: GeneratedId) -> Option<&Text> {
+        self.components.iter().find(|text| text.id() == id)
     }
 
     /// Query an `Text` component by its ID (`O(n)` lookup).
@@ -413,10 +411,8 @@ impl TextsManager {
     /// container.text_mut(text_id)?;
     /// ```
     #[inline]
-    pub fn query_mut(&mut self, id: GeneratedId) -> FtuiResult<&mut Text> {
-        self.components.iter_mut()
-            .find(|text| text.id() == id)
-            .ok_or(FtuiError::ContainerNoComponentById)
+    pub fn query_mut(&mut self, id: GeneratedId) -> Option<&mut Text> {
+        self.components.iter_mut().find(|text| text.id() == id)
     }
 
     pub(crate) fn comps_mut(&mut self) -> &mut [Text] {
