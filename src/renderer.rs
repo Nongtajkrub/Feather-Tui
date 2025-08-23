@@ -4,10 +4,10 @@ use std::io::Write;
 use crossterm as ct;
 
 use crate::components as cpn;
-use crate::container::Container;
-use crate::container::Document;
-use crate::container::List;
-use crate::container::Message;
+use crate::containers::Container;
+use crate::containers::Document;
+use crate::containers::List;
+use crate::containers::Message;
 use crate::error::FtuiError;
 use crate::error::FtuiResult;
 use crate::util::ansi;

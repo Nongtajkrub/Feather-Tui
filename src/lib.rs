@@ -23,7 +23,7 @@
 /// Core building blocks for constructing user interfaces.
 pub mod components;
 /// Acts as a layout manager for the UI elements.
-pub mod container;
+pub mod containers;
 /// Responsible for rendering the UI to the terminal.
 pub mod renderer;
 /// Handles user input, non-blocking key events, and key code conversions with crossterm.
@@ -40,7 +40,7 @@ mod     util;
 pub use components as cpn;
 
 #[cfg(feature = "shorten_mod_name")]
-pub use container as con;
+pub use containers as con;
 
 #[cfg(feature = "shorten_mod_name")]
 pub use list as lst;
@@ -63,7 +63,7 @@ pub use error as err;
 pub use components::{Option, Text, TextFlags, Separator, SeparatorStyle};
 
 #[cfg(feature = "reduce_abstraction")]
-pub use container::{Container, ContainerBuilder, List, ListBuilder, Document, DocumentBuilder, Message, MessageStyle};
+pub use containers::{Container, ContainerBuilder, List, ListBuilder, Document, DocumentBuilder, Message, MessageStyle};
 
 #[cfg(feature = "reduce_abstraction")]
 pub use renderer::Renderer;
