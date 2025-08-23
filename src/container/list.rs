@@ -1,6 +1,9 @@
-use crate::{
-    components::{Text, TextFlags}, error::{FtuiError, FtuiResult}, renderer::Renderer, util::id::IdGenerator
-};
+use crate::components::Text;
+use crate::components::TextFlags;
+use crate::error::FtuiError;
+use crate::error::FtuiResult;
+use crate::renderer::Renderer;
+use crate::util::id::IdGenerator;
 
 #[doc = "⚠️ **Experimental** ⚠️"]
 /// A specialized variant of `Container` designed to display data in a vertical 
