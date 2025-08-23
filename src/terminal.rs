@@ -1,6 +1,8 @@
-use crate::error::FtuiResult;
 use std::io;
+
 use crossterm as ct;
+
+use crate::error::FtuiResult;
 
 /// Prepares the terminal for rendering. This function is typically used in 
 /// conjunction with `unready()`, similar to how `malloc` pairs with `free`.
