@@ -5,6 +5,10 @@ pub(crate) mod text;
 /// A UI component that acts as a separator typically a horizontal line.
 pub(crate) mod seperator;
 
-pub use option::{Option, OptionsManager};
-pub use text::{Text, TextFlags, TextsManager};
-pub use seperator::{Separator, SeparatorStyle};
+pub use option::Option;
+pub use option::OptionsManager;
+pub use text::Text;
+pub use text::TextFlags;
+pub use text::TextsManager;
+pub use seperator::Separator;
+pub use seperator::SeparatorStyle;
