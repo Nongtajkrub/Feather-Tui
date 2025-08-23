@@ -1,5 +1,6 @@
-use num_integer::Integer;
 use std::ops::AddAssign;
+
+use num_integer::Integer;
 
 #[derive(Debug, PartialEq, Eq)]
 pub(crate) struct IdGenerator<T>
