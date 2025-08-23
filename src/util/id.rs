@@ -1,27 +1,19 @@
-use std::ops::AddAssign;
-
-use num_integer::Integer;
+pub type GeneratedId = u32;
 
 #[derive(Debug, PartialEq, Eq)]
-pub(crate) struct IdGenerator<T>
-where 
-    T: Integer + Copy + AddAssign + PartialEq + Eq,
-{
-    id: T,
+pub(crate) struct IdGenerator {
+    id: GeneratedId,
 }
 
-impl<T> IdGenerator<T>
-where 
-    T: Integer + Copy + AddAssign + PartialEq + Eq,
-{
+impl IdGenerator {
     pub(crate) fn new() -> Self {
         IdGenerator {
-            id: T::zero(),
+            id: 0,
         }
     }
 
-    pub(crate) fn get_id(&mut self) -> T {
-        self.id += T::one();
+    pub(crate) fn get_id(&mut self) -> GeneratedId {
+        self.id += 1;
         self.id
     }
 }

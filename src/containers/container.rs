@@ -2,6 +2,7 @@ use crate::components as cpn;
 use crate::error::FtuiResult;
 use crate::renderer::Renderer;
 use crate::util::id::IdGenerator;
+use crate::util::id::GeneratedId;
 
 /// `Container` is a data structure used to store and organize UI components,
 /// including `Header`, `Option`, `Text`, `Separator`, and `Selector`.
@@ -16,7 +17,7 @@ use crate::util::id::IdGenerator;
 /// - Navigate using `selector_up`, `selector_down`, and `selector_select`.
 #[derive(Debug, PartialEq, Eq)]
 pub struct Container {
-    id_generator: IdGenerator<u16>,
+    id_generator: IdGenerator,
     header: Option<cpn::Text>,
     footer: Option<cpn::Text>,
     options: cpn::OptionsManager,
@@ -58,7 +59,7 @@ impl Container {
     }
 
     // Return added Option ID.
-    pub(crate) fn add_option(&mut self, mut option: cpn::Option) -> u16 {
+    pub(crate) fn add_option(&mut self, mut option: cpn::Option) -> GeneratedId {
         let id = self.id_generator.get_id();
         option.set_id(id);
         option.set_line(self.component_count);
@@ -74,7 +75,7 @@ impl Container {
     }
 
     // Return added Text ID.
-    pub(crate) fn add_text(&mut self, mut text: cpn::Text) -> u16 {
+    pub(crate) fn add_text(&mut self, mut text: cpn::Text) -> GeneratedId {
         let id = self.id_generator.get_id();
         text.set_id(id);
         text.set_line(self.component_count);
@@ -273,7 +274,7 @@ impl ContainerBuilder {
     ///     .option_id("Option", None, &mut id);
     /// ```
     #[inline]
-    pub fn option_id(mut self, label: impl ToString, store_id: &mut u16) -> Self {
+    pub fn option_id(mut self, label: impl ToString, store_id: &mut GeneratedId) -> Self {
         *store_id = self.container.add_option(cpn::Option::new(label)); 
         self
     }
@@ -335,7 +336,7 @@ impl ContainerBuilder {
     pub fn text_id(
         mut self, 
         label: impl ToString,
-        flags: impl Into<Option<cpn::TextFlags>>, store_id: &mut u16
+        flags: impl Into<Option<cpn::TextFlags>>, store_id: &mut GeneratedId
     ) -> FtuiResult<Self> {
         *store_id = self.container.add_text(cpn::Text::new(label, flags)?);
         Ok(self)

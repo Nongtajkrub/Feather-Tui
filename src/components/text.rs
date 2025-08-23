@@ -5,6 +5,7 @@ use unicode_segmentation::UnicodeSegmentation;
 use crate::error::FtuiError;
 use crate::error::FtuiResult;
 use crate::util::ansi;
+use crate::util::id::GeneratedId;
 
 bitflags! {
     /// Flags used to style a `Text` component. Multiple flags can be combined 
@@ -221,7 +222,7 @@ impl TextFlags {
 pub struct Text {
     label: String,
     len: usize,
-    id: u16,
+    id: GeneratedId,
     line: u16,
     flags: TextFlags,
     pos: u16,
@@ -270,7 +271,7 @@ impl Text {
     }
 
     pub(crate) fn with_id(
-        label: impl ToString, flags: impl Into<Option<TextFlags>>, id: u16
+        label: impl ToString, flags: impl Into<Option<TextFlags>>, id: GeneratedId
     ) -> FtuiResult<Self> {
         let mut text = Text::new(label, flags)?;
         text.set_id(id);
@@ -336,11 +337,11 @@ impl Text {
         return &self.style;
     }
 
-    pub(crate) fn id(&self) -> u16 {
+    pub(crate) fn id(&self) -> GeneratedId {
         self.id
     }
 
-    pub(crate) fn set_id(&mut self, value: u16) {
+    pub(crate) fn set_id(&mut self, value: GeneratedId) {
         self.id = value;
     }
 }
@@ -384,7 +385,7 @@ impl TextsManager {
     /// container.text(text_id)?;
     /// ```
     #[inline]
-    pub fn query(&self, id: u16) -> FtuiResult<&Text> {
+    pub fn query(&self, id: GeneratedId) -> FtuiResult<&Text> {
         self.components.iter()
             .find(|text| text.id() == id)
             .ok_or(FtuiError::ContainerNoComponentById)
@@ -412,7 +413,7 @@ impl TextsManager {
     /// container.text_mut(text_id)?;
     /// ```
     #[inline]
-    pub fn query_mut(&mut self, id: u16) -> FtuiResult<&mut Text> {
+    pub fn query_mut(&mut self, id: GeneratedId) -> FtuiResult<&mut Text> {
         self.components.iter_mut()
             .find(|text| text.id() == id)
             .ok_or(FtuiError::ContainerNoComponentById)

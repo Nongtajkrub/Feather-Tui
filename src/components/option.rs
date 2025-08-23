@@ -2,6 +2,7 @@ use unicode_segmentation::UnicodeSegmentation;
 
 use crate::error::FtuiError;
 use crate::error::FtuiResult;
+use crate::util::id::GeneratedId;
 
 /// A UI component representing an interactive option in a `Container`. 
 /// `Option` components are displayed in the order they are added to the
@@ -20,7 +21,7 @@ pub struct Option {
     label: String,
     len: usize,
     line: u16,
-    id: u16,
+    id: GeneratedId,
     selc_on: bool,
     is_selc: bool,
 }
@@ -131,11 +132,11 @@ impl Option {
         self.is_selc = value;
     }
 
-    pub(crate) fn id(&self) -> u16 {
+    pub(crate) fn id(&self) -> GeneratedId {
         self.id
     }
 
-    pub(crate) fn set_id(&mut self, value: u16) {
+    pub(crate) fn set_id(&mut self, value: GeneratedId) {
         self.id = value;
     }
 }
@@ -180,7 +181,7 @@ impl OptionsManager {
     /// container.option(option_id)?;
     /// ```
     #[inline]
-    pub fn query(&self, id: u16) -> FtuiResult<&Option> {
+    pub fn query(&self, id: GeneratedId) -> FtuiResult<&Option> {
         self.components.iter()
             .find(|option| option.id() == id)
             .ok_or(FtuiError::ContainerNoComponentById)
@@ -208,7 +209,7 @@ impl OptionsManager {
     /// container.option_mut(option_id)?;
     /// ```
     #[inline]
-    pub fn query_mut(&mut self, id: u16) -> FtuiResult<&mut Option> {
+    pub fn query_mut(&mut self, id: GeneratedId) -> FtuiResult<&mut Option> {
         self.components.iter_mut()
             .find(|option| option.id() == id)
             .ok_or(FtuiError::ContainerNoComponentById)

@@ -4,6 +4,7 @@ use crate::error::FtuiError;
 use crate::error::FtuiResult;
 use crate::renderer::Renderer;
 use crate::util::id::IdGenerator;
+use crate::util::id::GeneratedId;
 
 #[doc = "⚠️ **Experimental** ⚠️"]
 /// A specialized variant of `Container` designed to display data in a vertical 
@@ -25,7 +26,7 @@ pub struct List {
     offset: usize,
     default_flags: Option<TextFlags>,
     number: bool,
-    id_generator: IdGenerator<u16>,
+    id_generator: IdGenerator,
 }
 
 impl List {
@@ -74,7 +75,7 @@ impl List {
     /// ```
     pub fn add<'a>(
         &mut self, label: impl ToString, flags: impl Into<Option<TextFlags>>
-    ) -> FtuiResult<u16> {
+    ) -> FtuiResult<GeneratedId> {
         let flags = flags.into();
         let id = self.id_generator.get_id(); 
 
@@ -203,7 +204,7 @@ impl List {
     /// let index = list.find_id(id)?;
     /// ```
     #[inline]
-    pub fn find_id(&self, id: u16) -> Option<usize> {
+    pub fn find_id(&self, id: GeneratedId) -> Option<usize> {
         self.elements.iter().position(|element| element.id() == id)
     }
 
