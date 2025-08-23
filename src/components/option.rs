@@ -1,7 +1,5 @@
 use unicode_segmentation::UnicodeSegmentation;
 
-use crate::error::FtuiError;
-use crate::error::FtuiResult;
 use crate::util::id::GeneratedId;
 
 /// A UI component representing an interactive option in a `Container`. 
@@ -165,26 +163,24 @@ impl OptionsManager {
     /// - `id`: The ID of the `Option` component to query.
     ///
     /// # Returns
-    /// - `Ok(&Option)`: A reference to the `Option` component.
-    /// - `Err(FtuiError)`: Returns an error.
+    /// - `Some(&Option)`: A reference to the `Option` component.
+    /// - `None`: The `Option` component with the specified ID does not exist.
     ///
     /// # Example
     /// ```rust
-    /// // A mutable `u16` to store the ID of a `Option` component.
-    /// let mut option_id = 0;
+    /// // A mutable `u32` to store the ID of a `Option` component.
+    /// let mut option_id = 0u32;
     ///
     /// let container = ContainerBuilder::new()
     ///     .option_id(..., &mut option_id)?
     ///     .build();
     ///
     /// // Query the option by its ID.
-    /// container.option(option_id)?;
+    /// assert!(container.options().query(option_id).is_some());
     /// ```
     #[inline]
-    pub fn query(&self, id: GeneratedId) -> FtuiResult<&Option> {
-        self.components.iter()
-            .find(|option| option.id() == id)
-            .ok_or(FtuiError::ContainerNoComponentById)
+    pub fn query(&self, id: GeneratedId) -> std::option::Option<&Option> {
+        self.components.iter().find(|option| option.id() == id)
     }
 
     /// Query an `Option` component by its ID (`O(n)` lookup).
@@ -193,26 +189,24 @@ impl OptionsManager {
     /// - `id`: The ID of the `Option` component to query.
     ///
     /// # Returns
-    /// - `Ok(&Option)`: A mutable reference to the `Option` component.
-    /// - `Err(FtuiError)`: Returns an error.
+    /// - `Some(&mut Option)`: A mutable reference to the `Option` component.
+    /// - `None`: The `Option` component with the specified ID does not exist.
     ///
     /// # Example
     /// ```rust
-    /// // A mutable `u16` to store the ID of a `Option` component.
-    /// let mut option_id = 0;
+    /// // A mutable `u32` to store the ID of a `Option` component.
+    /// let mut option_id = 0u32;
     ///
     /// let container = ContainerBuilder::new()
     ///     .option_id(..., &mut option_id)?
     ///     .build();
     ///
     /// // Query the option by its ID.
-    /// container.option_mut(option_id)?;
+    /// assert!(container.options_mut().query_mut(option_id).is_some());
     /// ```
     #[inline]
-    pub fn query_mut(&mut self, id: GeneratedId) -> FtuiResult<&mut Option> {
-        self.components.iter_mut()
-            .find(|option| option.id() == id)
-            .ok_or(FtuiError::ContainerNoComponentById)
+    pub fn query_mut(&mut self, id: GeneratedId) -> std::option::Option<&mut Option> {
+        self.components.iter_mut().find(|option| option.id() == id)
     }
 
     /// Attempts to move the `Selector` up by one position, if possible.
