@@ -25,7 +25,7 @@ use crate::error::FtuiResult;
 ///     Err(e) => eprintln!("Error: {}", e),
 /// };
 /// ```
-pub fn line(promt: &str) -> FtuiResult<String> {
+pub fn promt(promt: &str) -> FtuiResult<String> {
     let mut stdout = io::stdout();
     ct::execute!(
         stdout,
