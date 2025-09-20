@@ -6,7 +6,6 @@ use crate::renderer::Renderer;
 use crate::util::id::IdGenerator;
 use crate::util::id::GeneratedId;
 
-#[doc = "⚠️ **Experimental** ⚠️"]
 /// A specialized variant of `Container` designed to display data in a vertical 
 /// list format. A `List` is scrollable, allowing it to handle a dynamic number
 /// of elements. It can be created using the `ListBuilder`, and new elements can
