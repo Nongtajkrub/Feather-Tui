@@ -202,6 +202,21 @@ impl DocumentBuilder {
         Ok(self)
     }
 
+    /// Sets the `TextFlags` to be used when for this document.
+    ///
+    /// # Parameters
+    /// - `flags`: The `TextFlags` to apply to the document.
+    ///
+    /// # Returns
+    /// - `Ok(DocumentBuilder)`: Returns `self`.
+    /// - `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Set a red color for.
+    /// DocumentBuilder::new()
+    ///     .flags(TextFlags::COLOR_RED)?;
+    /// ```
     pub fn flags(mut self, flags: TextFlags) -> FtuiResult<Self> {
         flags.ensure_compatibility()?;
         self.document.flags = flags;
@@ -209,11 +224,38 @@ impl DocumentBuilder {
         Ok(self)
     }
 
+    /// Sets the content of the document.
+    ///
+    /// # Parameters
+    /// - `data`: Any type that implements `ToString`, representing the document content.
+    ///
+    /// # Returns
+    /// `DocumentBuilder`: Returns self.
+    ///
+    /// # Example
+    /// ```
+    /// DocumentBuilder::new()
+    ///     .content("Hello, World");
+    /// ```
     pub fn content(mut self, data: impl ToString) -> Self {
         self.document.data = data.to_string(); 
         self
     }
 
+    /// Loads the contents of a file and sets it as the document content.
+    ///
+    /// # Parameters
+    /// - `path`: A path to the file to be read.
+    ///
+    /// # Returns
+    /// - `Ok(DocumentBuilder)`: Returns self.  
+    /// - `Err(FtuiError)`: Returns an `io` error.  
+    ///
+    /// # Example
+    /// ```
+    /// let builder = DocumentBuilder::new()
+    ///     .from_file("/path/to/file.txt")?;
+    /// ```
     pub fn from_file(mut self, path: impl AsRef<Path>) -> FtuiResult<Self> {
         self.document.data = fs::read_to_string(path.as_ref())?.trim().to_owned(); 
         Ok(self)
@@ -226,8 +268,8 @@ impl DocumentBuilder {
     /// - `renderer`: A mutable type that implements `AsMut<Renderer>`.
     ///
     /// # Returns
-    /// - `Ok(())` if the document was successfully drawn.
-    /// - `Err(FtuiError)` if rendering failed.
+    /// - `Ok(())`: Return nothing if the document was successfully drawn.
+    /// - `Err(FtuiError)`: Returns an error.
     ///
     /// # Example
     /// ```rust
@@ -239,6 +281,22 @@ impl DocumentBuilder {
         renderer.as_mut().draw(self.document)
     }
 
+    /// Finalizes the construction of a `Document`. This method should be called
+    /// after all desired options have been set using the builder pattern.
+    /// It consumes `self` and returns the completed `Document`.
+    ///
+    /// # Returns
+    /// - `Document`: Returns the created `Document`.
+    ///
+    /// # Example
+    /// ```rust
+    /// DocumentBuilder::new()
+    ///     .header(...)?
+    ///     .content(...)
+    ///     .flags(...)?
+    ///     .footer(...)?
+    ///     .build(); // Finalize and retrieve the constructed document.
+    /// ```
     pub fn build(self) -> Document {
         self.document
     }
