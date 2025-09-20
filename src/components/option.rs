@@ -27,34 +27,10 @@ pub struct Option {
 impl Option {
     /// Creates a new `Option` with the specified label and callback.
     ///
-    /// # Parameters
-    /// - `label`: A `&str` representing the text displayed for this option.
-    /// - `callback`: A `Callback` to invoked when the option is selected (optional). 
-    ///
     /// # Returns
     /// `Ok(Option)`: A new `Option` instance.
     /// `Err(FtuiError)`: Returns an error.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Define a callback function that quits the program when invoked.
-    /// cbk_new_callback_func!(quit_option_callback, _arg, {
-    ///     std::process::exit(0);
-    /// });
-    /// 
-    /// // Create a `Callback` with no arguments.
-    /// let callback = Callback::no_arg(quit_option_callback);
-    /// 
-    /// // Create an `Option` component labeled "Quit".
-    /// // When selected, it exits the program.
-    /// let _ = Option::new("Quit", callback)?;
-    /// 
-    /// // Create an `Option` component labeled "Nothing".
-    /// // This option has no associated callback.
-    /// // You can detect its selection using the `is_selc()` method.
-    /// let _ = Option::new("Nothing", None)?;
-    /// ```
-    pub fn new(label: impl ToString) -> Self {
+    pub(crate) fn new(label: impl ToString) -> Self {
         let label = label.to_string();
 
         Option {

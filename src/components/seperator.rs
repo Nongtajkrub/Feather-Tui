@@ -41,7 +41,7 @@ pub enum SeparatorStyle {
 /// # Usage
 /// The `Separator` component is useful for dividing sections in your terminal UI.
 #[derive(Debug, Clone, PartialEq, Eq)]
-pub struct Separator {
+pub(crate) struct Separator {
     line: u16,
     dotted: bool,
     style: SeparatorStyle,
@@ -50,18 +50,9 @@ pub struct Separator {
 impl Separator {
     /// Creates a standard (non-dotted) `Separator` with the given style.
     ///
-    /// # Parameters
-    /// - `style`: The visual style of the separator, specified as a `SeparatorStyle`.
-    ///
     /// # Returns
     /// `Separator`: A new `Separator` instance.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a normal separator with a solid style.
-    /// let _ = Separator::normal(SeparatorStyle::Solid);
-    /// ```
-    pub fn normal(style: SeparatorStyle) -> Self {
+    pub(crate) fn normal(style: SeparatorStyle) -> Self {
         Separator {
             line: 0,
             dotted: false,
@@ -71,18 +62,9 @@ impl Separator {
 
     /// Creates a dotted `Separator` with the given style.
     ///
-    /// # Parameters
-    /// - `style`: The visual style of the separator, specified as a `SeparatorStyle`.
-    ///
     /// # Returns
     /// `Separator`: A new `Separator` instance.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a dotted separator with a solid style.
-    /// let _ = Separator::dotted(SeparatorStyle::Solid);
-    /// ```
-    pub fn dotted(style: SeparatorStyle) -> Self {
+    pub(crate) fn dotted(style: SeparatorStyle) -> Self {
         Separator {
             line: 0,
             dotted: true,

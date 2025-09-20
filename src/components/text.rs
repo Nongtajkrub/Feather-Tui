@@ -232,26 +232,13 @@ pub struct Text {
 impl Text {
     /// Creates a new `Text` component with the specified label and flags.
     ///
-    /// # Parameters
-    /// - `label`: A `&str` representing the text content.
-    /// - `flags`: A set of `TextFlags` combined using the bitwise OR operator.
-    ///
     /// # Notes
     /// The bitwise OR operator combines flags like this: `flag1 | flag2 | flag3`
     ///
     /// # Returns
     /// - `Ok(Text)`: Returns a `Text` instance
     /// - `Err(FtuiError)`: Returns an error.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a `Text` component labeled "Text".
-    /// // The text is right-aligned.
-    /// // The background color is red.
-    /// let _ = Text::new(
-    ///     "Text", TextFlags::ALIGN_RIGHT | TextFlags::COLOR_RED_BACK)?;
-    /// ```
-    pub fn new(
+    pub(crate) fn new(
         label: impl ToString, flags: impl Into<Option<TextFlags>>
     ) -> FtuiResult<Self> {
         let flags = flags.into().unwrap_or(TextFlags::NONE);
