@@ -115,28 +115,8 @@ impl AsMut<Renderer> for Renderer {
 /// a `Container` and displays its components on the screen.
 ///
 /// # Usage
-///
 /// A `Renderer` is used to render a `Container` to the terminal. It manages
 /// drawing operations and handles the rendering process efficiently.
-///
-/// # Derives
-///
-/// `Clone`, `Debug`, `PartialEq`, `Eq`
-///
-/// # Example
-/// ```rust
-/// // Create a Renderer with a width of 40 and a height of 20
-/// let mut renderer = Renderer::new(40, 20);
-///
-/// // Clear the buffer before rendering
-/// renderer.clear();
-///
-/// // Render the container (assuming `container` is created elsewhere)
-/// renderer.render(&container);
-///
-/// // Draw the final output to the terminal
-/// renderer.draw();
-/// ```
 #[derive(Clone, Debug, PartialEq, Eq)] 
 pub struct Renderer {
     width: u16,
@@ -161,12 +141,13 @@ impl Renderer {
     /// - `height`: A `u16` representing the height in characters.
     ///
     /// # Returns
-    /// A `Renderer` instance.
+    /// `Ok(Renderer)`: A `Renderer` instance.
+    /// `Err(FtuiError)`: Returns an error.
     ///
     /// # Example
     /// ```rust
     /// // Create a Renderer with a width of 40 and a height of 20 characters.
-    /// let renderer = Renderer::new(40, 20);
+    /// let renderer = Renderer::new(40, 20)?;
     /// ```
     pub fn new(width: u16, height: u16) -> FtuiResult<Renderer> {
         let (term_width, term_height) = ct::terminal::size()?;
@@ -194,6 +175,20 @@ impl Renderer {
         Ok(Self::new_uncheck(width, height))
     }
 
+    /// Constructs a new `Renderer` with the specified height with a fullscreen width.
+    ///
+    /// # Parameters
+    /// - `height`: A `u16` representing the height in characters.
+    ///
+    /// # Returns
+    /// `Ok(Renderer)`: A `Renderer` instance.
+    /// `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a Renderer with a fullscreen width and a height of 20 characters.
+    /// let renderer = Renderer::fullwidth(20)?;
+    /// ```
     pub fn fullwidth(height: u16) -> FtuiResult<Renderer> {
         let (width, term_height) = ct::terminal::size()?;
         
@@ -204,6 +199,20 @@ impl Renderer {
         }
     }
 
+    /// Constructs a new `Renderer` with the specified width with a fullscreen height.
+    ///
+    /// # Parameters
+    /// - `width`: A `u16` representing the width in characters.
+    ///
+    /// # Returns
+    /// `Ok(Renderer)`: A `Renderer` instance.
+    /// `Err(FtuiError)`: Returns an error.
+    ///
+    /// # Example
+    /// ```rust
+    /// // Create a Renderer with a fullscreen height and a width of 20 characters.
+    /// let renderer = Renderer::fullheight(40)?;
+    /// ```
     pub fn fullheight(width: u16) -> FtuiResult<Renderer> {
         let (term_width, height) = ct::terminal::size()?;
         
@@ -322,30 +331,7 @@ impl Renderer {
         Ok(())
     }
 
-    /// Renders a `Container` into the `Renderer` buffer without drawing to the terminal.
-    ///
-    /// # Parameters
-    /// - `container`: A mutable reference to the `Container` to be rendered.
-    ///
-    /// # Note
-    ///  - This method only updates the internal buffer. 
-    ///  - To display the rendered content, call the `draw` method.
-    ///  - You should use the `clear` method to clear the buffer first.
-    ///
-    /// # Returns
-    /// - `Ok(())`: Returns nothing.
-    /// - `Err(FtuiError)`: Returns an error.
-    /// 
-    /// # Example
-    /// ```rust
-    /// // Create a `Renderer` with a width of 40 and a height of 20 characters.
-    /// let mut renderer = Renderer::new(40, 20);
-    ///
-    /// // Render the container into the renderer buffer
-    /// // (assuming `container` is created elsewhere)
-    /// renderer.render(&mut container)?;
-    /// ```
-    pub(crate) fn render_container(&mut self, container: &mut Container) -> FtuiResult<()> {
+    fn render_container(&mut self, container: &mut Container) -> FtuiResult<()> {
         if container.component_count() > self.height {
             return Err(FtuiError::RendererContainerTooBig);
         }
@@ -367,30 +353,7 @@ impl Renderer {
         Ok(())
     }
 
-    /// Renders a `List` into the `Renderer` buffer without drawing to the terminal.
-    ///
-    /// # Parameters
-    /// - `list`: A mutable reference to the `List` to be rendered.
-    ///
-    /// # Note
-    ///  - This method only updates the internal buffer. 
-    ///  - To display the rendered content, call the `draw` method.
-    ///  - You should use the `clear` method to clear the buffer first.
-    ///
-    /// # Returns
-    /// - `Ok(())`: Returns nothing.
-    /// - `Err(FtuiError)`: Returns an error.
-    /// 
-    /// # Example
-    /// ```rust
-    /// // Create a `Renderer` with a width of 40 and a height of 20 characters.
-    /// let mut renderer = Renderer::new(40, 20);
-    ///
-    /// // Render a list into the renderer buffer
-    /// // (assuming `list` is created elsewhere)
-    /// renderer.render_list(&mut list)?;
-    /// ```
-    pub(crate) fn render_list(&mut self, list: &mut List) -> FtuiResult<()> {
+    fn render_list(&mut self, list: &mut List) -> FtuiResult<()> {
         let offset = list.offset();
         let is_number = list.is_number();
         let skip_top = if list.header().is_some() { 1 } else { 0 };  
@@ -467,7 +430,7 @@ impl Renderer {
         Ok(())
     }
 
-    pub(crate) fn render_message(&mut self, message: &Message) -> FtuiResult<()> {
+    fn render_message(&mut self, message: &Message) -> FtuiResult<()> {
         self.ensure_label_inbound(message.len())?;
         let line = (self.height as f32 / 2.0).round() as usize;
         let x_pos = Self::calc_middle_align_pos(self.width, message.len());
@@ -488,9 +451,7 @@ impl Renderer {
         Ok(())
     }
 
-    pub(crate) fn render<'a>(
-        &mut self, renderable: impl Into<Renderable<'a>>
-    ) -> FtuiResult<()> {
+    fn render<'a>(&mut self, renderable: impl Into<Renderable<'a>>) -> FtuiResult<()> {
         match renderable.into() {
             Renderable::Container(ref mut container) =>
                 self.render_container(container.as_mut())?,
@@ -505,31 +466,8 @@ impl Renderer {
         Ok(())
     }
 
-    /// Clears the `Renderer` buffer. This method should be called before rendering.
-    ///
-    /// # Note
-    /// Calling this method before rendering prevents visual artifacts.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a `Renderer` with a width of 40 and a height of 20 characters.
-    /// let mut renderer = Renderer::new(40, 20);
-    ///
-    /// // Rendering loop
-    /// loop {
-    ///     // Clear the `Renderer` buffer to remove previous frame content
-    ///     renderer.clear();
-    ///
-    ///     // Render the container into the renderer buffer
-    ///     // (assuming `container` is created elsewhere)
-    ///     renderer.render(&mut container)?;
-    ///
-    ///     // Draw the rendered content to the terminal
-    ///     renderer.draw();
-    /// }
-    /// ```
     #[inline]
-    pub(crate) fn clear(&mut self) {
+    fn clear(&mut self) {
         self.lines.iter_mut().for_each(|line| line.clear());
     }
 
