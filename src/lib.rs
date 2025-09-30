@@ -3,22 +3,6 @@
 //! school management system project, aiming to offer an easy-to-use UI framework
 //! for terminal applications. Now, I’m rewriting it in Rust to learn the language
 //! and (hopefully) improve both performance and maintainability.
-//!
-//! # Features
-//!
-//! - `shorten_mod_name` shortened aliases for common modules to reduce verbosity.
-//!     - `components` -> `cpn`
-//!     - `container` -> `con`
-//!     - `list` -> `lis`
-//!     - `renderer` -> `ren`
-//!     - `input` -> `inp`
-//!     - `error` -> `err`
-//! 
-//! - `reduce_abstraction` flattens module paths to make the API more direct.
-//!     - `feather_tui::components::Option` → `feather_tui::Option`
-//!     - `feather_tui::renderer::Renderer` → `feather_tui::Renderer`
-//!     - `feather_tui::input::key_char` → `feather_tui::key_char
-//!     - ...
 
 /// Core building blocks for constructing user interfaces.
 pub mod components;
