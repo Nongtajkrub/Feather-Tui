@@ -43,16 +43,16 @@ impl Option {
         }
     }
 
+    pub fn label(&self) -> &String {
+        return &self.label;
+    }
+
     pub(crate) fn set_line(&mut self, line: u16) {
         self.line = line;
     }
 
     pub(crate) fn line(&self) -> u16 {
         return self.line;
-    }
-
-    pub(crate) fn label(&self) -> &String {
-        return &self.label;
     }
 
     pub(crate) fn len(&self) -> usize {
