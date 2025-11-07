@@ -35,15 +35,9 @@ Feather-Tui is a simple terminal UI library designed to provide building blocks 
 
 ---
 
-## 🚀 Usage
+## 🚀 Getting Started
 
 [Check out the guide on how to use Feather-Tui (WIP)! Click here to learn more.](https://github.com/Nongtajkrub/Feather-Tui/wiki/Getting-Started)
-
----
-
-## 🌱 Related Projects
-
-[Original C Version (part of my school management system)](https://github.com/nongtajkrub/school-management)
 
 ---
 
