@@ -14,6 +14,8 @@ use crate::util::ansi;
 use crate::util::mom::Mom;
 use crate::util::number as num;
 
+const WHITESPACE_CHAR: char = ' ';
+
 /// A helper class for `Renderer`.
 #[derive(Debug, Clone, PartialEq, Eq)]
 struct Line {
@@ -29,7 +31,7 @@ impl Line {
         Line {
             ansi: Vec::new(),
             width: width,
-            data: std::iter::repeat(' ').take(width).collect(),
+            data: std::iter::repeat(WHITESPACE_CHAR).take(width).collect(),
         }
     }
 
@@ -57,7 +59,7 @@ impl Line {
 
         for _ in 0..repeat_count {
             self.data.push(c);
-            self.data.push(' ');
+            self.data.push(WHITESPACE_CHAR);
         }
     }
 
@@ -69,7 +71,7 @@ impl Line {
 
     #[inline]
     pub fn clear(&mut self) {
-        self.fill(' ');
+        self.fill(WHITESPACE_CHAR);
         self.ansi.clear();
     }
 }
@@ -493,7 +495,7 @@ impl Renderer {
             }
 
             if i != (self.height - 1) as usize {
-                buf.push('\n');
+                buf.push_str("\r\n");
             }
         }
 
