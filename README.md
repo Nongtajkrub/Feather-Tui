@@ -28,7 +28,7 @@ Feather-Tui is a simple terminal UI library designed to provide building blocks 
 
 ## 📝 Changelog
 
-[Only enhancements in this version! Click here to learn more.](https://github.com/Nongtajkrub/Feather-Tui/wiki/Changes#-v410)
+[The biggest update ever! Click here to learn more](https://github.com/Nongtajkrub/Feather-Tui/wiki/Changes#-v500-release-candidate-changelog-wip)
 
 ---
 
