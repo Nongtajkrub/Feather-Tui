@@ -10,6 +10,9 @@
 
 Feather-Tui is a simple terminal UI library designed to provide building blocks for terminal-based user interfaces. It started life as a small C library aiming to offer an easy-to-use UI framework for terminal applications. Now, I’m rewriting it in Rust to learn the language and (hopefully) improve both performance and maintainability.
 
+> [!CAUTION]
+> The documentation for Feather-Tui `v5.0.0` is not yet complete. For example, the `Getting Started` guide in the Wiki has not been updated for this version. This release is primarily intended for users who wish to experiment with new features. Some parts of the changelog are still in progress, though a few sections are already available. For stability and full documentation, it is recommended to continue using `v4.1.0` for now.
+
 ---
 
 ## 📊 Progress
