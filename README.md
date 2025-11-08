@@ -30,6 +30,9 @@ Feather-Tui is a simple terminal UI library designed to provide building blocks 
 
 [The biggest update ever! Click here to learn more](https://github.com/Nongtajkrub/Feather-Tui/wiki/Changes#-v500-release-candidate-changelog-wip)
 
+> [!CAUTION]
+> Changelog for `v5.0.0-rc.1` in still in development. For stability and full documentation, it is recommended to continue using `v4.1.0` for now.
+
 ---
 
 ## 📦 Crates
@@ -41,6 +44,9 @@ Feather-Tui is a simple terminal UI library designed to provide building blocks 
 ## 🚀 Getting Started
 
 [Check out the guide on how to use Feather-Tui (WIP)! Click here to learn more.](https://github.com/Nongtajkrub/Feather-Tui/wiki/Getting-Started)
+
+> [!CAUTION]
+> Getting Started guide for `v5.0.0-rc.1` in still in development. For stability and full documentation, it is recommended to continue using `v4.1.0` for now.
 
 ---
 
