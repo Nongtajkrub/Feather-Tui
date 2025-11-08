@@ -509,6 +509,12 @@ impl Renderer {
     /// The `render` method must be called at least once before `draw`, as `draw` only
     /// displays the content stored in the `Renderer` buffer.
     ///
+    /// > The `renderable` parameter must be provided as either a mutable reference
+    /// > or an owned value.
+    /// > 
+    /// > If you encounter an error mentioning `&mut &mut ...` or something similar,
+    /// > you’ll need to **reborrow** the inner value (e.g., `&mut *value`).
+    ///
     /// # Example
     /// ```rust
     /// // Create a `Renderer` with a width of 40 and a height of 20 characters.
