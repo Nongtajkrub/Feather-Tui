@@ -1,6 +1,9 @@
 use crate::components as cpn;
 use crate::error::FtuiResult;
+use crate::error::FtuiError;
+use crate::renderer::RenderableComponent;
 use crate::renderer::Renderer;
+use crate::renderer::RenderableContainer;
 use crate::util::id::IdGenerator;
 use crate::util::id::GeneratedId;
 
@@ -92,44 +95,8 @@ impl Container {
         self.component_count += 1;
     }
 
-    pub fn options(&self) -> &cpn::OptionsManager {
-        &self.options
-    }
-
     pub fn options_mut(&mut self) -> &mut cpn::OptionsManager {
         &mut self.options
-    }
-
-    pub fn text(&self) -> &cpn::TextsManager {
-        &self.texts
-    }
-
-    pub fn text_mut(&mut self) -> &mut cpn::TextsManager {
-        &mut self.texts
-    }
-
-    pub(crate) fn option_comps(&self) -> &[cpn::Option] {
-        &self.options.comps()
-    }
-
-    pub(crate) fn text_comps_mut(&mut self) -> &mut [cpn::Text] {
-        self.texts.comps_mut()
-    }
-
-    pub(crate) fn component_count(&self) -> u16 {
-        self.component_count
-    }
-
-    pub(crate) fn header_mut(&mut self) -> &mut Option<cpn::Text> {
-        &mut self.header
-    }
-
-    pub(crate) fn footer_mut(&mut self) -> &mut Option<cpn::Text> {
-        &mut self.footer
-    }
-
-    pub(crate) fn separators(&self) -> &[cpn::Separator] {
-        &self.separators
     }
 }
 
@@ -399,8 +366,8 @@ impl ContainerBuilder {
     ///     .option(...)
     ///     .instant_draw(Renderer::new(...))?;
     /// ```
-    pub fn instant_draw(self, mut renderer: impl AsMut<Renderer>) -> FtuiResult<()> {
-        renderer.as_mut().draw(self.container)
+    pub fn instant_draw(mut self, mut renderer: impl AsMut<Renderer>) -> FtuiResult<()> {
+        renderer.as_mut().draw(&mut self.container)
     }
 
     /// Finalizes the construction of a `Container`. This method should be called
@@ -423,5 +390,34 @@ impl ContainerBuilder {
     /// ```
     pub fn build(self) -> Container {
         self.container
+    }
+}
+
+impl RenderableContainer for Container {
+    fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
+        let (_, height) = renderer.get_dimensions();
+
+        if self.component_count > height {
+            return Err(FtuiError::RendererContainerTooBig);
+        }
+
+        renderer.clear();
+
+        if let Some(header) = &mut self.header {
+            header.render(renderer)?;
+        }
+
+        self.options.render(renderer)?;
+        self.texts.render(renderer)?;
+        
+        for seperator in self.separators.iter_mut() {
+            seperator.render(renderer)?;
+        }
+
+        if let Some(footer) = &mut self.footer {
+            renderer.render_text_as_footer(footer)?;
+        }
+
+        Ok(())
     }
 }

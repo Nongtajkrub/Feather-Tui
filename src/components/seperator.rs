@@ -1,3 +1,8 @@
+use crate::renderer::RenderableComponent;
+use crate::renderer::Renderer;
+use crate::error::FtuiResult;
+
+
 /// An `enum` representing all possible styles for a `Separator` component.
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -88,3 +93,31 @@ impl Separator {
         self.style
     }
 }
+
+#[inline]
+fn apply_correct_separator(renderer: &mut Renderer, separator: &Separator, c: char) {
+    if separator.is_dotted() {
+        renderer.line_mut(separator.line() as usize).fill_dotted(c);
+    } else {
+        renderer.line_mut(separator.line() as usize).fill(c);
+    }
+}
+    
+impl RenderableComponent for Separator {
+    fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
+        match self.style() {
+            SeparatorStyle::Solid => 
+                apply_correct_separator(renderer, self, '█'), 
+            SeparatorStyle::Medium =>
+                apply_correct_separator(renderer, self, '━'),
+            SeparatorStyle::Thin =>
+                apply_correct_separator(renderer, self, '─'),
+            SeparatorStyle::Double => 
+                apply_correct_separator(renderer, self, '═'),
+            SeparatorStyle::Custom(c) =>
+                apply_correct_separator(renderer, self, c),
+        }
+
+        Ok(())
+    }
+} 

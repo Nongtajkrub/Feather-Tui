@@ -2,9 +2,12 @@ use crate::components::Text;
 use crate::components::TextFlags;
 use crate::error::FtuiError;
 use crate::error::FtuiResult;
+use crate::renderer::RenderableComponent;
 use crate::renderer::Renderer;
+use crate::renderer::RenderableContainer;
 use crate::util::id::IdGenerator;
 use crate::util::id::GeneratedId;
+use crate::util::number as num;
 
 /// A specialized variant of `Container` designed to display data in a vertical 
 /// list format. A `List` is scrollable, allowing it to handle a dynamic number
@@ -24,7 +27,7 @@ pub struct List {
     elements: Vec<Text>,
     offset: usize,
     default_flags: Option<TextFlags>,
-    number: bool,
+    is_numbered: bool,
     id_generator: IdGenerator,
 }
 
@@ -45,7 +48,7 @@ impl List {
             elements: vec![],
             offset: 0,
             default_flags: None,
-            number: false,
+            is_numbered: false,
             id_generator: IdGenerator::new(),
         }
     }
@@ -320,36 +323,8 @@ impl List {
         }
     }
 
-    pub(crate) fn header(&self) -> &Option<Text> {
-        &self.header
-    }
-
-    pub(crate) fn header_mut(&mut self) -> &mut Option<Text> {
-        &mut self.header
-    }
-
-    pub(crate) fn footer(&self) -> &Option<Text> {
-        &self.footer
-    }
-
-    pub(crate) fn footer_mut(&mut self) -> &mut Option<Text> {
-        &mut self.footer
-    }
-
-    pub(crate) fn elements_mut(&mut self) -> &mut [Text] {
-        &mut self.elements
-    }
-
-    pub(crate) fn len(&self) -> usize {
+    fn len(&self) -> usize {
         self.elements.len()
-    }
-
-    pub(crate) fn offset(&self) -> usize {
-        self.offset
-    }
-    
-    pub(crate) fn is_number(&self) -> bool {
-        self.number
     }
 }
 
@@ -473,7 +448,7 @@ impl ListBuilder {
     ///     .number();
     /// ```
     pub fn number(mut self) -> Self {
-        self.list.number = true;
+        self.list.is_numbered = true;
         self
     }
 
@@ -493,8 +468,8 @@ impl ListBuilder {
     ///     .header(...)?
     ///     .instant_draw(Renderer::new(...))?;
     /// ```
-    pub fn instant_draw(self, mut renderer: impl AsMut<Renderer>) -> FtuiResult<()> {
-        renderer.as_mut().draw(self.list)
+    pub fn instant_draw(mut self, mut renderer: impl AsMut<Renderer>) -> FtuiResult<()> {
+        renderer.as_mut().draw(&mut self.list)
     }
 
     /// Finalizes the construction of a `List`. This method should be called
@@ -514,5 +489,51 @@ impl ListBuilder {
     /// ```
     pub fn build(self) -> List {
         self.list
+    }
+}
+
+impl RenderableContainer for List {
+    fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
+        let (width, height) = renderer.get_dimensions();
+        let skip_top = if self.header.is_some() { 1 } else { 0 };  
+        let skip_bottom = if self.footer.is_some() { 1 } else { 0 };
+        let max_elements = (height - 1) as usize - skip_bottom;
+        let num_prefix = if self.is_numbered {
+            (num::digits(self.len() as u64) + 2) as usize 
+        } else { 0 };
+
+        renderer.clear();
+
+        if let Some(header) = &mut self.header {
+            header.render(renderer)?;
+        }
+
+        if let Some(footer) = &mut self.footer {
+            renderer.render_text_as_footer(footer)?;
+        }
+        
+        for (i, elt) in self
+            .elements
+            .iter_mut()
+            .skip(self.offset)
+            .take(max_elements)
+            .enumerate() 
+        {
+            renderer.ensure_label_inbound(elt.len())?;
+            elt.resolve_pos_custom_len(width, elt.len() + num_prefix);
+
+            let line = renderer.line_mut(i + skip_top);
+
+            if self.is_numbered {
+                line.edit(
+                    &format!("{}. {}", i + 1 + self.offset, elt.label()), elt.pos());
+            } else {
+                line.edit(elt.label(), elt.pos());
+            }
+
+            line.add_ansi_many(elt.styles());
+        }
+
+        Ok(())
     }
 }

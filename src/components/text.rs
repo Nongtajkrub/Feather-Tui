@@ -6,6 +6,8 @@ use crate::error::FtuiError;
 use crate::error::FtuiResult;
 use crate::util::ansi;
 use crate::util::id::GeneratedId;
+use crate::renderer::Renderer;
+use crate::renderer::RenderableComponent;
 
 bitflags! {
     /// Flags used to style a `Text` component. Multiple flags can be combined 
@@ -333,6 +335,21 @@ impl Text {
     }
 }
 
+impl RenderableComponent for Text {
+    fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
+        let (width, _) = renderer.get_dimensions();
+        renderer.ensure_label_inbound(self.len())?;
+
+        let line = renderer.line_mut(self.line as usize);
+
+        self.resolve_pos(width);
+        line.edit(self.label(), self.pos());
+        line.add_ansi_many(self.styles());
+
+        Ok(())
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct TextsManager {
     components: Vec<Text>,
@@ -404,5 +421,15 @@ impl TextsManager {
 
     pub(crate) fn comps_mut(&mut self) -> &mut [Text] {
         &mut self.components
+    }
+}
+
+impl RenderableComponent for TextsManager {
+    fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
+        for text in self.comps_mut().iter_mut() {
+            text.render(renderer)?;
+        }
+
+        Ok(())
     }
 }

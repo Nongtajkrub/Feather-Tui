@@ -4,7 +4,9 @@ use std::fs;
 use crate::components::Text;
 use crate::components::TextFlags;
 use crate::error::FtuiResult;
+use crate::renderer::RenderableComponent;
 use crate::renderer::Renderer;
+use crate::renderer::RenderableContainer;
 
 /// A specialized variant of `Container` for displaying long-form text.  
 /// The `Document` supports text wrapping and scrolling, making it suitable  
@@ -84,34 +86,6 @@ impl Document {
     #[inline]
     pub(crate) fn offset_ensure_in_bound(&mut self, bound: usize) {
         self.offset = self.offset.min(bound);
-    }
-
-    pub(crate) fn header(&self) -> &Option<Text> {
-        &self.header
-    }
-
-    pub(crate) fn footer(&self) -> &Option<Text> {
-        &self.footer
-    }
-
-    pub(crate) fn header_mut(&mut self) -> &mut Option<Text> {
-        &mut self.header
-    }
-
-    pub(crate) fn footer_mut(&mut self) -> &mut Option<Text> {
-        &mut self.footer
-    }
-
-    pub(crate) fn data(&self) -> &str {
-        &self.data
-    }
-
-    pub(crate) fn style(&self) -> &[&'static str] {
-        &self.style
-    }
-
-    pub(crate) fn offset(&self) -> usize {
-        self.offset
     }
 }
 
@@ -277,8 +251,8 @@ impl DocumentBuilder {
     ///     .header(...)?
     ///     .instant_draw(Renderer::new(...))?;
     /// ```
-    pub fn instant_draw(self, mut renderer: impl AsMut<Renderer>) -> FtuiResult<()> {
-        renderer.as_mut().draw(self.document)
+    pub fn instant_draw(mut self, mut renderer: impl AsMut<Renderer>) -> FtuiResult<()> {
+        renderer.as_mut().draw(&mut self.document)
     }
 
     /// Finalizes the construction of a `Document`. This method should be called
@@ -299,5 +273,40 @@ impl DocumentBuilder {
     /// ```
     pub fn build(self) -> Document {
         self.document
+    }
+}
+
+impl RenderableContainer for Document {
+    fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
+        let len = self.data.len();
+        let (width, height) = renderer.get_dimensions();
+        let wrap_n = (len as f64 / width as f64).ceil() as usize;
+        let width = width as usize;
+        let height = height as usize;
+        let skip_top = if self.header.is_some() { 1 } else { 0 };
+        let skip_bottom = if self.footer.is_some() { 1 } else { 0 };
+        let max_lines = (height - 1) - skip_bottom;
+        self.offset_ensure_in_bound(wrap_n - 1);
+
+        renderer.clear();
+
+        if let Some(header) = &mut self.header {
+            header.render(renderer)?;
+        }
+
+        for i in (0..wrap_n - self.offset).take(max_lines) {
+            let line = renderer.line_mut(i + skip_top);
+            let begin = (i + self.offset) * width;
+            let end = (begin + len.min(width)).min(len);
+
+            line.edit(&self.data[begin..end], 0);
+            line.add_ansi_many(&self.style);
+        }
+
+        if let Some(footer) = &mut self.footer {
+            renderer.render_text_as_footer(footer)?;
+        }
+
+        Ok(())
     }
 }

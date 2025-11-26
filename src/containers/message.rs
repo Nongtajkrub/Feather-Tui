@@ -1,4 +1,7 @@
 use crate::util::ansi;
+use crate::renderer::Renderer;
+use crate::renderer::RenderableContainer;
+use crate::error::FtuiResult;
 
 pub(crate) const MSG_INFO_ANSI: [&'static str; 2] = [ansi::ESC_WHITE_B, ansi::ESC_BLACK_F];
 pub(crate) const MSG_WARN_ANSI: [&'static str; 1] = [ansi::ESC_YELLOW_B];
@@ -60,15 +63,33 @@ impl Message {
         }
     }
 
-    pub(crate) fn message(&self) -> &str {
-        &self.message
-    }
-
     pub(crate) fn len(&self) -> usize {
         self.message.len()
     }
+}
 
-    pub(crate) fn style(&self) -> MessageStyle {
-        self.style
+impl RenderableContainer for Message {
+    fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
+        renderer.ensure_label_inbound(self.len())?;
+        let (width, height) = renderer.get_dimensions();
+        let message_line = (height as f32 / 2.0).round() as usize;
+        let x_pos = Renderer::calc_middle_align_pos(width, self.len());
+        let ansi = self.style.to_ansi();
+
+        let line = renderer.line_mut(message_line);
+
+        line.edit(&self.message, x_pos);
+        line.add_ansi_many(ansi);
+
+        renderer.lines_mut().get_mut(message_line - 1).map(|line| {
+            line.clear();
+            line.add_ansi_many(ansi);
+        });
+        renderer.lines_mut().get_mut(message_line + 1).map(|line| {
+            line.clear();
+            line.add_ansi_many(ansi);
+        });
+
+        Ok(())
     }
 }

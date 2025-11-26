@@ -1,6 +1,9 @@
 use unicode_segmentation::UnicodeSegmentation;
 
+use crate::renderer::Renderer;
+use crate::renderer::RenderableComponent;
 use crate::util::id::GeneratedId;
+use crate::util::ansi;
 
 /// A UI component representing an interactive option in a `Container`. 
 /// `Option` components are displayed in the order they are added to the
@@ -278,5 +281,27 @@ impl OptionsManager {
 
     pub(crate) fn comps(&self) -> &[Option] {
         &self.components
+    }
+
+    pub(crate) fn len(&self) -> usize {
+        self.components.len()
+    }
+}
+
+impl RenderableComponent for OptionsManager {
+    fn render(&mut self, renderer: &mut Renderer) -> crate::error::FtuiResult<()> {
+        for option in self.comps() {
+            renderer.ensure_label_inbound(option.len())?;
+            
+            let line = &mut renderer.line_mut(option.line() as usize);
+
+            line.edit(option.label(), 0);
+
+            if option.selc_on() {
+                line.add_ansi(ansi::ESC_BLUE_B);
+            }
+        }
+
+        Ok(())
     }
 }
