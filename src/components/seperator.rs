@@ -2,7 +2,6 @@ use crate::renderer::RenderableComponent;
 use crate::renderer::Renderer;
 use crate::error::FtuiResult;
 
-
 /// An `enum` representing all possible styles for a `Separator` component.
 #[repr(u8)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
