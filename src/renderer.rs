@@ -1,12 +1,11 @@
 use std::io;
 use std::io::Write;
 
-use crossterm as ct;
-
 use crate::components as cpn;
 use crate::error::FtuiError;
 use crate::error::FtuiResult;
 use crate::util::ansi;
+use crate::util::Dimension;
 
 const WHITESPACE_CHAR: char = ' ';
 
@@ -98,101 +97,11 @@ pub struct Renderer {
 }
 
 impl Renderer {
-    /// Create a Renderer without checking the terminal size.
-    fn new_uncheck(width: u16, height: u16) -> Renderer {
+    pub fn new(dimension: Dimension) -> Renderer {
         Renderer {
-            width,
-            height,
-            lines: Self::make_lines(width, height),
-        }
-    }
-
-    /// Constructs a new `Renderer` with the specified width and height.
-    ///
-    /// # Parameters
-    /// - `width`: A `u16` representing the width in characters.
-    /// - `height`: A `u16` representing the height in characters.
-    ///
-    /// # Returns
-    /// `Ok(Renderer)`: A `Renderer` instance.
-    /// `Err(FtuiError)`: Returns an error.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a Renderer with a width of 40 and a height of 20 characters.
-    /// let renderer = Renderer::new(40, 20)?;
-    /// ```
-    pub fn new(width: u16, height: u16) -> FtuiResult<Renderer> {
-        let (term_width, term_height) = ct::terminal::size()?;
-
-        if width > term_width || height > term_height {
-            Err(FtuiError::RendererTerminalToSmall)
-        } else {
-            Ok(Self::new_uncheck(width, height))
-        }
-    }
-
-    /// Constructs a new fullscreen `Renderer` (Does not resize).
-    ///
-    /// # Returns
-    /// `Ok(Renderer)`: A `Renderer` instance.
-    /// `Err(FtuiError)`: Returns an error.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a fullscreen Renderer.
-    /// let renderer = Renderer::fullscreen()?;
-    /// ```
-    pub fn fullscreen() -> FtuiResult<Renderer> {
-        let (width, height) = ct::terminal::size()?;
-        Ok(Self::new_uncheck(width, height))
-    }
-
-    /// Constructs a new `Renderer` with the specified height with a fullscreen width.
-    ///
-    /// # Parameters
-    /// - `height`: A `u16` representing the height in characters.
-    ///
-    /// # Returns
-    /// `Ok(Renderer)`: A `Renderer` instance.
-    /// `Err(FtuiError)`: Returns an error.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a Renderer with a fullscreen width and a height of 20 characters.
-    /// let renderer = Renderer::fullwidth(20)?;
-    /// ```
-    pub fn fullwidth(height: u16) -> FtuiResult<Renderer> {
-        let (width, term_height) = ct::terminal::size()?;
-        
-        if height > term_height {
-            Err(FtuiError::RendererTerminalToSmall)
-        } else {
-            Ok(Self::new_uncheck(width, height))
-        }
-    }
-
-    /// Constructs a new `Renderer` with the specified width with a fullscreen height.
-    ///
-    /// # Parameters
-    /// - `width`: A `u16` representing the width in characters.
-    ///
-    /// # Returns
-    /// `Ok(Renderer)`: A `Renderer` instance.
-    /// `Err(FtuiError)`: Returns an error.
-    ///
-    /// # Example
-    /// ```rust
-    /// // Create a Renderer with a fullscreen height and a width of 20 characters.
-    /// let renderer = Renderer::fullheight(40)?;
-    /// ```
-    pub fn fullheight(width: u16) -> FtuiResult<Renderer> {
-        let (term_width, height) = ct::terminal::size()?;
-        
-        if width > term_width {
-            Err(FtuiError::RendererTerminalToSmall)
-        } else {
-            Ok(Self::new_uncheck(width, height))
+            width: dimension.width(),
+            height: dimension.height(),
+            lines: Self::make_lines(dimension.width(), dimension.height()),
         }
     }
 
