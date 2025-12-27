@@ -4,6 +4,7 @@ use crate::error::FtuiError;
 use crate::renderer::RenderableComponent;
 use crate::renderer::Renderer;
 use crate::renderer::RenderableContainer;
+use crate::color::Colors;
 use crate::util::id::IdGenerator;
 use crate::util::id::GeneratedId;
 
@@ -243,6 +244,12 @@ impl ContainerBuilder {
     #[inline]
     pub fn option_id(mut self, label: impl ToString, store_id: &mut GeneratedId) -> Self {
         *store_id = self.container.add_option(cpn::Option::new(label)); 
+        self
+    }
+
+    #[inline]
+    pub fn option_highligh(mut self, color: Colors) -> Self {
+        self.container.options_mut().set_highlight(color);
         self
     }
 

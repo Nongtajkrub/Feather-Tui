@@ -3,7 +3,7 @@ use unicode_segmentation::UnicodeSegmentation;
 use crate::renderer::Renderer;
 use crate::renderer::RenderableComponent;
 use crate::util::id::GeneratedId;
-use crate::util::ansi;
+use crate::color::Colors;
 
 /// A UI component representing an interactive option in a `Container`. 
 /// `Option` components are displayed in the order they are added to the
@@ -122,6 +122,7 @@ impl Option {
 pub struct OptionsManager {
     components: Vec<Option>,
     selector_on: usize,
+    highligh: Colors, 
 }
 
 impl OptionsManager {
@@ -129,11 +130,16 @@ impl OptionsManager {
         Self {
             components: Vec::new(),
             selector_on: 0,
+            highligh: Colors::CyanBack,
         }
     }
 
     pub(crate) fn add(&mut self, component: Option) {
         self.components.push(component);
+    }
+
+    pub(crate) fn set_highlight(&mut self, color: Colors) {
+        self.highligh = color;
     }
 
     /// Query an `Option` component by its ID (`O(n)` lookup).
@@ -282,10 +288,6 @@ impl OptionsManager {
     pub(crate) fn comps(&self) -> &[Option] {
         &self.components
     }
-
-    pub(crate) fn len(&self) -> usize {
-        self.components.len()
-    }
 }
 
 impl RenderableComponent for OptionsManager {
@@ -298,7 +300,7 @@ impl RenderableComponent for OptionsManager {
             line.edit(option.label(), 0);
 
             if option.selc_on() {
-                line.add_ansi(ansi::ESC_BLUE_B);
+                line.add_ansi(self.highligh.to_ansi());
             }
         }
 
