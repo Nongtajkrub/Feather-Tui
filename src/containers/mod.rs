@@ -13,3 +13,5 @@ pub use document::DocumentBuilder;
 mod message;
 pub use message::Message;
 pub use message::MessageStyle;
+
+mod custom;

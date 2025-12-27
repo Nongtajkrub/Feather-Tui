@@ -3,7 +3,7 @@ use unicode_segmentation::UnicodeSegmentation;
 use crate::renderer::Renderer;
 use crate::renderer::RenderableComponent;
 use crate::util::id::GeneratedId;
-use crate::color::Colors;
+use crate::util::Colors;
 
 /// A UI component representing an interactive option in a `Container`. 
 /// `Option` components are displayed in the order they are added to the

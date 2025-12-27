@@ -4,7 +4,7 @@ use crate::error::FtuiError;
 use crate::renderer::RenderableComponent;
 use crate::renderer::Renderer;
 use crate::renderer::RenderableContainer;
-use crate::color::Colors;
+use crate::util::Colors;
 use crate::util::id::IdGenerator;
 use crate::util::id::GeneratedId;
 

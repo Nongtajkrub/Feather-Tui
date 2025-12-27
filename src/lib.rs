@@ -4,7 +4,6 @@
 //! for terminal applications. Now, I’m rewriting it in Rust to learn the language
 //! and (hopefully) improve both performance and maintainability.
 
-pub mod color;
 /// Core building blocks for constructing user interfaces.
 pub mod components;
 /// Acts as a layout manager for the UI elements.
@@ -17,4 +16,4 @@ pub mod input;
 pub mod error;
 pub mod terminal;
 
-mod     util;
+pub mod util;
