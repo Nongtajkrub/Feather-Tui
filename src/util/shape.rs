@@ -5,7 +5,7 @@ pub(crate) trait Rect {
     fn h(&self) -> u16;
 
     fn is_inbound(&self, bound_w: u16, bound_h: u16) -> bool {
-        self.x() > bound_w || self.h() > bound_h
+        self.x() < bound_w || self.h() < bound_h
     }
 }
 

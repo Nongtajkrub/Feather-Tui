@@ -14,7 +14,7 @@ const WHITESPACE_CHAR: char = ' ';
 pub(crate) struct Line {
     ansi: Vec<&'static str>,
     width: usize,
-    data: String,
+    data: Vec<char>,
 }
 
 impl Line {
@@ -56,16 +56,34 @@ impl Line {
         }
     }
 
-    #[inline]
     pub fn edit(&mut self, data: &str, begin: u16) {
         let begin = begin as usize;
-        self.data.replace_range(begin..data.len() + begin, data);
+
+        for (i, c) in data.chars().enumerate() {
+            self.data[begin + i] = c;
+        }
+    }
+
+    pub fn edit_iter<I>(&mut self, data_iter: I, begin: u16) 
+    where
+        I: Iterator<Item = char>
+    {
+        let begin = begin as usize;
+
+        for (i, c) in data_iter.enumerate() {
+            self.data[begin + i] = c;
+        }
     }
 
     #[inline]
     pub fn clear(&mut self) {
         self.fill(WHITESPACE_CHAR);
         self.ansi.clear();
+    }
+
+    #[inline]
+    pub fn as_string(&self) -> String {
+        self.data.iter().collect()
     }
 }
 
@@ -175,12 +193,13 @@ impl Renderer {
 
         for (i, line) in self.lines.iter().enumerate() {
             let have_ansi = !line.ansi.is_empty();
+            let line_data = line.as_string();
 
             buf.push_str(&line.ansi.concat());
 
             // Exclude lines containing only whitesapce unless it have ANSIs.
-            if !line.data.trim().is_empty() || have_ansi {
-                buf.push_str(if have_ansi { &line.data } else { line.data.trim() });
+            if !line_data.trim().is_empty() || have_ansi {
+                buf.push_str(if have_ansi { &line_data } else { line_data.trim() });
             }
 
             // Only include the ANSI reset suffix if the line have ANSIs.
