@@ -7,3 +7,7 @@ pub use color::Colors;
 
 mod dimension;
 pub use dimension::Dimension;
+
+mod shape;
+pub(crate) use shape::Rect;
+pub use shape::Rectangle;
