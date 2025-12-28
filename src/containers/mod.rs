@@ -15,3 +15,4 @@ pub use message::Message;
 pub use message::MessageStyle;
 
 mod custom;
+pub use custom::Custom;
