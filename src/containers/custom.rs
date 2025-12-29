@@ -1,14 +1,22 @@
+use std::usize;
+
 use crate::renderer::Renderer;
 use crate::renderer::RenderableContainer;
 use crate::error::FtuiResult;
-use crate::util::Rect;
-use crate::util::Rectangle;
 use crate::util::Dimension;
 
 pub struct Custom {
     buffer: Vec<Vec<char>>,
     width: u16,
     height: u16,
+}
+
+/// Implementation detail, not intended for direct use.
+/// 
+/// This trait is automatically implemented for shapes types.
+pub trait RasterizableShape {
+    /// Implementation detail. Use `Custom::blit` instead.
+    fn rasterize(&self, container: &mut Custom) -> FtuiResult<()>;
 }
 
 impl Custom {
@@ -27,19 +35,32 @@ impl Custom {
             .collect()
     }
 
-    pub fn square(&mut self, shape: Rectangle) {
-        if !shape.is_inbound(self.width, self.height) {
-            return;
-        }
+    #[inline]
+    pub(crate) fn is_inbound(&self, x: u16, y: u16) -> bool {
+        self.width >= x && self.height >= y
+    }
 
-        let max_width = (shape.x() + shape.w()).min(self.width) as usize;
-        let max_height = (shape.y() + shape.h()).min(self.height) as usize;
+    #[inline]
+    pub(crate) fn get_dimensions(&self) -> (u16, u16) {
+        (self.width, self.height)
+    }
 
-        for cursor_y in (shape.y() as usize)..max_height {
-            for cursor_x in (shape.x() as usize)..max_width {
-                self.buffer[cursor_y][cursor_x] = '█';
-            }
-        }
+    #[inline]
+    pub(crate) fn buf_set(&mut self, x: u16, y: u16, c: char) {
+        self.buffer[y as usize][x as usize] = c;
+    }
+
+    #[inline]
+    pub(crate) fn buffer(&self) -> &[Vec<char>] {
+        &self.buffer
+    }
+
+    #[inline]
+    pub fn blit<R>(&mut self, shape: R) -> FtuiResult<()> 
+    where 
+        R: RasterizableShape,
+    {
+        shape.rasterize(self)
     }
 }
 
