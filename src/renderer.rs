@@ -1,4 +1,3 @@
-use std::io;
 use std::io::Write;
 
 use crate::components as cpn;
@@ -254,7 +253,7 @@ impl Renderer {
     ) -> FtuiResult<()> {
         renderable.render(self)?;
 
-        let mut stdout = io::stdout().lock();
+        let mut stdout = std::io::stdout().lock();
         stdout.write_all(self.to_string().as_bytes())?;
         stdout.flush()?;
 
