@@ -91,7 +91,12 @@ pub(crate) trait RenderableComponent {
     fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()>;
 } 
 
+/// Implementation detail, not intended for direct use.
+/// 
+/// This trait is automatically implemented for container types.
 pub trait RenderableContainer {
+    /// Implementation detail. Use `Renderer::draw` instead.
+    #[doc(hidden)]
     fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()>;
 } 
 
