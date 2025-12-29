@@ -3,6 +3,11 @@ use std::usize;
 use crate::renderer::Renderer;
 use crate::renderer::RenderableContainer;
 use crate::error::FtuiResult;
+use crate::error::FtuiError;
+use crate::util::Rect;
+use crate::util::Positional;
+use crate::util::Rectangle;
+use crate::util::Point;
 use crate::util::Dimension;
 
 pub struct Custom {
@@ -17,6 +22,38 @@ pub struct Custom {
 pub trait RasterizableShape {
     /// Implementation detail. Use `Custom::blit` instead.
     fn rasterize(&self, container: &mut Custom) -> FtuiResult<()>;
+}
+
+impl RasterizableShape for Rectangle {
+    fn rasterize(&self, container: &mut Custom) -> FtuiResult<()> {
+        if !container.is_inbound(self.x(), self.y()) {
+            return Err(FtuiError::CustomContainerBlitOutOfBound);
+        }
+
+        let (width, height) = container.get_dimensions();
+
+        let max_width = (self.x() + self.w()).min(width);
+        let max_height = (self.y() + self.h()).min(height);
+
+        for cursor_y in self.y()..max_height + 1 {
+            for cursor_x in self.x()..max_width + 1 {
+                container.buf_set(cursor_x - 1, cursor_y - 1, '█');
+            }
+        }
+
+        Ok(())
+    }
+}
+
+impl RasterizableShape for Point {
+    fn rasterize(&self, container: &mut Custom) -> FtuiResult<()> {
+        if !container.is_inbound(self.x(), self.y()) {
+            return Err(FtuiError::CustomContainerBlitOutOfBound);
+        }
+
+        container.buf_set(self.x() - 1, self.y() - 1, '█');
+        Ok(())
+    }
 }
 
 impl Custom {
@@ -48,11 +85,6 @@ impl Custom {
     #[inline]
     pub(crate) fn buf_set(&mut self, x: u16, y: u16, c: char) {
         self.buffer[y as usize][x as usize] = c;
-    }
-
-    #[inline]
-    pub(crate) fn buffer(&self) -> &[Vec<char>] {
-        &self.buffer
     }
 
     #[inline]
