@@ -130,9 +130,6 @@ pub enum FtuiError {
     #[error("Container is bigger than what the renderer can accommodate.")]
     RendererContainerTooBig,
 
-    #[error("")]
-    CustomContainerBlitOutOfBound,
-
     /// Occurs when functions in the `input` module fail. Affected functions 
     /// include `line`, `key`, and `key_char`. This enum wraps an error
     /// from `std::io::Error`.

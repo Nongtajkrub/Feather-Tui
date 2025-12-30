@@ -1,14 +1,17 @@
 use std::usize;
 
 use crate::renderer::Renderer;
-use crate::renderer::RenderableContainer;
 use crate::error::FtuiResult;
-use crate::error::FtuiError;
+use crate::util::Coordinate;
 use crate::util::Rect;
 use crate::util::Positional;
+use crate::util::Circular;
 use crate::util::Rectangle;
 use crate::util::Point;
+use crate::util::Circle;
 use crate::util::Dimension;
+use crate::util::Renderable;
+use crate::util::RenderableMut;
 
 pub struct Custom {
     buffer: Vec<Vec<char>>,
@@ -16,28 +19,37 @@ pub struct Custom {
     height: u16,
 }
 
-/// Implementation detail, not intended for direct use.
-/// 
-/// This trait is automatically implemented for shapes types.
-pub trait RasterizableShape {
-    /// Implementation detail. Use `Custom::blit` instead.
-    fn rasterize(&self, container: &mut Custom) -> FtuiResult<()>;
-}
-
-impl RasterizableShape for Rectangle {
-    fn rasterize(&self, container: &mut Custom) -> FtuiResult<()> {
+impl Renderable<Custom> for Point {
+    fn render(&self, container: &mut Custom) -> FtuiResult<()> {
         if !container.is_inbound(self.x(), self.y()) {
-            return Err(FtuiError::CustomContainerBlitOutOfBound);
+            return Ok(());
         }
 
-        let (width, height) = container.get_dimensions();
+        container.buf_set(self.x(), self.y(), '█');
+        Ok(())
+    }
+}
 
-        let max_width = (self.x() + self.w()).min(width);
-        let max_height = (self.y() + self.h()).min(height);
+impl Renderable<Custom> for Rectangle {
+    fn render(&self, container: &mut Custom) -> FtuiResult<()> {
+        let end_x = self.x() + self.w() as Coordinate;
+        let end_y = self.y() + self.h() as Coordinate;
 
-        for cursor_y in self.y()..max_height + 1 {
-            for cursor_x in self.x()..max_width + 1 {
-                container.buf_set(cursor_x - 1, cursor_y - 1, '█');
+        if end_x < 0 || end_y < 0 {
+            return Ok(());
+        }
+
+        for cursor_y in self.y()..end_y {
+            if !container.is_inbound_y(cursor_y) {
+                continue;
+            }
+
+            for cursor_x in self.x()..end_x {
+                if !container.is_inbound_x(cursor_x) {
+                    continue;
+                }
+
+                container.buf_set(cursor_x, cursor_y, '█');
             }
         }
 
@@ -45,13 +57,42 @@ impl RasterizableShape for Rectangle {
     }
 }
 
-impl RasterizableShape for Point {
-    fn rasterize(&self, container: &mut Custom) -> FtuiResult<()> {
-        if !container.is_inbound(self.x(), self.y()) {
-            return Err(FtuiError::CustomContainerBlitOutOfBound);
+impl Renderable<Custom> for Circle {
+    fn render(&self, container: &mut Custom) -> FtuiResult<()> {
+        let x = self.x() as i32;
+        let y = self.y() as i32;
+        let r = self.r() as i32;
+        let mut relative_y = -r;
+        let mut decision_param = relative_y;
+
+        for relative_x in 0..r {
+            if decision_param > 0 {
+                relative_y += 1;
+                decision_param += 2 * (relative_x + relative_y) + 1;
+            } else {
+                decision_param += (2 * relative_x) + 1 
+            }
+
+            use crate::util::Coordinate as C;
+
+            let _ = container
+                .blit(Point::new((x + relative_x) as C, (y + relative_y) as C));
+            let _ =container
+                .blit(Point::new((x - relative_x) as C, (y + relative_y) as C));
+            let _ = container
+                .blit(Point::new((x + relative_x) as C, (y - relative_y) as C));
+            let _ = container
+                .blit(Point::new((x - relative_x) as C, (y - relative_y) as C));
+            let _ = container
+                .blit(Point::new((x + relative_y) as C, (y + relative_x) as C));
+            let _ = container
+                .blit(Point::new((x - relative_y) as C, (y + relative_x) as C));
+            let _ =container
+                .blit(Point::new((x + relative_y) as C, (y - relative_x) as C));
+            let _ = container
+                .blit(Point::new((x - relative_y) as C, (y - relative_x) as C));
         }
 
-        container.buf_set(self.x() - 1, self.y() - 1, '█');
         Ok(())
     }
 }
@@ -68,35 +109,40 @@ impl Custom {
     #[inline]
     fn create_buffer(width: u16, height: u16) -> Vec<Vec<char>> {
         (0..height)
-            .map(|_| (0..width).map(|_| 'x').collect())
+            .map(|_| (0..width).map(|_| 'X').collect())
             .collect()
     }
 
     #[inline]
-    pub(crate) fn is_inbound(&self, x: u16, y: u16) -> bool {
-        self.width >= x && self.height >= y
+    pub(crate) fn is_inbound_x(&self, x: Coordinate) -> bool {
+        self.width as Coordinate >= x && x >= 0
     }
 
     #[inline]
-    pub(crate) fn get_dimensions(&self) -> (u16, u16) {
-        (self.width, self.height)
+    pub(crate) fn is_inbound_y(&self, y: Coordinate) -> bool {
+        self.height as Coordinate >= y && y >= 0
     }
 
     #[inline]
-    pub(crate) fn buf_set(&mut self, x: u16, y: u16, c: char) {
+    pub(crate) fn is_inbound(&self, x: Coordinate, y: Coordinate) -> bool {
+        self.is_inbound_x(x) && self.is_inbound_y(y)
+    }
+
+    #[inline]
+    pub(crate) fn buf_set(&mut self, x: Coordinate, y: Coordinate, c: char) {
         self.buffer[y as usize][x as usize] = c;
     }
 
     #[inline]
-    pub fn blit<R>(&mut self, shape: R) -> FtuiResult<()> 
+    pub fn blit<R>(&mut self, surface: R) -> FtuiResult<()> 
     where 
-        R: RasterizableShape,
+        R: Renderable<Custom>,
     {
-        shape.rasterize(self)
+        surface.render(self)
     }
 }
 
-impl RenderableContainer for Custom {
+impl RenderableMut<Renderer> for Custom {
     fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
         let (r_width, r_height) = renderer.get_dimensions();
         let max_height = self.height.min(r_height) as usize;

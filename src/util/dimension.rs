@@ -1,5 +1,3 @@
-use std::u16;
-
 use crate::error::FtuiResult;
 use crate::error::FtuiError;
         
@@ -120,5 +118,21 @@ impl Dimension {
 
     pub fn height(&self) -> u16 {
         self.height
+    }
+
+    pub fn center_x(&self) -> u16 {
+        ((self.width as f32 / 2.0).round() as u16) - 1 
+    }
+
+    pub fn center_y(&self) -> u16 {
+        ((self.height as f32 / 2.0).round() as u16) - 1 
+    }
+
+    pub fn center_x_un_zero_based(&self) -> u16 {
+        (self.width as f32 / 2.0).round() as u16
+    }
+
+    pub fn center_y_un_zero_based(&self) -> u16 {
+        (self.height as f32 / 2.0).round() as u16
     }
 }
