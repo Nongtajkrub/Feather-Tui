@@ -2,12 +2,11 @@ use crate::components::Text;
 use crate::components::TextFlags;
 use crate::error::FtuiError;
 use crate::error::FtuiResult;
-use crate::renderer::RenderableComponent;
 use crate::renderer::Renderer;
-use crate::renderer::RenderableContainer;
 use crate::util::id::IdGenerator;
 use crate::util::id::GeneratedId;
 use crate::util::number as num;
+use crate::util::RenderableMut;
 
 /// A specialized variant of `Container` designed to display data in a vertical 
 /// list format. A `List` is scrollable, allowing it to handle a dynamic number
@@ -492,7 +491,7 @@ impl ListBuilder {
     }
 }
 
-impl RenderableContainer for List {
+impl RenderableMut<Renderer> for List {
     fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
         let (width, height) = renderer.get_dimensions();
         let skip_top = if self.header.is_some() { 1 } else { 0 };  

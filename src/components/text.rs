@@ -4,10 +4,10 @@ use unicode_segmentation::UnicodeSegmentation;
 
 use crate::error::FtuiError;
 use crate::error::FtuiResult;
+use crate::renderer::Renderer;
 use crate::util::ansi;
 use crate::util::id::GeneratedId;
-use crate::renderer::Renderer;
-use crate::renderer::RenderableComponent;
+use crate::util::RenderableMut;
 
 bitflags! {
     /// Flags used to style a `Text` component. Multiple flags can be combined 
@@ -335,7 +335,7 @@ impl Text {
     }
 }
 
-impl RenderableComponent for Text {
+impl RenderableMut<Renderer> for Text {
     fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
         let (width, _) = renderer.get_dimensions();
         renderer.ensure_label_inbound(self.len())?;
@@ -424,7 +424,7 @@ impl TextsManager {
     }
 }
 
-impl RenderableComponent for TextsManager {
+impl RenderableMut<Renderer> for TextsManager {
     fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
         for text in self.comps_mut().iter_mut() {
             text.render(renderer)?;

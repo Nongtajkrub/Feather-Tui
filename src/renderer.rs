@@ -5,6 +5,7 @@ use crate::error::FtuiError;
 use crate::error::FtuiResult;
 use crate::util::ansi;
 use crate::util::Dimension;
+use crate::util::RenderableMut;
 
 const WHITESPACE_CHAR: char = ' ';
 
@@ -83,25 +84,6 @@ impl Line {
     #[inline]
     pub fn as_string(&self) -> String {
         self.data.iter().collect()
-    }
-}
-
-pub(crate) trait RenderableComponent {
-    fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()>;
-} 
-
-/// Implementation detail, not intended for direct use.
-/// 
-/// This trait is automatically implemented for container types.
-pub trait RenderableContainer {
-    /// Implementation detail. Use `Renderer::draw` instead.
-    #[doc(hidden)]
-    fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()>;
-} 
-
-impl AsMut<Renderer> for Renderer {
-    fn as_mut(&mut self) -> &mut Renderer {
-        self
     }
 }
 
@@ -248,9 +230,10 @@ impl Renderer {
     /// // but changes won't be reflected unless `render` is called.
     /// renderer.draw();
     /// ```
-    pub fn draw<'a>(
-        &mut self, renderable: &mut impl RenderableContainer
-    ) -> FtuiResult<()> {
+    pub fn draw<C>(&mut self, renderable: &mut C) -> FtuiResult<()>
+    where 
+        C: RenderableMut<Renderer>
+    {
         renderable.render(self)?;
 
         let mut stdout = std::io::stdout().lock();

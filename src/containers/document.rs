@@ -4,9 +4,8 @@ use std::fs;
 use crate::components::Text;
 use crate::components::TextFlags;
 use crate::error::FtuiResult;
-use crate::renderer::RenderableComponent;
 use crate::renderer::Renderer;
-use crate::renderer::RenderableContainer;
+use crate::util::RenderableMut;
 
 /// A specialized variant of `Container` for displaying long-form text.  
 /// The `Document` supports text wrapping and scrolling, making it suitable  
@@ -276,7 +275,7 @@ impl DocumentBuilder {
     }
 }
 
-impl RenderableContainer for Document {
+impl RenderableMut<Renderer> for Document {
     fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
         let len = self.data.len();
         let (width, height) = renderer.get_dimensions();

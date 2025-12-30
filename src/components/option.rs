@@ -1,9 +1,10 @@
 use unicode_segmentation::UnicodeSegmentation;
 
 use crate::renderer::Renderer;
-use crate::renderer::RenderableComponent;
 use crate::util::id::GeneratedId;
 use crate::util::Colors;
+use crate::util::Renderable;
+use crate::error::FtuiResult;
 
 /// A UI component representing an interactive option in a `Container`. 
 /// `Option` components are displayed in the order they are added to the
@@ -290,8 +291,8 @@ impl OptionsManager {
     }
 }
 
-impl RenderableComponent for OptionsManager {
-    fn render(&mut self, renderer: &mut Renderer) -> crate::error::FtuiResult<()> {
+impl Renderable<Renderer> for OptionsManager {
+    fn render(&self, renderer: &mut Renderer) -> FtuiResult<()> {
         for option in self.comps() {
             renderer.ensure_label_inbound(option.len())?;
             

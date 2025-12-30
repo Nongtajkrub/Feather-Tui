@@ -1,6 +1,6 @@
-use crate::renderer::RenderableComponent;
 use crate::renderer::Renderer;
 use crate::error::FtuiResult;
+use crate::util::RenderableMut;
 
 /// An `enum` representing all possible styles for a `Separator` component.
 #[repr(u8)]
@@ -102,7 +102,7 @@ fn apply_correct_separator(renderer: &mut Renderer, separator: &Separator, c: ch
     }
 }
     
-impl RenderableComponent for Separator {
+impl RenderableMut<Renderer> for Separator {
     fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
         match self.style() {
             SeparatorStyle::Solid => 

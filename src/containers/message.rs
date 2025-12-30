@@ -1,7 +1,7 @@
 use crate::util::ansi;
 use crate::renderer::Renderer;
-use crate::renderer::RenderableContainer;
 use crate::error::FtuiResult;
+use crate::util::RenderableMut;
 
 pub(crate) const MSG_INFO_ANSI: [&'static str; 2] = [ansi::ESC_WHITE_B, ansi::ESC_BLACK_F];
 pub(crate) const MSG_WARN_ANSI: [&'static str; 1] = [ansi::ESC_YELLOW_B];
@@ -68,7 +68,7 @@ impl Message {
     }
 }
 
-impl RenderableContainer for Message {
+impl RenderableMut<Renderer> for Message {
     fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
         renderer.ensure_label_inbound(self.len())?;
         let (width, height) = renderer.get_dimensions();

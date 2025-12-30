@@ -1,12 +1,12 @@
 use crate::components as cpn;
 use crate::error::FtuiResult;
 use crate::error::FtuiError;
-use crate::renderer::RenderableComponent;
 use crate::renderer::Renderer;
-use crate::renderer::RenderableContainer;
 use crate::util::Colors;
 use crate::util::id::IdGenerator;
 use crate::util::id::GeneratedId;
+use crate::util::RenderableMut;
+use crate::util::Renderable;
 
 /// `Container` is a data structure used to store and organize UI components,
 /// including `Header`, `Option`, `Text`, `Separator`, and `Selector`.
@@ -400,7 +400,7 @@ impl ContainerBuilder {
     }
 }
 
-impl RenderableContainer for Container {
+impl RenderableMut<Renderer> for Container {
     fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
         let (_, height) = renderer.get_dimensions();
 
