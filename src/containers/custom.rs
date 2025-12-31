@@ -1,7 +1,3 @@
-use std::usize;
-
-use crossterm::cursor;
-
 use crate::renderer::Renderer;
 use crate::error::FtuiResult;
 use crate::util::Coordinate;
@@ -35,10 +31,15 @@ impl Renderable<Custom> for Point {
 
 impl Renderable<Custom> for Rectangle {
     fn render(&self, container: &mut Custom) -> FtuiResult<()> {
+        if container.is_overflowing(self.x(), self.y()) {
+            return Ok(());
+        }
+
         let start_x = self.x().max(0);
         let start_y = self.y().max(0);
-        let end_x = self.x() + self.w() as Coordinate;
-        let end_y = self.y() + self.h() as Coordinate;
+        let (width, height) = container.dimension();
+        let end_x = (self.x() + self.w() as Coordinate).min(width as Coordinate);
+        let end_y = (self.y() + self.h() as Coordinate).min(height as Coordinate);
 
         if end_x < 0 || end_y < 0 {
             return Ok(());
@@ -115,23 +116,24 @@ impl Custom {
     }
 
     #[inline]
-    pub(crate) fn is_inbound_x(&self, x: Coordinate) -> bool {
-        self.width as Coordinate >= x && x >= 0
-    }
-
-    #[inline]
-    pub(crate) fn is_inbound_y(&self, y: Coordinate) -> bool {
+    pub(crate) fn is_inbound(&self, x: Coordinate, y: Coordinate) -> bool {
+        self.width as Coordinate >= x && x >= 0 && 
         self.height as Coordinate >= y && y >= 0
     }
 
     #[inline]
-    pub(crate) fn is_inbound(&self, x: Coordinate, y: Coordinate) -> bool {
-        self.is_inbound_x(x) && self.is_inbound_y(y)
+    pub(crate) fn is_overflowing(&self, x: Coordinate, y: Coordinate) -> bool {
+        (self.width as Coordinate) < x || (self.height as Coordinate) < y
     }
 
     #[inline]
     pub(crate) fn buf_set(&mut self, x: Coordinate, y: Coordinate, c: char) {
         self.buffer[y as usize][x as usize] = c;
+    }
+
+    #[inline]
+    pub(crate) fn dimension(&mut self) -> (u16, u16) {
+        (self.width, self.height)
     }
 
     #[inline]
