@@ -1,11 +1,14 @@
 use std::usize;
 
+use crossterm::cursor;
+
 use crate::renderer::Renderer;
 use crate::error::FtuiResult;
 use crate::util::Coordinate;
 use crate::util::Rect;
 use crate::util::Positional;
 use crate::util::Circular;
+use crate::util::Fillable;
 use crate::util::Rectangle;
 use crate::util::Point;
 use crate::util::Circle;
@@ -32,6 +35,8 @@ impl Renderable<Custom> for Point {
 
 impl Renderable<Custom> for Rectangle {
     fn render(&self, container: &mut Custom) -> FtuiResult<()> {
+        let start_x = self.x().max(0);
+        let start_y = self.y().max(0);
         let end_x = self.x() + self.w() as Coordinate;
         let end_y = self.y() + self.h() as Coordinate;
 
@@ -39,18 +44,14 @@ impl Renderable<Custom> for Rectangle {
             return Ok(());
         }
 
-        for cursor_y in self.y()..end_y {
-            if !container.is_inbound_y(cursor_y) {
-                continue;
-            }
-
-            for cursor_x in self.x()..end_x {
-                if !container.is_inbound_x(cursor_x) {
-                    continue;
+        if self.is_fill() {
+            for cursor_y in start_y..end_y {
+                for cursor_x in start_x..end_x {
+                    container.buf_set(cursor_x, cursor_y, '█');
                 }
-
-                container.buf_set(cursor_x, cursor_y, '█');
             }
+        } else {
+            todo!("Implement Line Drawing First!");
         }
 
         Ok(())

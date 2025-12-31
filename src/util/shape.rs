@@ -14,21 +14,27 @@ pub(crate) trait Circular {
     fn r(&self) -> u16;
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) trait Fillable {
+    fn is_fill(&self) -> bool;
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Rectangle {
     x: Coordinate,
     y: Coordinate,
     w: u16,
     h: u16,
+    is_fill: bool,
 }
 
 impl Rectangle {
-    pub fn new(x: Coordinate, y: Coordinate, w: u16, h: u16) -> Self {
+    pub fn new(x: Coordinate, y: Coordinate, w: u16, h: u16, fill: bool) -> Self {
         Self {
             x,
             y,
             w,
             h,
+            is_fill: fill,
         }
     }
 }
@@ -53,7 +59,13 @@ impl Rect for Rectangle {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+impl Fillable for Rectangle {
+    fn is_fill(&self) -> bool {
+        self.is_fill
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Point {
     x: Coordinate,
     y: Coordinate,
@@ -78,18 +90,21 @@ impl Positional for Point {
     }
 }
 
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct Circle {
     x: Coordinate,
     y: Coordinate,
     r: u16,
+    is_fill: bool,
 }
 
 impl Circle {
-    pub fn new(x: Coordinate, y: Coordinate, r: u16) -> Self {
+    pub fn new(x: Coordinate, y: Coordinate, r: u16, fill: bool) -> Self {
         Self {
             x,
             y,
             r,
+            is_fill: fill,
         }
     }
 }
@@ -107,5 +122,11 @@ impl Positional for Circle {
 impl Circular for Circle {
     fn r(&self) -> u16 {
         self.r
+    }
+}
+
+impl Fillable for Circle {
+    fn is_fill(&self) -> bool {
+        self.is_fill
     }
 }

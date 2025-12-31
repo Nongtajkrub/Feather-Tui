@@ -12,6 +12,7 @@ mod shape;
 pub(crate) use shape::Rect;
 pub(crate) use shape::Positional;
 pub(crate) use shape::Circular;
+pub(crate) use shape::Fillable;
 pub use shape::Coordinate;
 pub use shape::Rectangle;
 pub use shape::Point;
