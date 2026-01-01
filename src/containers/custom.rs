@@ -18,6 +18,83 @@ pub struct Custom {
     buffer: Vec<Vec<char>>,
     width: u16,
     height: u16,
+    cursor: char,
+}
+
+impl Custom {
+    pub fn new(dimension: Dimension) -> Self {
+        Self {
+            buffer: Self::create_buffer(dimension.width(), dimension.height()),
+            width: dimension.width(),
+            height: dimension.height(),
+            cursor: '█',
+        }
+    }
+
+    #[inline]
+    fn create_buffer(width: u16, height: u16) -> Vec<Vec<char>> {
+        (0..height)
+            .map(|_| (0..width).map(|_| ' ').collect())
+            .collect()
+    }
+
+    #[inline]
+    pub(crate) fn is_inbound_x(&self, x: Coordinate) -> bool {
+        self.width as Coordinate >= x && x >= 0
+    }
+
+    #[inline]
+    pub(crate) fn is_inbound_y(&self, y: Coordinate) -> bool {
+        self.height as Coordinate >= y && y >= 0
+    }
+
+    #[inline]
+    pub(crate) fn is_inbound(&self, x: Coordinate, y: Coordinate) -> bool {
+        self.is_inbound_x(x) && self.is_inbound_y(y)
+    }
+
+    #[inline]
+    pub(crate) fn is_overflowing(&self, x: Coordinate, y: Coordinate) -> bool {
+        (self.width as Coordinate) < x || (self.height as Coordinate) < y
+    }
+
+    #[inline]
+    pub(crate) fn buf_set(&mut self, x: Coordinate, y: Coordinate, c: char) {
+        self.buffer[y as usize][x as usize] = c;
+    }
+
+    #[inline]
+    pub(crate) fn dimension(&mut self) -> (u16, u16) {
+        (self.width, self.height)
+    }
+
+    #[inline]
+    pub fn set_cursor(&mut self, c: char) {
+        self.cursor = c;
+    }
+
+    #[inline]
+    pub fn blit<R>(&mut self, surface: R) -> FtuiResult<()> 
+    where 
+        R: Renderable<Custom>,
+    {
+        surface.render(self)
+    }
+}
+
+impl RenderableMut<Renderer> for Custom {
+    fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
+        let (r_width, r_height) = renderer.get_dimensions();
+        let max_height = self.height.min(r_height) as usize;
+        let max_width = self.width.min(r_width) as usize;
+
+        for i in 0..max_height {
+            renderer.line_mut(i)
+                .edit_iter(self.buffer[i][0..max_width].iter().copied(), 0);
+        }
+
+        Ok(())
+    }
 }
 
 impl Renderable<Custom> for Point {
@@ -26,7 +103,7 @@ impl Renderable<Custom> for Point {
             return Ok(());
         }
 
-        surface.buf_set(self.x(), self.y(), '█');
+        surface.buf_set(self.x(), self.y(), surface.cursor);
         Ok(())
     }
 }
@@ -50,7 +127,7 @@ impl Renderable<Custom> for Rectangle {
         if self.is_fill() {
             for cursor_y in start_y..end_y {
                 for cursor_x in start_x..end_x {
-                    surface.buf_set(cursor_x, cursor_y, '█');
+                    surface.buf_set(cursor_x, cursor_y, surface.cursor);
                 }
             }
         } else {
@@ -140,76 +217,6 @@ impl Renderable<Custom> for Line {
 
                 surface.blit(Point::new(cursor_x, cursor_y))?;
             }
-        }
-
-        Ok(())
-    }
-}
-
-impl Custom {
-    pub fn new(dimension: Dimension) -> Self {
-        Self {
-            buffer: Self::create_buffer(dimension.width(), dimension.height()),
-            width: dimension.width(),
-            height: dimension.height(),
-        }
-    }
-
-    #[inline]
-    fn create_buffer(width: u16, height: u16) -> Vec<Vec<char>> {
-        (0..height)
-            .map(|_| (0..width).map(|_| 'X').collect())
-            .collect()
-    }
-
-    #[inline]
-    pub(crate) fn is_inbound_x(&self, x: Coordinate) -> bool {
-        self.width as Coordinate >= x && x >= 0
-    }
-
-    #[inline]
-    pub(crate) fn is_inbound_y(&self, y: Coordinate) -> bool {
-        self.height as Coordinate >= y && y >= 0
-    }
-
-    #[inline]
-    pub(crate) fn is_inbound(&self, x: Coordinate, y: Coordinate) -> bool {
-        self.is_inbound_x(x) && self.is_inbound_y(y)
-    }
-
-    #[inline]
-    pub(crate) fn is_overflowing(&self, x: Coordinate, y: Coordinate) -> bool {
-        (self.width as Coordinate) < x || (self.height as Coordinate) < y
-    }
-
-    #[inline]
-    pub(crate) fn buf_set(&mut self, x: Coordinate, y: Coordinate, c: char) {
-        self.buffer[y as usize][x as usize] = c;
-    }
-
-    #[inline]
-    pub(crate) fn dimension(&mut self) -> (u16, u16) {
-        (self.width, self.height)
-    }
-
-    #[inline]
-    pub fn blit<R>(&mut self, surface: R) -> FtuiResult<()> 
-    where 
-        R: Renderable<Custom>,
-    {
-        surface.render(self)
-    }
-}
-
-impl RenderableMut<Renderer> for Custom {
-    fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
-        let (r_width, r_height) = renderer.get_dimensions();
-        let max_height = self.height.min(r_height) as usize;
-        let max_width = self.width.min(r_width) as usize;
-
-        for i in 0..max_height {
-            renderer.line_mut(i)
-                .edit_iter(self.buffer[i][0..max_width].iter().copied(), 0);
         }
 
         Ok(())
