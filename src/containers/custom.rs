@@ -4,10 +4,12 @@ use crate::util::Coordinate;
 use crate::util::Rect;
 use crate::util::Positional;
 use crate::util::Circular;
+use crate::util::Segment;
 use crate::util::Fillable;
 use crate::util::Rectangle;
 use crate::util::Point;
 use crate::util::Circle;
+use crate::util::Line;
 use crate::util::Dimension;
 use crate::util::Renderable;
 use crate::util::RenderableMut;
@@ -19,25 +21,25 @@ pub struct Custom {
 }
 
 impl Renderable<Custom> for Point {
-    fn render(&self, container: &mut Custom) -> FtuiResult<()> {
-        if !container.is_inbound(self.x(), self.y()) {
+    fn render(&self, surface: &mut Custom) -> FtuiResult<()> {
+        if !surface.is_inbound(self.x(), self.y()) {
             return Ok(());
         }
 
-        container.buf_set(self.x(), self.y(), '█');
+        surface.buf_set(self.x(), self.y(), '█');
         Ok(())
     }
 }
 
 impl Renderable<Custom> for Rectangle {
-    fn render(&self, container: &mut Custom) -> FtuiResult<()> {
-        if container.is_overflowing(self.x(), self.y()) {
+    fn render(&self, surface: &mut Custom) -> FtuiResult<()> {
+        if surface.is_overflowing(self.x(), self.y()) {
             return Ok(());
         }
 
         let start_x = self.x().max(0);
         let start_y = self.y().max(0);
-        let (width, height) = container.dimension();
+        let (width, height) = surface.dimension();
         let end_x = (self.x() + self.w() as Coordinate).min(width as Coordinate);
         let end_y = (self.y() + self.h() as Coordinate).min(height as Coordinate);
 
@@ -48,11 +50,26 @@ impl Renderable<Custom> for Rectangle {
         if self.is_fill() {
             for cursor_y in start_y..end_y {
                 for cursor_x in start_x..end_x {
-                    container.buf_set(cursor_x, cursor_y, '█');
+                    surface.buf_set(cursor_x, cursor_y, '█');
                 }
             }
         } else {
-            todo!("Implement Line Drawing First!");
+            let end_x_uncap = self.x() + self.w() as Coordinate;
+            let end_y_uncap = self.y() + self.h() as Coordinate;
+
+            // Avoid drawing edge if it suppose to clip.
+            if surface.is_inbound_x(self.x()) {
+                surface.blit(Line::new(start_x, start_y, start_x, end_y))?;
+            }
+            if surface.is_inbound_y(self.y()) {
+                surface.blit(Line::new(start_x, start_y, end_x, start_y))?;
+            }
+            if surface.is_inbound_x(end_x_uncap) {
+                surface.blit(Line::new(end_x - 1, start_y, end_x - 1, end_y - 1))?;
+            }
+            if surface.is_inbound_y(end_y_uncap) {
+                surface.blit(Line::new(start_x, end_y - 1, end_x, end_y - 1))?;
+            }
         }
 
         Ok(())
@@ -60,7 +77,7 @@ impl Renderable<Custom> for Rectangle {
 }
 
 impl Renderable<Custom> for Circle {
-    fn render(&self, container: &mut Custom) -> FtuiResult<()> {
+    fn render(&self, surface: &mut Custom) -> FtuiResult<()> {
         let x = self.x() as i32;
         let y = self.y() as i32;
         let r = self.r() as i32;
@@ -77,22 +94,52 @@ impl Renderable<Custom> for Circle {
 
             use crate::util::Coordinate as C;
 
-            let _ = container
-                .blit(Point::new((x + relative_x) as C, (y + relative_y) as C));
-            let _ =container
-                .blit(Point::new((x - relative_x) as C, (y + relative_y) as C));
-            let _ = container
-                .blit(Point::new((x + relative_x) as C, (y - relative_y) as C));
-            let _ = container
-                .blit(Point::new((x - relative_x) as C, (y - relative_y) as C));
-            let _ = container
-                .blit(Point::new((x + relative_y) as C, (y + relative_x) as C));
-            let _ = container
-                .blit(Point::new((x - relative_y) as C, (y + relative_x) as C));
-            let _ =container
-                .blit(Point::new((x + relative_y) as C, (y - relative_x) as C));
-            let _ = container
-                .blit(Point::new((x - relative_y) as C, (y - relative_x) as C));
+            surface.blit(Point::new((x + relative_x) as C, (y + relative_y) as C))?;
+            surface.blit(Point::new((x - relative_x) as C, (y + relative_y) as C))?;
+            surface.blit(Point::new((x + relative_x) as C, (y - relative_y) as C))?;
+            surface.blit(Point::new((x - relative_x) as C, (y - relative_y) as C))?;
+            surface.blit(Point::new((x + relative_y) as C, (y + relative_x) as C))?;
+            surface.blit(Point::new((x - relative_y) as C, (y + relative_x) as C))?;
+            surface.blit(Point::new((x + relative_y) as C, (y - relative_x) as C))?;
+            surface.blit(Point::new((x - relative_y) as C, (y - relative_x) as C))?;
+        }
+
+        Ok(())
+    }
+}
+
+impl Renderable<Custom> for Line {
+    fn render(&self, surface: &mut Custom) -> FtuiResult<()> {
+        let (x1, y1) = self.start();
+        let (x2, y2) = self.end();
+        let dx = x2 - x1;
+        let dy = y2 - y1;
+        
+        // Draw straight line
+        if dx == 0 {
+            for cursor_y in y1..y2 {
+                surface.blit(Point::new(x1, cursor_y))?;
+            }
+            return Ok(());
+        }
+        if dy == 0 {
+            for cursor_x in x1..x2 {
+                surface.blit(Point::new(cursor_x, y1))?;
+            }
+            return Ok(());
+        }
+
+        let step = std::cmp::max(dx.abs(), dy.abs());
+        if step != 0 {
+            let step_x = dx as f32 / step as f32;
+            let step_y = dy as f32 / step as f32;
+
+            for i in 0..step {
+                let cursor_x = ((x1 + i) as f32 * step_x).round() as Coordinate;
+                let cursor_y = ((y1 + i) as f32 * step_y).round() as Coordinate;
+
+                surface.blit(Point::new(cursor_x, cursor_y))?;
+            }
         }
 
         Ok(())
@@ -116,9 +163,18 @@ impl Custom {
     }
 
     #[inline]
-    pub(crate) fn is_inbound(&self, x: Coordinate, y: Coordinate) -> bool {
-        self.width as Coordinate >= x && x >= 0 && 
+    pub(crate) fn is_inbound_x(&self, x: Coordinate) -> bool {
+        self.width as Coordinate >= x && x >= 0
+    }
+
+    #[inline]
+    pub(crate) fn is_inbound_y(&self, y: Coordinate) -> bool {
         self.height as Coordinate >= y && y >= 0
+    }
+
+    #[inline]
+    pub(crate) fn is_inbound(&self, x: Coordinate, y: Coordinate) -> bool {
+        self.is_inbound_x(x) && self.is_inbound_y(y)
     }
 
     #[inline]

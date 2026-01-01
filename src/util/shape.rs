@@ -14,6 +14,11 @@ pub(crate) trait Circular {
     fn r(&self) -> u16;
 }
 
+pub(crate) trait Segment {
+    fn start(&self) -> (Coordinate, Coordinate);
+    fn end(&self) -> (Coordinate, Coordinate);
+}
+
 pub(crate) trait Fillable {
     fn is_fill(&self) -> bool;
 }
@@ -128,5 +133,31 @@ impl Circular for Circle {
 impl Fillable for Circle {
     fn is_fill(&self) -> bool {
         self.is_fill
+    }
+}
+
+pub struct Line {
+    start: Point,
+    end: Point,
+}
+
+impl Line {
+    pub fn new(
+        x1: Coordinate, y1: Coordinate, x2: Coordinate, y2: Coordinate
+    ) -> Self {
+        Self {
+            start: Point::new(x1, y1),
+            end: Point::new(x2, y2),
+        }
+    }
+}
+
+impl Segment for Line {
+    fn start(&self) -> (Coordinate, Coordinate) {
+        (self.start.x(), self.start.y())
+    }
+
+    fn end(&self) -> (Coordinate, Coordinate) {
+        (self.end.x(), self.end.y())
     }
 }
