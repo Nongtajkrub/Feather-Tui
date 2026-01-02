@@ -13,6 +13,8 @@ use crate::util::Line;
 use crate::util::Dimension;
 use crate::util::Renderable;
 use crate::util::RenderableMut;
+use crate::util::Turtle;
+use crate::util::TurtleAction;
 
 pub struct Custom {
     buffer: Vec<Vec<char>>,
@@ -32,6 +34,19 @@ impl Custom {
     }
 
     #[inline]
+    pub fn set_cursor(&mut self, c: char) {
+        self.cursor = c;
+    }
+
+    #[inline]
+    pub fn blit<R>(&mut self, surface: R) -> FtuiResult<()> 
+    where 
+        R: Renderable<Custom>,
+    {
+        surface.render(self)
+    }
+
+    #[inline]
     fn create_buffer(width: u16, height: u16) -> Vec<Vec<char>> {
         (0..height)
             .map(|_| (0..width).map(|_| ' ').collect())
@@ -48,7 +63,7 @@ impl Custom {
         self.height as Coordinate >= y && y >= 0
     }
 
-    #[inline]
+#[inline]
     pub(crate) fn is_inbound(&self, x: Coordinate, y: Coordinate) -> bool {
         self.is_inbound_x(x) && self.is_inbound_y(y)
     }
@@ -66,19 +81,6 @@ impl Custom {
     #[inline]
     pub(crate) fn dimension(&mut self) -> (u16, u16) {
         (self.width, self.height)
-    }
-
-    #[inline]
-    pub fn set_cursor(&mut self, c: char) {
-        self.cursor = c;
-    }
-
-    #[inline]
-    pub fn blit<R>(&mut self, surface: R) -> FtuiResult<()> 
-    where 
-        R: Renderable<Custom>,
-    {
-        surface.render(self)
     }
 }
 
@@ -216,6 +218,22 @@ impl Renderable<Custom> for Line {
                 let cursor_y = ((y1 + i) as f32 * step_y).round() as Coordinate;
 
                 surface.blit(Point::new(cursor_x, cursor_y))?;
+            }
+        }
+
+        Ok(())
+    }
+}
+
+impl Renderable<Custom> for Turtle {
+    fn render(&self, surface: &mut Custom) -> FtuiResult<()> {
+        for action in self.actions() {
+            use TurtleAction::*;
+
+            match action {
+                DrawLine((x1, y1), (x2, y2)) =>
+                    surface.blit(Line::new(*x1, *y1, *x2, *y2))?,
+                SetPen(c) => surface.set_cursor(*c),
             }
         }
 

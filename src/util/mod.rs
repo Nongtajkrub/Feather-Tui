@@ -20,6 +20,10 @@ pub use shape::Point;
 pub use shape::Circle;
 pub use shape::Line;
 
+mod turtle;
+pub use turtle::Turtle;
+pub(crate) use turtle::TurtleAction;
+
 mod traits;
 pub(crate) use traits::Renderable;
 pub(crate) use traits::RenderableMut;
