@@ -63,7 +63,7 @@ impl Custom {
         self.height as Coordinate >= y && y >= 0
     }
 
-#[inline]
+    #[inline]
     pub(crate) fn is_inbound(&self, x: Coordinate, y: Coordinate) -> bool {
         self.is_inbound_x(x) && self.is_inbound_y(y)
     }
@@ -114,7 +114,7 @@ impl Renderable<Custom> for Rectangle {
     fn render(&self, surface: &mut Custom) -> FtuiResult<()> {
         if surface.is_overflowing(self.x(), self.y()) {
             return Ok(());
-        }
+        } 
 
         let start_x = self.x().max(0);
         let start_y = self.y().max(0);
@@ -194,31 +194,24 @@ impl Renderable<Custom> for Line {
         let dx = x2 - x1;
         let dy = y2 - y1;
         
-        // Draw straight line
-        if dx == 0 {
-            for cursor_y in y1..y2 {
-                surface.blit(Point::new(x1, cursor_y))?;
-            }
-            return Ok(());
-        }
-        if dy == 0 {
-            for cursor_x in x1..x2 {
-                surface.blit(Point::new(cursor_x, y1))?;
-            }
-            return Ok(());
-        }
-
         let step = std::cmp::max(dx.abs(), dy.abs());
         if step != 0 {
             let step_x = dx as f32 / step as f32;
             let step_y = dy as f32 / step as f32;
+            let mut cursor_x = x1 as f32;
+            let mut cursor_y = y1 as f32;
 
-            for i in 0..step {
-                let cursor_x = ((x1 + i) as f32 * step_x).round() as Coordinate;
-                let cursor_y = ((y1 + i) as f32 * step_y).round() as Coordinate;
+            for _ in 0..=step {
+                surface.blit(
+                    Point::new(
+                        cursor_x.round() as Coordinate,
+                        cursor_y.round() as Coordinate))?;
 
-                surface.blit(Point::new(cursor_x, cursor_y))?;
+                cursor_x += step_x;
+                cursor_y += step_y;
             }
+        } else {
+            surface.blit(Point::new(x1, y1))?;
         }
 
         Ok(())
