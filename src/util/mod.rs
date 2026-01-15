@@ -12,13 +12,15 @@ mod shape;
 pub(crate) use shape::Rect;
 pub(crate) use shape::Positional;
 pub(crate) use shape::Circular;
-pub(crate) use shape::Fillable;
 pub(crate) use shape::Segment;
+pub(crate) use shape::HasProperties;
+pub(crate) use shape::AddPropertySlot;
 pub use shape::Coordinate;
 pub use shape::Rectangle;
 pub use shape::Point;
 pub use shape::Circle;
 pub use shape::Line;
+pub use shape::AddProperties;
 
 mod turtle;
 pub use turtle::Turtle;

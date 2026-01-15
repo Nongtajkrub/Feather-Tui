@@ -5,7 +5,8 @@ use crate::util::Rect;
 use crate::util::Positional;
 use crate::util::Circular;
 use crate::util::Segment;
-use crate::util::Fillable;
+use crate::util::HasProperties;
+use crate::util::AddPropertySlot;
 use crate::util::Rectangle;
 use crate::util::Point;
 use crate::util::Circle;
@@ -126,7 +127,7 @@ impl Renderable<Custom> for Rectangle {
             return Ok(());
         }
 
-        if self.is_fill() {
+        if self.props().is_exist(AddPropertySlot::Fill) {
             for cursor_y in start_y..end_y {
                 for cursor_x in start_x..end_x {
                     surface.buf_set(cursor_x, cursor_y, surface.cursor);
@@ -200,6 +201,7 @@ impl Renderable<Custom> for Line {
             let step_y = dy as f32 / step as f32;
             let mut cursor_x = x1 as f32;
             let mut cursor_y = y1 as f32;
+
 
             for _ in 0..=step {
                 surface.blit(
