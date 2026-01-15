@@ -58,13 +58,13 @@ impl Turtle {
     }
 
     #[inline]
-    pub fn turn_right(&mut self, degree: u16) {
+    pub fn right(&mut self, degree: u16) {
         self.radians = (self.radians + (degree as f32).to_radians())
             .rem_euclid(std::f32::consts::TAU);
     }
 
     #[inline]
-    pub fn turn_left(&mut self, degree: u16) {
+    pub fn left(&mut self, degree: u16) {
         self.radians = (self.radians - (degree as f32).to_radians())
             .rem_euclid(std::f32::consts::TAU);
     }
@@ -90,7 +90,7 @@ impl Turtle {
 
     pub fn goto(&mut self, x: Coordinate, y: Coordinate) {
         if self.pen_down {
-            self.draw_line(self.x, self.y, x, y);
+            self.actions.push(TurtleAction::DrawLine((self.x, self.y), (x, y)));
         }
 
         self.x = x;
@@ -100,12 +100,5 @@ impl Turtle {
     #[inline]
     pub(crate) fn actions(&self) -> &[TurtleAction] {
         &self.actions
-    }
-
-    #[inline]
-    fn draw_line(
-        &mut self, x1: Coordinate, y1: Coordinate, x2: Coordinate, y2: Coordinate
-    ) {
-        self.actions.push(TurtleAction::DrawLine((x1, y1), (x2, y2)));
     }
 }
