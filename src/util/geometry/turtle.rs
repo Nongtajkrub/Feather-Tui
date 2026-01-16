@@ -1,4 +1,4 @@
-use crate::util::Coordinate;
+use crate::util::geometry::Coordinate;
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum TurtleAction {

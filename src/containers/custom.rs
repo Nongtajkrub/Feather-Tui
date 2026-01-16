@@ -1,21 +1,23 @@
 use crate::renderer::Renderer;
 use crate::error::FtuiResult;
-use crate::util::Coordinate;
-use crate::util::Rect;
-use crate::util::Positional;
-use crate::util::Circular;
-use crate::util::Segment;
-use crate::util::HasProperties;
-use crate::util::AddPropertySlot;
-use crate::util::Rectangle;
-use crate::util::Point;
-use crate::util::Circle;
-use crate::util::Line;
+use crate::util::geometry::AddProperties;
+use crate::util::geometry::Coordinate;
+use crate::util::geometry::Rect;
+use crate::util::geometry::Positional;
+use crate::util::geometry::Circular;
+use crate::util::geometry::Segment;
+use crate::util::geometry::HasProperties;
+use crate::util::geometry::AddPropertySlot;
+use crate::util::geometry::Rectangle;
+use crate::util::geometry::Point;
+use crate::util::geometry::Circle;
+use crate::util::geometry::Line;
+use crate::util::geometry::Turtle;
+use crate::util::geometry::TurtleAction;
+use crate::util::geometry::linalg::rotate_vec2;
 use crate::util::Dimension;
 use crate::util::Renderable;
 use crate::util::RenderableMut;
-use crate::util::Turtle;
-use crate::util::TurtleAction;
 
 pub struct Custom {
     buffer: Vec<Vec<char>>,
@@ -102,11 +104,19 @@ impl RenderableMut<Renderer> for Custom {
 
 impl Renderable<Custom> for Point {
     fn render(&self, surface: &mut Custom) -> FtuiResult<()> {
-        if !surface.is_inbound(self.x(), self.y()) {
+        let (mut x, mut y) = (self.x(), self.y());
+
+        if let Some(AddProperties::Rotate(angle)) =
+            self.props().get(AddPropertySlot::Rotate) 
+        {
+            (x, y) = rotate_vec2((x, y), *angle);
+        }
+
+        if !surface.is_inbound(x, y) {
             return Ok(());
         }
 
-        surface.buf_set(self.x(), self.y(), surface.cursor);
+        surface.buf_set(x, y, surface.cursor);
         Ok(())
     }
 }
@@ -172,7 +182,7 @@ impl Renderable<Custom> for Circle {
                 decision_param += (2 * relative_x) + 1 
             }
 
-            use crate::util::Coordinate as C;
+            use Coordinate as C;
 
             surface.blit(Point::new((x + relative_x) as C, (y + relative_y) as C))?;
             surface.blit(Point::new((x - relative_x) as C, (y + relative_y) as C))?;
@@ -201,7 +211,6 @@ impl Renderable<Custom> for Line {
             let step_y = dy as f32 / step as f32;
             let mut cursor_x = x1 as f32;
             let mut cursor_y = y1 as f32;
-
 
             for _ in 0..=step {
                 surface.blit(
