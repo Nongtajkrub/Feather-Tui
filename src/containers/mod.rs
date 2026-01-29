@@ -1,6 +1,6 @@
-mod container;
-pub use container::Container;
-pub use container::ContainerBuilder;
+mod general;
+pub use general::General;
+pub use general::GeneralBuilder;
 
 mod list;
 pub use list::List;
@@ -13,6 +13,3 @@ pub use document::DocumentBuilder;
 mod message;
 pub use message::Message;
 pub use message::MessageStyle;
-
-pub(crate) mod custom;
-pub use custom::Custom;

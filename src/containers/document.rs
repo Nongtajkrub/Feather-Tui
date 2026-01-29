@@ -7,7 +7,7 @@ use crate::error::FtuiResult;
 use crate::renderer::Renderer;
 use crate::util::RenderableMut;
 
-/// A specialized variant of `Container` for displaying long-form text.  
+/// A specialized variant of container for displaying long-form text.  
 /// The `Document` supports text wrapping and scrolling, making it suitable  
 /// for content such as stories, logs, or multi-line descriptions.
 ///

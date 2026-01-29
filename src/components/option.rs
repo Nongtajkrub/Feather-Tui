@@ -123,7 +123,7 @@ impl Option {
 pub struct OptionsManager {
     components: Vec<Option>,
     selector_on: usize,
-    highligh: Colors, 
+    highlight: Colors, 
 }
 
 impl OptionsManager {
@@ -131,7 +131,7 @@ impl OptionsManager {
         Self {
             components: Vec::new(),
             selector_on: 0,
-            highligh: Colors::CyanBack,
+            highlight: Colors::CyanBack,
         }
     }
 
@@ -140,7 +140,7 @@ impl OptionsManager {
     }
 
     pub(crate) fn set_highlight(&mut self, color: Colors) {
-        self.highligh = color;
+        self.highlight = color;
     }
 
     /// Query an `Option` component by its ID (`O(n)` lookup).
@@ -301,7 +301,7 @@ impl Renderable<Renderer> for OptionsManager {
             line.edit(option.label(), 0);
 
             if option.selc_on() {
-                line.add_ansi(self.highligh.to_ansi());
+                line.add_ansi(self.highlight.to_ansi());
             }
         }
 

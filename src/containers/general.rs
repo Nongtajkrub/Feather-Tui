@@ -8,9 +8,9 @@ use crate::util::id::GeneratedId;
 use crate::util::RenderableMut;
 use crate::util::Renderable;
 
-/// `Container` is a data structure used to store and organize UI components,
-/// including `Header`, `Option`, `Text`, `Separator`, and `Selector`.
-/// It is created using a `ContainerBuilder`.
+/// A general container used to store and organize UI components,
+/// including `Header`, `Option`, `Text`, and `Separator`. It is created using
+/// a `GeneralBuilder`.
 ///
 /// # Usage
 /// - Handle UI events with the `looper` method.
@@ -20,7 +20,7 @@ use crate::util::Renderable;
 /// - Access `Text` components by ID using `text` and `text_mut`.
 /// - Navigate using `selector_up`, `selector_down`, and `selector_select`.
 #[derive(Debug, PartialEq, Eq)]
-pub struct Container {
+pub struct General {
     id_generator: IdGenerator,
     header: Option<cpn::Text>,
     footer: Option<cpn::Text>,
@@ -30,18 +30,18 @@ pub struct Container {
     component_count: u16,
 }
 
-impl Container {
-    /// Constructs a new `Container`. 
+impl General {
+    /// Constructs a new `General`. 
     ///
     /// # Returns
-    /// `Container`: A new instance of `Container`.
+    /// `General`: A new instance of `General`.
     ///
     /// # Example
     /// ```rust
-    /// let _ = Container::new();
+    /// let _ = General::new();
     /// ```
-    pub(crate) fn new() -> Container {
-        Container {
+    pub(crate) fn new() -> General {
+        General {
             id_generator: IdGenerator::new(),
             header: None,
             footer: None,
@@ -101,7 +101,7 @@ impl Container {
     }
 }
 
-/// `ContainerBuilder` is used to create `Container` instances using the builder
+/// `GeneralBuilder` is used to create `General` instances using the builder
 /// pattern. This allows for a flexible and readable way to construct complex
 /// containers by chaining method calls.
 ///
@@ -109,7 +109,7 @@ impl Container {
 /// ```rust
 /// // Create a container with a header, two options, a separator, some text,
 /// // and a selector.
-/// let container: Container = ContainerBuilder::new()
+/// let container: General = GeneralBuilder::new()
 ///     .header(...)?
 ///     .option(...)
 ///     .option(...)
@@ -118,32 +118,32 @@ impl Container {
 ///     .selector(...)?
 ///     .build();
 /// ```
-pub struct ContainerBuilder {
-    container: Container,
+pub struct GeneralBuilder {
+    container: General,
 }
 
-impl Into<Container> for ContainerBuilder {
-    fn into(self) -> Container {
+impl Into<General> for GeneralBuilder {
+    fn into(self) -> General {
         self.container
     }
 }
 
-impl ContainerBuilder {
-    /// Constructs a new `ContainerBuilder`. 
+impl GeneralBuilder {
+    /// Constructs a new `GeneralBuilder`. 
     ///
     /// # Return
-    /// `ContainerBuilder`: A new instance of `ContainerBuilder`.
+    /// `GeneralBuilder`: A new instance of `GeneralBuilder`.
     ///
     /// # Example
     /// ```rust
-    /// let _ = ContainerBuilder::new();
+    /// let _ = GeneralBuilder::new();
     /// ```
     #[inline]
     pub fn new() -> Self {
-        ContainerBuilder { container: Container::new(), }
+        GeneralBuilder { container: General::new(), }
     }
 
-    /// Sets the header for the `Container`.
+    /// Sets the header for the `General`.
     ///
     /// # Notes
     /// The header behaves similarly to a `Text` component and can display
@@ -154,13 +154,13 @@ impl ContainerBuilder {
     /// - `flags`: An optional set of `TextFlags` combined using the bitwise OR operator.
     ///
     /// # Returns
-    /// - `Ok(ContainerBuilder)`: Returns `self`.
+    /// - `Ok(GeneralBuilder)`: Returns `self`.
     /// - `Err(FtuiError)`: Returns an error.
     ///
     /// # Example
     /// ```rust
     /// // Sets a header with the label "Welcome" in red.
-    /// ContainerBuilder::new()
+    /// GeneralBuilder::new()
     ///     .header("Welcome", TextFlags::COLOR_RED)?;
     /// ```
     #[inline]
@@ -171,7 +171,7 @@ impl ContainerBuilder {
         Ok(self)
     }
 
-    /// Sets the footer for the `Container`.
+    /// Sets the footer for the `General`.
     ///
     /// # Notes
     /// The footer behaves similarly to a `Text` component and can display
@@ -182,13 +182,13 @@ impl ContainerBuilder {
     /// - `flags`: An optional set of `TextFlags` combined using the bitwise OR operator.
     ///
     /// # Returns
-    /// - `Ok(ContainerBuilder)`: Returns `self`.
+    /// - `Ok(GeneralBuilder)`: Returns `self`.
     /// - `Err(FtuiError)`: Returns an error.
     ///
     /// # Example
     /// ```rust
     /// // Sets a footer with the label "q -> exit" in red.
-    /// ContainerBuilder::new()
+    /// GeneralBuilder::new()
     ///     .footer("q -> exit", TextFlags::COLOR_RED)?;
     /// ```
     #[inline]
@@ -199,20 +199,20 @@ impl ContainerBuilder {
         Ok(self)
     }
 
-    /// Adds an `Option` component to the `Container`.
+    /// Adds an `Option` component to the `General`.
     ///
     /// # Parameters
     /// - `label`: A `&str` representing the text displayed for this option.
     /// - `callback`: An optional `Callback` invoked when the option is selected.
     ///
     /// # Returns
-    /// - `Ok(ContainerBuilder)`: Returns `self`.
+    /// - `Ok(GeneralBuilder)`: Returns `self`.
     /// - `Err(FtuiError)`: Returns an error.
     ///
     /// # Example
     /// ```rust
     /// // Add an `Option` component with the label "Option" and no `Callback`.
-    /// ContainerBuilder::new()
+    /// GeneralBuilder::new()
     ///     .option("Option", None);
     /// ```
     #[inline]
@@ -221,7 +221,7 @@ impl ContainerBuilder {
         self
     }
 
-    /// Adds an `Option` component to the `Container` and stores its ID.
+    /// Adds an `Option` component to the `General` and stores its ID.
     ///
     /// # Parameters
     /// - `label`: The text displayed for this option.
@@ -229,7 +229,7 @@ impl ContainerBuilder {
     /// - `store_id`: A `&mut u16` to store the created `Option` component ID.
     /// 
     /// # Returns
-    /// - `Ok(ContainerBuilder)`: Returns `self`.
+    /// - `Ok(GeneralBuilder)`: Returns `self`.
     /// - `Err(FtuiError)`: Returns an error.
     /// 
     /// # Example
@@ -238,7 +238,7 @@ impl ContainerBuilder {
     ///
     /// // Add an `Option` labeled "Option" with no `Callback`,
     /// // storing the generated ID in `id`.
-    /// ContainerBuilder::new()
+    /// GeneralBuilder::new()
     ///     .option_id("Option", None, &mut id);
     /// ```
     #[inline]
@@ -253,7 +253,7 @@ impl ContainerBuilder {
         self
     }
 
-    /// Adds a `Text` component to the `Container`.
+    /// Adds a `Text` component to the `General`.
     /// 
     /// # Parameters
     /// - `label`: A `&str` representing the text to display.
@@ -263,14 +263,14 @@ impl ContainerBuilder {
     /// - This is what bitwise OR operator look like -> `flag1 | flag2 | flag3 ...`
     ///
     /// # Returns
-    /// - `Ok(ContainerBuilder)`: Returns `self`.
+    /// - `Ok(GeneralBuilder)`: Returns `self`.
     /// - `Err(FtuiError)`: Returns an error.
     ///
     /// # Example
     /// ```rust
     /// // Create a `Text` component labeled "Text", right-aligned and with
     /// // a magenta background.
-    /// ContainerBuilder::new()
+    /// GeneralBuilder::new()
     ///     .text("Text", TextFlags::ALIGN_RIGHT | TextFlags::COLOR_MAGENTA_BACK)?;
     /// ```
     #[inline]
@@ -281,7 +281,7 @@ impl ContainerBuilder {
         Ok(self)
     }
 
-    /// Adds a `Text` component to the `Container` and stores its ID.
+    /// Adds a `Text` component to the `General` and stores its ID.
     /// 
     /// # Parameters
     /// - `label`: A `&str` representing the text to display.
@@ -292,7 +292,7 @@ impl ContainerBuilder {
     /// - This is what bitwise OR operator look like -> `flag1 | flag2 | flag3 ...`
     ///
     /// # Returns
-    /// - `Ok(ContainerBuilder)`: Returns `self`.
+    /// - `Ok(GeneralBuilder)`: Returns `self`.
     /// - `Err(FtuiError)`: Returns an error.
     ///
     /// # Example
@@ -301,7 +301,7 @@ impl ContainerBuilder {
     ///
     /// // Create a `Text` component labeled "Text", right-aligned and with
     /// // a magenta background. storing the generated ID in `id`.
-    /// ContainerBuilder::new()
+    /// GeneralBuilder::new()
     ///     .text(
     ///         "Text",
     ///         TextFlags::ALIGN_RIGHT | TextFlags::COLOR_MAGENTA_BACK, &mut id)?;
@@ -322,12 +322,12 @@ impl ContainerBuilder {
     /// - `style`: The visual style of the separator, specified as a `SeparatorStyle`.
     ///
     /// # Returns
-    /// - `ContainerBuilder`: Returns `self`.
+    /// - `GeneralBuilder`: Returns `self`.
     ///
     /// # Example
     /// ```rust
     /// // Add a normal separator with a solid style.
-    /// ContainerBuilder::new()
+    /// GeneralBuilder::new()
     ///     separator_normal(SeparatorStyle::Solid);
     /// ```
     #[inline]
@@ -342,12 +342,12 @@ impl ContainerBuilder {
     /// - `style`: The visual style of the separator, specified as a `SeparatorStyle`.
     ///
     /// # Returns
-    /// - `ContainerBuilder`: Returns `self`.
+    /// - `GeneralBuilder`: Returns `self`.
     ///
     /// # Example
     /// ```rust
     /// // Add a dotted separator with a solid style.
-    /// ContainerBuilder::new()
+    /// GeneralBuilder::new()
     ///     separator_dotted(SeparatorStyle::Solid);
     /// ```
     #[inline]
@@ -356,7 +356,7 @@ impl ContainerBuilder {
         self
     }
 
-    /// Renders the current `Container` directly to the terminal without
+    /// Renders the current `General` directly to the terminal without
     /// creating and returning a new one.
     ///
     /// # Parameters
@@ -368,7 +368,7 @@ impl ContainerBuilder {
     ///
     /// # Example
     /// ```rust
-    /// ContainerBuilder::new()
+    /// GeneralBuilder::new()
     ///     .header(...)?
     ///     .option(...)
     ///     .instant_draw(Renderer::new(...))?;
@@ -377,16 +377,16 @@ impl ContainerBuilder {
         renderer.as_mut().draw(&mut self.container)
     }
 
-    /// Finalizes the construction of a `Container`. This method should be called
+    /// Finalizes the construction of a `General`. This method should be called
     /// after all desired components have been added using the builder pattern.
-    /// It consumes `self` and returns the completed `Container`.
+    /// It consumes `self` and returns the completed `General`.
     ///
     /// # Returns
-    /// - `Container`: Returns the created `Container`.
+    /// - `General`: Returns the created `General`.
     ///
     /// # Example
     /// ```rust
-    /// let container: Container = ContainerBuilder::new()
+    /// let container: General = GeneralBuilder::new()
     ///     .header(...)?
     ///     .option(...)
     ///     .option(...)
@@ -395,12 +395,12 @@ impl ContainerBuilder {
     ///     .selector(...)?
     ///     .build(); // Finalize and retrieve the constructed container.
     /// ```
-    pub fn build(self) -> Container {
+    pub fn build(self) -> General {
         self.container
     }
 }
 
-impl RenderableMut<Renderer> for Container {
+impl RenderableMut<Renderer> for General {
     fn render(&mut self, renderer: &mut Renderer) -> FtuiResult<()> {
         let (_, height) = renderer.get_dimensions();
 
